@@ -1,0 +1,377 @@
+---
+title: "Introduction: why do we need statistics"   
+output: 
+    html_document:
+      code_download: true    
+      theme: cosmo 
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = TRUE, comment = NA, echo = TRUE,
+                      message = FALSE, warning = FALSE)
+library(tidyverse)
+```
+
+#Smelly armpit example
+
+- Smelly armpits are not caused by sweat, itself. The smell is caused by specific micro-organisms belonging to the group of *Corynebacterium spp.* that metabolise sweat.
+Another group of abundant bacteria are the *Staphylococcus spp.*.
+
+- The CMET-groep at Ghent University does research to the use of microbial transplants of the armpit to save people with smelly armpits. 
+
+- Proposed Therapy:
+  	1. Remove armpit-microbiome with antibiotics 
+    2. Influence armpit microbiome with microbial  transplant (https://youtu.be/9RIFyqLXdVw)
+
+- Experiment: 
+    
+    - 20 students with smelly armpits are attributed to one of two treatment groups
+    - placebo (only antibiotics)
+    - transplantie (antibiotica, gevolgd door microbi??le transplantatie).
+    - The microbiome is sampled 6 weeks upon the treatment
+    - The relative abundance of *Staphylococcus spp.* on *Corynebacterium spp.* + *Staphylococcus spp.* in the microbiome is measured via DGGE (*Denaturing Gradient Gel Electrophoresis*).
+
+## Import the data
+```{r}
+read_lines("https://raw.githubusercontent.com/statOmics/psls20/master/data/armpit.csv?token=AF2MWG5H3QKFBWLFS4SDQSK6D4T2M")
+```
+
+The file is comma separated and in tidy format
+
+```{r}
+ap<-read_csv("https://raw.githubusercontent.com/statOmics/psls20/master/data/armpit.csv?token=AF2MWG5H3QKFBWLFS4SDQSK6D4T2M")
+ap
+```
+
+
+## Data exploration
+
+```{r}
+
+```
+
+```{r}
+ap %>%  ggplot(aes(x=trt,y=rel)) + geom_boxplot(outlier.shape=NA) + geom_point(position="jitter")
+```
+
+
+## Some concepts
+
+- Why do we need more than one student per group? 
+
+- What are the meaning and the consequences of the term "randomly"?
+
+- Consider two designs: 
+
+1. A research assistant selects 20 male students from his faculty with smelly armpits
+
+2. A research assistant selects 20 people with smelly armpits from the Belgian population. 
+
+```{r echo=FALSE}
+set.seed(140)
+ap2<-ap
+hlp<-lm(rel~trt,ap)
+ap2$rel<-rnorm(20,mean=hlp$fit-20,sd=sigma(hlp)*2)
+```
+
+```{r}
+ap %>%  ggplot(aes(x=trt,y=rel)) + geom_boxplot(outlier.shape=NA) + geom_point(position="jitter") + ylim(0,100)
+ap2 %>%  ggplot(aes(x=trt,y=rel)) + geom_boxplot(outlier.shape=NA) + geom_point(position="jitter") + ylim(0,100)
+```
+
+- Design 1: smaller variability
+
+- Design 2: larger variability and lower relative abundance of *Staphylococcus*
+
+- What is the best design? 
+
+- Random sampling is closely related to the concept of the population or the scope of the study.
+
+- Based on a sample of subjects, the researchers want to come to conclusions that hold for
+
+    - all kind of people
+    - only male students
+
+- Scope of the study should be well specified before the start of the study.
+
+- For the statistical analysis to be valid, it is required that the subjects are selected completely at random.
+
+- Selecting completely at random from a population implies:
+    - all subjects in the population should have the same probability of being selected in the sample
+    - the selection of a subject in the sample should be independent from the selection of the other pears in the sample.
+    - The sample is thus supposed to be representative for the population, but still it is random.
+
+- What does this imply? 
+
+# Sample to sample variability
+
+National Health NHanes study
+
+  - Since 1999 approximately 5000 individuals of all ages are interviewed in their homes every year
+  - Complete the health examination component of the survey, which is conducted in a mobile examination centre (MEC).
+  - We will use this larger study to select random subjects from the American population. 
+  - This will help us to understand how the results of an analysis and the conclusions vary from sample to sample. 
+  
+```{r}
+library(NHANES)
+head(NHANES)
+glimpse(NHANES)
+```
+
+Suppose that we are interested in assessing the difference in direct cholestorol levels between males and females older than 25 years.
+
+## Data exploration
+
+```{r}
+NHANES%>%filter(NHANES$Age>25)%>%ggplot(aes(x=DirectChol))+geom_histogram() +facet_grid(Gender~.) + xlab("Direct Cholestorol (mg/dl)")
+```
+
+- Cholestorol levels and concentration measurements are often skewed. 
+- They cannot be lower than 0.
+- They are often log transformed.
+
+```{r}
+NHANES%>%filter(NHANES$Age>25)%>%ggplot(aes(x=DirectChol%>%log))+geom_histogram() +facet_grid(Gender~.) + xlab("Direct Cholestorol (log)")
+```
+
+We see that upon log transformation they are more or less bell shaped. 
+
+```{r}
+nhanesSub<-NHANES%>%filter(Age>25&!is.na(DirectChol)) %>% select(c("Gender","DirectChol")) %>% mutate(cholLog=log(DirectChol))
+Rmisc::summarySE(measurevar = "cholLog","Gender",data=nhanesSub)
+```
+
+
+## Experiment
+
+
+- Suppose that we would  have no access to cholestorol levels of the American population. 
+- Then we would have to setup an experiment. 
+- Suppose that we have a budget for assessing 10 females and 10 males
+
+```{r}
+fem<-nhanesSub%>%filter(Gender=="female")%>%sample_n(size=10)
+mal<-nhanesSub%>%filter(Gender=="male")%>%sample_n(size=10)
+samp<-rbind(fem,mal)
+samp%>%ggplot(aes(x=DirectChol%>%log))+geom_histogram(binwidth = .1) +facet_grid(Gender~.) + xlab("Direct Cholestorol (log)")
+samp%>% ggplot(aes(x=Gender,y=cholLog)) + geom_boxplot(outlier.shape=NA) + geom_point(position="jitter") 
+Rmisc::summarySE(measurevar = "cholLog","Gender",data=samp)
+t.test(cholLog~Gender,samp,var.equal=TRUE)
+```
+
+
+## Repeat the experiment
+
+If we would do the experiment again we would select other people and we will obtain different results. 
+
+```{r}
+fem<-nhanesSub%>%filter(Gender=="female")%>%sample_n(size=10)
+mal<-nhanesSub%>%filter(Gender=="male")%>%sample_n(size=10)
+samp2<-rbind(fem,mal)
+samp2%>%ggplot(aes(x=DirectChol%>%log))+geom_histogram(binwidth = .1) +facet_grid(Gender~.) + xlab("Direct Cholestorol (log)")
+samp2%>% ggplot(aes(x=Gender,y=cholLog)) + geom_boxplot(outlier.shape=NA) + geom_point(position="jitter") 
+Rmisc::summarySE(measurevar = "cholLog","Gender",data=samp2)
+t.test(cholLog~Gender,samp2,var.equal=TRUE)
+```
+
+## And again
+
+```{r}
+set.seed(12857)
+fem<-nhanesSub%>%filter(Gender=="female")%>%sample_n(size=10)
+mal<-nhanesSub%>%filter(Gender=="male")%>%sample_n(size=10)
+samp2<-rbind(fem,mal)
+samp2%>%ggplot(aes(x=DirectChol%>%log))+geom_histogram(binwidth = .1) +facet_grid(Gender~.) + xlab("Direct Cholestorol (log)")
+samp2%>% ggplot(aes(x=Gender,y=cholLog)) + geom_boxplot(outlier.shape=NA) + geom_point(position="jitter") 
+Rmisc::summarySE(measurevar = "cholLog","Gender",data=samp2)
+t.test(cholLog~Gender,samp2,var.equal=TRUE)
+```
+
+## Summary
+- Because we sampled other subject, we obtain diffent cholestorol levels. 
+- However, not only the cholestorol levels differ from experiment to experiment but also the summary statistics: means, standard deviations and standard errors. 
+- Note, that in the last sample the log cholestorol levels are on average lower for females than for males so based on this sample we even would wrongly conclude that the cholestorol levels for females are on average larger than those of males.
+- So also our conclusions are random and might change from sample to sample. 
+- The sample with results as extreme as the last sample, however, are very rare. 
+
+```{r}
+set.seed(1)
+nsim<-20000
+nSamp<-10
+res<-matrix(0,nrow=nsim,ncol=2)
+fem<-nhanesSub%>%filter(Gender=="female")
+mal<-nhanesSub%>%filter(Gender=="male")
+
+for (i in 1:nsim)
+{
+ femSamp<-sample(fem$cholLog,nSamp)
+ malSamp<-sample(mal$cholLog,nSamp)
+
+meanFem<-mean(femSamp)
+ meanMal<-mean(malSamp)
+ delta<-meanFem-meanMal
+ sdFem<-sd(femSamp)
+ sdMal<-sd(malSamp)
+ seFem<-sdFem/sqrt(nSamp)
+ seFem<-sdFem/sqrt(nSamp)
+ sdPool<-sqrt((sdFem^2*(nSamp-1) + sdMal^2*(nSamp-1))/(2*nSamp-2))
+tvalue<-(delta)/(sdPool*sqrt(1/nSamp+1/nSamp))
+pvalue<-pt(abs(tvalue),lower.tail = FALSE,df=2*nSamp-2)*2
+ res[i,]<-c(delta,pvalue)
+}
+sum(res[,2]<0.05&res[,1]>0)
+sum(res[,2]>0.05)
+sum(res[,2]<0.05&res[,1]<0)
+
+res<-res %>% as.data.frame
+names(res) <- c("delta","pvalue")
+res %>% ggplot(aes(x=delta,y=-log10(pvalue),color=pvalue<0.05)) + geom_point() + xlab("Average cholestorol difference") + ylab("- log10(pvalue)") + scale_color_manual(values=c("black","red"))
+res %>% ggplot(aes(y=delta)) +geom_boxplot() + geom_point(aes(x=0,y=c(mean(fem$cholLog)-mean(mal$cholLog)),color="pop. diff")) +xlab("")
+```
+
+Only in `r sum(res[,2]<0.05&res[,1]<0)` out of 20000 samples we conclude that the mean cholestorol level of males is significantly lower than for females. For the remaining samples the cholestorol levels for males were on average significantly lower than for females (`r sum(res[,2]<0.05&res[,1]>0)` samples) or the average difference in cholestorol levels were not statistically significant (`r sum(res[,2]>0.05)` samples). The latter is because the power is rather low to detect the difference with 10 samples in each group.
+
+Run the code above and modify the sample size to 50.
+What happens?
+
+Note, that we can write more efficient code to do the simulation above.
+
+# Salk study
+
+- In 1916 first large polio epidemy in the US
+- John Salk developed a vaccine with promising results in the lab
+- In 1954 the National Foundation
+for Infantile Paralysis (NFIP) has setup a large study to assess effectiveness of vaccine.
+- Suppose that the NFIP would have vaccinated a large number of childeren in 1954 and would have observed that the polio incidence in 1954 was lower than in 1953. Could they have concluded that the vaccine was effective? 
+
+##NFIP study
+###Design
+- Large simultaneous study with cases, vaccinated, and controls,  non-vaccinated children
+- All schools in districts with high polio incidence
+- cases: children with consent for vaccination from second grade of primary school
+- controls: 750000 children from  second and third grade
+
+###Data
+```{r}
+nfip<-data.frame(group=c("cases","control","noConcent"),grade=c("g2","g1g3","g2"),vaccin=c("yes","no","no"),total=c(221998,725173,123605),polio=c(54,391,56))
+nfip$noPolio<-nfip$total-nfip$polio
+knitr::kable(nfip)
+```
+
+Compare polio incidence?
+
+```{r, echo=FALSE, eval=FALSE}
+nfip$incidencePM<-round(nfip$polio/nfip$total*1e6,0) 
+knitr::kable(nfip)
+```
+
+What can we conclude? 
+
+
+##Confounding
+
+
+```{r,echo=FALSE, fig.align = "center",out.width = '50%'}
+plot(c(0,0,1),c(-2,2,0),pch=c("S","V","P"),xaxt="none",yaxt="none",axes=FALSE,xlab="",ylab="",cex=4,ylim=c(-2.2,2.2))
+arrows(x0=0.1,x1=.9,y0=1.8,y1=0.1,lwd=4)
+arrows(x0=0.1,x1=.9,y0=-1.8,y1=-0.2,lwd=4)
+arrows(x0=0,x1=0,y0=-1.4,y1=1.4,lwd=4)
+```
+
+
+- We observe a lower incidence for children for who no consent was given than in the control group
+- consent for vaccination was associated with the socio-economic status
+- Children of lower socio-economic status were more resistant to the disease.
+- The groups of cases and controls are not comparable: 
+    - Difference in age
+    - Difference in socio-economic status
+    - Difference in susceptible for disease 
+  
+
+##Salk Study
+
+### Design
+A new study was conducted: Randomized double blind study
+
+  - Children are assigned at random to control or case treatment after consent was given by the parents
+  - Control: vaccination with placebo
+  - Treatment: vaccination with vaccine
+  - double blinding: 
+    - parents did not know if child was vaccinated or received the placebo
+    - care-giver/researchers did not know if child was vaccinated  or recieved placebo
+    
+###Data 
+
+```{r}
+salk<-data.frame(group=c("cases","control","noConcent"),treatment=c("vaccine","placebo","none"),total=c(200745,
+201229, 338778),polio=c(57,142,157))
+salk$noPolio<-salk$total-salk$polio
+salk$incidencePM<-round(salk$polio/salk$total*1e6,0) 
+knitr::kable(salk)
+```
+
+- We observe a much large effect now that the cases and the controls are comparable, incidence of `r salk$incidencePM[1]`  and `r salk$incidencePM[2]` per million, respectively.
+- Incidence for children with no consent remains similar, `r nfip$incidencePM[3]` and `r salk$incidencePM[3]` per million in the NFIP and Salk study, respectively. 
+
+
+# Scientific method
+
+- Empirical data is key in the life sciences. 
+- Research is largely driven by data. 
+
+```{r,echo=FALSE, fig.align = "center"}
+plot(0,0,col=0,xaxt="none",yaxt="none",axes=FALSE,xlab="",ylab="",cex=4,ylim=c(-.5,1.5),xlim=c(-.5,1.5))
+lines(c(0,1),c(0,0),lwd=4)
+lines(c(0,.5),c(0,1),lwd=4)
+lines(c(.5,1),c(1,0),lwd=4)
+text(0.5,1.2,"Nature",cex=2)
+text(0.8,.5,"Experiment",cex=2,pos=4,col="darkred")
+text(1,0,"Data",cex=2,pos=4)
+text(0.2,.5,"Theory",cex=2,pos=2,col="darkred")
+text(0,0,"Model",cex=2,pos=2)
+text(0.5,-0.3,"Statistical\nInference",cex=2,col="darkred")
+```
+
+- *Nature*: biological process which we study
+
+- *Deduction*: Deduce logical consequences of  the theory/hypothesis that can be experimentally validated
+
+- *Experiment*: collect data on the process. The data are a manifestation of the real process. The experiment has to be *representative* and *reproducible* and should challenge the theory. *Experimental Design*!
+
+- *Statistical inference*: Bridge to confront the model/hypothesis to the data. $\rightarrow$ Cornerstone of the scientific method. 
+
+- *Falsification principle*: Data cannot be used to prove a model/hypothesis, only to reject it.
+
+- *Data-exploration and analysis* can to refine the theory to generate new hypotheses. Scientific cycle.
+
+
+# Role of Statistics in the life sciences
+
+- We have seen that 
+    - it is important to carefully specify the scope of the study before the experiment.
+    - the sample size matters
+    - be aware of confounding
+    - So good experimental design is crucial!
+
+- We also observed that there is variability in the population and because we can only sample a small part of the population our results and conclusions are subjected to uncertainty. 
+
+
+
+
+- Statistics is the science on 
+    1. collecting (experimental design), 
+    2. exploring (data exploration) and 
+    3. learning from data and to generalize what we observe in the sample towards the population (statistical modelling and statistical inference) while quantifying, controlling and reporting variability and uncertainty. 
+
+- Therefore, statistics plays an important role in almost all sciences (e.g. column "points of significance" in Nature Methods. http://blogs.nature.com/methagora/2013/08/giving_ statistics_the_attention_it_deserves.html)
+
+
+
+
+
+
+
