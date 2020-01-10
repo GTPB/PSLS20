@@ -64,6 +64,8 @@ There is a strong emphasis in reproducible research by extensively using R/Rmark
 
 
 
+
+
 ### [Instructors](pages/instructors.md)
 
 
