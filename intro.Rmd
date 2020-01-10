@@ -19,9 +19,9 @@ library(tidyverse)
 #Smelly armpit example
 
 - Smelly armpits are not caused by sweat, itself. The smell is caused by specific micro-organisms belonging to the group of *Corynebacterium spp.* that metabolise sweat.
-Another group of abundant bacteria are the *Staphylococcus spp.*.
+Another group of abundant bacteria are the *Staphylococcus spp.*, these bacteria do not metabolise sweat in smelly compounds.
 
-- The CMET-groep at Ghent University does research to the use of microbial transplants of the armpit to save people with smelly armpits. 
+- The CMET-groep at Ghent University does research to on transplanting the armpit microbiome to save people with smelly armpits. 
 
 - Proposed Therapy:
   	1. Remove armpit-microbiome with antibiotics 
@@ -31,7 +31,7 @@ Another group of abundant bacteria are the *Staphylococcus spp.*.
     
     - 20 students with smelly armpits are attributed to one of two treatment groups
     - placebo (only antibiotics)
-    - transplantie (antibiotica, gevolgd door microbi??le transplantatie).
+    - transplant (antibiotica followed by microbial transplant).
     - The microbiome is sampled 6 weeks upon the treatment
     - The relative abundance of *Staphylococcus spp.* on *Corynebacterium spp.* + *Staphylococcus spp.* in the microbiome is measured via DGGE (*Denaturing Gradient Gel Electrophoresis*).
 
@@ -43,17 +43,20 @@ read_lines("https://raw.githubusercontent.com/statOmics/psls20/master/data/armpi
 The file is comma separated and in tidy format
 
 ```{r}
-ap<-read_csv("https://raw.githubusercontent.com/statOmics/psls20/master/data/armpit.csv?token=AF2MWG5H3QKFBWLFS4SDQSK6D4T2M")
+ap<-read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit.csv")
 ap
 ```
 
 
 ## Data exploration
 
-```{r}
+We plot the direct relative abundances in function of the treatment group. With the ggplot2 library we can easily build plots by adding layers. 
 
-```
-
+    1. We pipe the `ap` dataframe to the ggplot command
+    2. We select the data with the command `ggplot(aes(x=trt,y=rel))` 
+    3. We add a boxplot with the command `geom_boxplot(outlier.shape=NA)` and we set the argument outlier.shape equal to NA so that the outliers are not plotted. We do this because we will add all raw data anyway.
+    4. We add the raw data using `geom_point(position="jitter")`, with the argument position='jitter' we will add some random noise to the x coordinate so that we can see all data. 
+    
 ```{r}
 ap %>%  ggplot(aes(x=trt,y=rel)) + geom_boxplot(outlier.shape=NA) + geom_point(position="jitter")
 ```
@@ -69,7 +72,7 @@ ap %>%  ggplot(aes(x=trt,y=rel)) + geom_boxplot(outlier.shape=NA) + geom_point(p
 
 1. A research assistant selects 20 male students from his faculty with smelly armpits
 
-2. A research assistant selects 20 people with smelly armpits from the Belgian population. 
+2. A research assistant selects 20 random people with smelly armpits from the Belgian population. 
 
 ```{r echo=FALSE}
 set.seed(140)
@@ -78,8 +81,10 @@ hlp<-lm(rel~trt,ap)
 ap2$rel<-rnorm(20,mean=hlp$fit-20,sd=sigma(hlp)*2)
 ```
 
+
 ```{r}
 ap %>%  ggplot(aes(x=trt,y=rel)) + geom_boxplot(outlier.shape=NA) + geom_point(position="jitter") + ylim(0,100)
+
 ap2 %>%  ggplot(aes(x=trt,y=rel)) + geom_boxplot(outlier.shape=NA) + geom_point(position="jitter") + ylim(0,100)
 ```
 
@@ -98,11 +103,11 @@ ap2 %>%  ggplot(aes(x=trt,y=rel)) + geom_boxplot(outlier.shape=NA) + geom_point(
 
 - Scope of the study should be well specified before the start of the study.
 
-- For the statistical analysis to be valid, it is required that the subjects are selected completely at random.
+- For the statistical analysis to be valid, it is required that the subjects are selected completely at random from the population to which we want to generalize our conclusions.
 
 - Selecting completely at random from a population implies:
     - all subjects in the population should have the same probability of being selected in the sample
-    - the selection of a subject in the sample should be independent from the selection of the other pears in the sample.
+    - the selection of a subject in the sample should be independent from the selection of the other subjects in the sample.
     - The sample is thus supposed to be representative for the population, but still it is random.
 
 - What does this imply? 
@@ -112,8 +117,8 @@ ap2 %>%  ggplot(aes(x=trt,y=rel)) + geom_boxplot(outlier.shape=NA) + geom_point(
 National Health NHanes study
 
   - Since 1999 approximately 5000 individuals of all ages are interviewed in their homes every year
-  - Complete the health examination component of the survey, which is conducted in a mobile examination centre (MEC).
-  - We will use this larger study to select random subjects from the American population. 
+  - The health examination component of the survey is conducted in a mobile examination centre (MEC).
+  - We will use this large study to select random subjects from the American population. 
   - This will help us to understand how the results of an analysis and the conclusions vary from sample to sample. 
   
 ```{r}
@@ -126,8 +131,19 @@ Suppose that we are interested in assessing the difference in direct cholestorol
 
 ## Data exploration
 
+1. We filter the data according to age.
+2. We plot the direct cholestorol levels.
+    - We select the data with the command `ggplot(aes(x=DirectChol))` 
+    - We add a histogram with the command `geom_histogram()`
+    - We make to vertical panels using the command `facet_grid(Gender~.)` 
+    - We customize the label of the x-axis with the `xlab` command.
+    
 ```{r}
-NHANES%>%filter(NHANES$Age>25)%>%ggplot(aes(x=DirectChol))+geom_histogram() +facet_grid(Gender~.) + xlab("Direct Cholestorol (mg/dl)")
+NHANES%>%filter(NHANES$Age>25)%>%
+  ggplot(aes(x=DirectChol))+
+  geom_histogram() +
+  facet_grid(Gender~.) + 
+  xlab("Direct Cholestorol (mg/dl)")
 ```
 
 - Cholestorol levels and concentration measurements are often skewed. 
@@ -135,13 +151,24 @@ NHANES%>%filter(NHANES$Age>25)%>%ggplot(aes(x=DirectChol))+geom_histogram() +fac
 - They are often log transformed.
 
 ```{r}
-NHANES%>%filter(NHANES$Age>25)%>%ggplot(aes(x=DirectChol%>%log))+geom_histogram() +facet_grid(Gender~.) + xlab("Direct Cholestorol (log)")
+NHANES%>%filter(NHANES$Age>25)%>%
+  ggplot(aes(x=DirectChol%>%log))+
+  geom_histogram() +
+  facet_grid(Gender~.) + 
+  xlab("Direct Cholestorol (log)")
 ```
 
-We see that upon log transformation they are more or less bell shaped. 
+We see that the data are more or less bell shaped upon log transformation. 
 
+We will now create a subset of the data that we will use to sample from in the next sections. 
+
+  1. We filter on age and remove subjects with missing values (NA).
+  2. We only select the variables Gender and DirectChol from the dataset to avoid unnessary variabeles
+  3. With the mutate function we can add a new variable logChol with log transformed direct cholestorol levels. 
+  
 ```{r}
-nhanesSub<-NHANES%>%filter(Age>25&!is.na(DirectChol)) %>% select(c("Gender","DirectChol")) %>% mutate(cholLog=log(DirectChol))
+nhanesSub<- NHANES%>%filter(Age>25&!is.na(DirectChol)) %>% select(c("Gender","DirectChol")) %>% mutate(cholLog=log(DirectChol))
+
 Rmisc::summarySE(measurevar = "cholLog","Gender",data=nhanesSub)
 ```
 
@@ -150,15 +177,24 @@ Rmisc::summarySE(measurevar = "cholLog","Gender",data=nhanesSub)
 
 
 - Suppose that we would  have no access to cholestorol levels of the American population. 
-- Then we would have to setup an experiment. 
+- Then, we would have to setup an experiment. 
 - Suppose that we have a budget for assessing 10 females and 10 males
+- We will subset 10 females and 10 males at random from the American population and measure their direct cholestorol levels. 
 
 ```{r}
 fem<-nhanesSub%>%filter(Gender=="female")%>%sample_n(size=10)
 mal<-nhanesSub%>%filter(Gender=="male")%>%sample_n(size=10)
+
 samp<-rbind(fem,mal)
-samp%>%ggplot(aes(x=DirectChol%>%log))+geom_histogram(binwidth = .1) +facet_grid(Gender~.) + xlab("Direct Cholestorol (log)")
+
+samp%>%
+  ggplot(aes(x=DirectChol%>%log))+
+  geom_histogram(binwidth = .1) +
+  facet_grid(Gender~.) + 
+  xlab("Direct Cholestorol (log)")
+
 samp%>% ggplot(aes(x=Gender,y=cholLog)) + geom_boxplot(outlier.shape=NA) + geom_point(position="jitter") 
+
 Rmisc::summarySE(measurevar = "cholLog","Gender",data=samp)
 t.test(cholLog~Gender,samp,var.equal=TRUE)
 ```
@@ -171,9 +207,15 @@ If we would do the experiment again we would select other people and we will obt
 ```{r}
 fem<-nhanesSub%>%filter(Gender=="female")%>%sample_n(size=10)
 mal<-nhanesSub%>%filter(Gender=="male")%>%sample_n(size=10)
+
 samp2<-rbind(fem,mal)
-samp2%>%ggplot(aes(x=DirectChol%>%log))+geom_histogram(binwidth = .1) +facet_grid(Gender~.) + xlab("Direct Cholestorol (log)")
+samp2%>%ggplot(aes(x=DirectChol%>%log))+
+  geom_histogram(binwidth = .1) +
+  facet_grid(Gender~.) + 
+  xlab("Direct Cholestorol (log)")
+
 samp2%>% ggplot(aes(x=Gender,y=cholLog)) + geom_boxplot(outlier.shape=NA) + geom_point(position="jitter") 
+
 Rmisc::summarySE(measurevar = "cholLog","Gender",data=samp2)
 t.test(cholLog~Gender,samp2,var.equal=TRUE)
 ```
@@ -184,19 +226,26 @@ t.test(cholLog~Gender,samp2,var.equal=TRUE)
 set.seed(12857)
 fem<-nhanesSub%>%filter(Gender=="female")%>%sample_n(size=10)
 mal<-nhanesSub%>%filter(Gender=="male")%>%sample_n(size=10)
+
 samp2<-rbind(fem,mal)
-samp2%>%ggplot(aes(x=DirectChol%>%log))+geom_histogram(binwidth = .1) +facet_grid(Gender~.) + xlab("Direct Cholestorol (log)")
+samp2%>%ggplot(aes(x=DirectChol%>%log))+
+  geom_histogram(binwidth = .1) +
+  facet_grid(Gender~.) + 
+  xlab("Direct Cholestorol (log)")
+
 samp2%>% ggplot(aes(x=Gender,y=cholLog)) + geom_boxplot(outlier.shape=NA) + geom_point(position="jitter") 
+
 Rmisc::summarySE(measurevar = "cholLog","Gender",data=samp2)
 t.test(cholLog~Gender,samp2,var.equal=TRUE)
 ```
 
 ## Summary
-- Because we sampled other subject, we obtain diffent cholestorol levels. 
-- However, not only the cholestorol levels differ from experiment to experiment but also the summary statistics: means, standard deviations and standard errors. 
+- Because we sampled other subjects in each sample, we obtain diffent cholestorol levels. 
+- However, not only the cholestorol levels differ from sample to sample but also the summary statistics: means, standard deviations and standard errors. 
 - Note, that in the last sample the log cholestorol levels are on average lower for females than for males so based on this sample we even would wrongly conclude that the cholestorol levels for females are on average larger than those of males.
-- So also our conclusions are random and might change from sample to sample. 
+- So, also our conclusions are subjected to uncertainty and might change from sample to sample. 
 - The sample with results as extreme as the last sample, however, are very rare. 
+- This is illustrated with the code below, where we will draw 20000 repeated samples with sample size 10 for females and males from the NHanes study. 
 
 ```{r}
 set.seed(1)
@@ -235,25 +284,28 @@ res %>% ggplot(aes(y=delta)) +geom_boxplot() + geom_point(aes(x=0,y=c(mean(fem$c
 
 Only in `r sum(res[,2]<0.05&res[,1]<0)` out of 20000 samples we conclude that the mean cholestorol level of males is significantly lower than for females. For the remaining samples the cholestorol levels for males were on average significantly lower than for females (`r sum(res[,2]<0.05&res[,1]>0)` samples) or the average difference in cholestorol levels were not statistically significant (`r sum(res[,2]>0.05)` samples). The latter is because the power is rather low to detect the difference with 10 samples in each group.
 
-Run the code above and modify the sample size to 50.
-What happens?
+##Assignment
 
-Note, that we can write more efficient code to do the simulation above.
+1. Copy the code chunk with the simulation study 
+2. Add it here below 
+3. Modify the sample size to 50.
+4. What do you observe?
 
 # Salk study
 
 - In 1916 first large polio epidemy in the US
-- John Salk developed a vaccine with promising results in the lab
+- John Salk developed a vaccine with promising results in the lab in the early fifties
 - In 1954 the National Foundation
-for Infantile Paralysis (NFIP) has setup a large study to assess effectiveness of vaccine.
+for Infantile Paralysis (NFIP) has setup a large study to assess the effectiveness of the Salk vaccine.
 - Suppose that the NFIP would have vaccinated a large number of childeren in 1954 and would have observed that the polio incidence in 1954 was lower than in 1953. Could they have concluded that the vaccine was effective? 
 
 ##NFIP study
 ###Design
-- Large simultaneous study with cases, vaccinated, and controls,  non-vaccinated children
+
+- Large simultaneous study with cases, vaccinated children, and controls,  non-vaccinated children
 - All schools in districts with high polio incidence
-- cases: children with consent for vaccination from second grade of primary school
-- controls: 750000 children from  second and third grade
+- Cases: children with consent for vaccination from second grade of primary school
+- Controls: children from  second and third grade
 
 ###Data
 ```{r}
@@ -283,9 +335,12 @@ arrows(x0=0,x1=0,y0=-1.4,y1=1.4,lwd=4)
 ```
 
 
-- We observe a lower incidence for children for who no consent was given than in the control group
-- consent for vaccination was associated with the socio-economic status
+- We observe a lower polio (P) incidence for children for who no consent was given than for the children in the control group
+
+- Consent for vaccination (V) was associated with the socio-economic status (S)
+
 - Children of lower socio-economic status were more resistant to the disease.
+
 - The groups of cases and controls are not comparable: 
     - Difference in age
     - Difference in socio-economic status
@@ -297,12 +352,12 @@ arrows(x0=0,x1=0,y0=-1.4,y1=1.4,lwd=4)
 ### Design
 A new study was conducted: Randomized double blind study
 
-  - Children are assigned at random to control or case treatment after consent was given by the parents
+  - Children are assigned at random to the control or case treatment arm after consent was given by the parents
   - Control: vaccination with placebo
   - Treatment: vaccination with vaccine
   - double blinding: 
-    - parents did not know if child was vaccinated or received the placebo
-    - care-giver/researchers did not know if child was vaccinated  or recieved placebo
+    - parents did not know if their child was vaccinated or received the placebo
+    - care-giver/researchers did not know if the child was vaccinated  or recieved placebo
     
 ###Data 
 
@@ -315,7 +370,8 @@ knitr::kable(salk)
 ```
 
 - We observe a much large effect now that the cases and the controls are comparable, incidence of `r salk$incidencePM[1]`  and `r salk$incidencePM[2]` per million, respectively.
-- Incidence for children with no consent remains similar, `r nfip$incidencePM[3]` and `r salk$incidencePM[3]` per million in the NFIP and Salk study, respectively. 
+
+- The polio incidence for children with no consent remains similar, `r nfip$incidencePM[3]` and `r salk$incidencePM[3]` per million in the NFIP and Salk study, respectively. 
 
 
 # Scientific method
@@ -342,11 +398,11 @@ text(0.5,-0.3,"Statistical\nInference",cex=2,col="darkred")
 
 - *Experiment*: collect data on the process. The data are a manifestation of the real process. The experiment has to be *representative* and *reproducible* and should challenge the theory. *Experimental Design*!
 
-- *Statistical inference*: Bridge to confront the model/hypothesis to the data. $\rightarrow$ Cornerstone of the scientific method. 
+- *Statistical inference*: Bridge to confront the model/hypothesis to the data $\rightarrow$ Cornerstone of the scientific method. 
 
 - *Falsification principle*: Data cannot be used to prove a model/hypothesis, only to reject it.
 
-- *Data-exploration and analysis* can to refine the theory to generate new hypotheses. Scientific cycle.
+- *Data-exploration and analysis* is typically used to refine the theory and to generate new hypotheses.
 
 
 # Role of Statistics in the life sciences
@@ -354,8 +410,10 @@ text(0.5,-0.3,"Statistical\nInference",cex=2,col="darkred")
 - We have seen that 
     - it is important to carefully specify the scope of the study before the experiment.
     - the sample size matters
-    - be aware of confounding
-    - So good experimental design is crucial!
+    - we should be aware of confounding
+    - a proper control is required.
+
+$\rightarrow$ Good experimental design is crucial!
 
 - We also observed that there is variability in the population and because we can only sample a small part of the population our results and conclusions are subjected to uncertainty. 
 
@@ -365,7 +423,7 @@ text(0.5,-0.3,"Statistical\nInference",cex=2,col="darkred")
 - Statistics is the science on 
     1. collecting (experimental design), 
     2. exploring (data exploration) and 
-    3. learning from data and to generalize what we observe in the sample towards the population (statistical modelling and statistical inference) while quantifying, controlling and reporting variability and uncertainty. 
+    3. learning from data and to generalize what we observe in the sample towards the population while quantifying, controlling and reporting variability and uncertainty (statistical modelling and statistical inference). 
 
 - Therefore, statistics plays an important role in almost all sciences (e.g. column "points of significance" in Nature Methods. http://blogs.nature.com/methagora/2013/08/giving_ statistics_the_attention_it_deserves.html)
 
