@@ -30,11 +30,10 @@ schemadotorg:
   # Contributor info
   contributor:
     - "@type": Person
-      name: "CO-AUTHOR_1"
+      name: "Lieven Clement"
     - "@type": Person
-      name: "CO-AUTHOR_2"
-    - "@type": Person
-      name: "CO-AUTHOR_3"
+      name: "Jeroen Gilis"
+
 
   # License & Language & url
   license: https://creativecommons.org/licenses/by/4.0/
@@ -44,18 +43,29 @@ schemadotorg:
 
 ## Course Description
 
+This intermediate level course is one of our Foundations courses. It covers essential statistical concepts and methods for extracting insights from empirical data in the life sciences. The course positions applied statistics, starting from important aspects of experimental design and data exploration. We then move into statistical modeling and data analysis. We will focus on the link between linear regression and analysis of variance. Together, these methods contribute to the study of General Linear Models. The course also introduces the basics of non-parametric testing, and addresses categorical data analysis and logistic regression.
 
-## Target Audience
-
-
-## Detailed Program
-
+The concepts and methods are exclusively introduced via case-studies in the life sciences. For every study we elaborate on a concrete research question and then provide a study design, which is followed by data exploration. Next, we will focus on how to model the data and elaborate on the link between model parameters and the subject matter research question.
 
 ---
 
 ### Learning objectives
 
-### Instructors
+The case studies will enable the participants to build self-confidence in
+understanding, reading and communicating on data and data analysis
+selecting appropriate statistical methods and software tools for analysing different types of data
+interpreting the result of a statistical data analysis in terms of subject matter research questions and reporting them appropriately.
+
+There is a strong emphasis in reproducible research by extensively using R/Rmarkdown scripts. This approach will enable the participants to weave statistical analyses, code, results and interpretation in webpages and PDF documents so that their entire data analysis workflow is transparent and reproducible. The course materials are designed in R/Rmarkdown, kickstarting the course participants into developing their own scripts.
+
+---
+
+### Practical Statistics for the Life Sciences
+
+
+
+### [Instructors](pages/instructors.md)
+
 
 ---
 
