@@ -388,7 +388,7 @@ $$z=\frac{x-\mu}{\sigma}$$
 - Upon standardizatio the data follow a standard normal distribution with mean $\mu=0$ and variance $\sigma^2=1$:
 $$z \sim N(0,1)$$
 
-We can use the qnorm function to calculate the quantile $z_{2.5\%}$ that corresponds to $F(z_{2.5\%})=0.025$. 
+We can use the qnorm function to calculate the quantile $z_{2.5\%}$ and $z_{97.5\%}$ corresponding to $F(z_{2.5\%})=0.025$ and $F(z_{97.5\%})=0.975$, respectively. 
 
 ```{r}
 qnorm(0.025)
@@ -396,7 +396,7 @@ qnorm(0.975)
 
 ```
 
-This is indeed  indicates that about 97.5%-2.5%=95% of a standard normal random variable falls within the interval [-2,2], within 2 times the standard deviation from the mean.
+This indeed  indicates that about 97.5%-2.5%=95% of a standard normal random variable falls within the interval [-2,2], within 2 times the standard deviation from the mean.
 
 # Sample
 
