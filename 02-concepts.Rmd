@@ -210,10 +210,11 @@ $P(X_j,X_k)= P(X_j)P(X_j)$
 
 - The probability mass function for a random variable $X$ describes the probability of each possible value of the sample space
 
-- Example Gender is a binary variable (0:male, 1:female) and can be using a Bernouilli distribution. 50.2% of the subjects of the American population are female and 49.8% are male. Let $\pi$ be the probability on a female $pi=0.502$. 
+- Example Gender is a binary variable (0:male, 1:female) and can be using a Bernouilli distribution. 50.2% of the subjects of the American population are female and 49.8% are male. Let $\pi$ be the probability on a female $\pi=0.502$. 
     so 
-    $$ X\sim \left \{ \begin{array}{lcl}
-    P(X=0) &=& 1-\pi
+    $$ X\sim \left \{ 
+    \begin{array}{lcl}
+    P(X=0) &=& 1-\pi\\
     P(X=1) &=& \pi
     \end{array} \right . $$
     
@@ -221,7 +222,7 @@ $P(X_j,X_k)= P(X_j)P(X_j)$
     plot(c(0,1),c(0.502,0.498),ylim=c(0,1),type="h",xlab="Gender",ylab=c("Probability"),xlim=c(-.3,1.3))
     ```
     Random variable $X$ follows an Bernouilli distribution $B(\pi)$ with parameter $\pi=0.502$ 
-    $$B(\pi)= \pi^X(1-\pi)^(X-1)$$
+    $$B(\pi)= \pi^x(1-\pi)^{(x-1)}$$
 
 #### Cumulative distribution function
 
