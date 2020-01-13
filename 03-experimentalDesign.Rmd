@@ -116,7 +116,7 @@ text(7.5,.5,"DATA EXPLORATION &\nDESCRIPTIVE STATISTICS (2)",col="black",cex=1.2
 
 - The imbalance according to for instance gender can be avoided using stratified randomisation: balanced randomisatie per stratum
 
-![Stratified Randomisatie](figs/stratification.png){ width=50% }
+![Stratified Randomisatie](https://raw.githubusercontent.com/GTPB/PSLS20/gh-pages/assets/figs/stratification.png){ width=50% }
 
 # Sample size 
 
