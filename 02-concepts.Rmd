@@ -1,5 +1,5 @@
 ---
-title: "Introduction: why do we need statistics"
+title: "Basic concepts"
 output:
     html_document:
       code_download: true
@@ -69,18 +69,18 @@ text(7.5,.5,"DATA EXPLORATION &\nDESCRIPTIVE STATISTICS (2)",col="black",cex=1.2
 
 
 ## Experimental Design (1)
-   - Researcher determines the **populatie** to which they want to generalize their conclusions to.
-   - Financial en logistic limitations $\rightarrow$ **representative sample** from population
+   - Researcher determines the **population** to which they want to generalize their conclusions.
+   - Financial and logistic limitations $\rightarrow$ **representative sample** from population
    
 ## Data analysis (2 & 3)
    - **Data-Exploration en Descriptive Statistics (2)**: explore, visualize, summarize, gain insight, check assumptions
-   - **Statistical Inference (3)**: Generalize what we observe in the sample towardt the population so that we can draw general conclusions on the biological process we study on population level based on the sample in our study. We need statistical models to analyze the data and to quantify and report on variability and uncertainty.  
+   - **Statistical Inference (3)**: Generalize what we observe in the sample towards the population so that we can draw general conclusions on the biological process we study. We need statistical models to analyze the data, and, to quantify and report on variability and uncertainty.  
    
 # Example
 
 - National Health and Nutrition Examination Survey (NHANES)
-- American demografic studie
-- Large number of physical, demographic, nutritional, life style and health characteristics are collected in this study. 
+- American demografic study
+- Large number of physical, demographic, nutritional, life style and health characteristics 
 
 ```{r nhanes, tidy=FALSE,echo=FALSE}
 library(NHANES)
@@ -93,20 +93,20 @@ knitr::kable(  NHANES[c(1,4,5,6,7,8),c(1,3,20,23,34,72)]
 
 - We measure *variables* on subjects in the sample
 - A variabele is a charactistic e.g. Direct cholestorol, Age, Gender,, ...
-- It varies from subject tot subject in the population and thus in the study.
+- It varies from subject tot subject in the population and thus also within the sample as well as from sample to sample.
 
 
 ## *Types* of variabeles
 
-1. *Qualitative variabelen* a limited number of outcome catergories, non-numeric. 
-	-  *nominal variabeles*: no natural ordening, e.g. gendere, race, blood group, eye color, ... 
+1. *Qualitative variabeles*: a limited number of outcome catergories, non-numeric. 
+	-  *nominal variabeles*: no natural ordening, e.g. gender, blood group, eye color, ... 
 	-  *ordinal variabeles*: ordening, e.g. BMI class, smoking status (1: never smoked, 2: stopped smoking, 3: smoker)
 
 2. *Numeric variabeles*:
    	- *discrete variabeles*: counts e.g. number of parners in life span, ...
 	- *continuous variabeles*: can (in theory) take each possible value between certain limits e.g. Age, Weight, BMI, fluorescence measurement in ELISA assay 
 	
-	- Often dichotomised to make nominal $\rightarrow$ information loss
+	- Often dichotomised to turn it in a nominal qualitative variable $\rightarrow$ information loss
 	
 # Population
 
@@ -115,14 +115,14 @@ knitr::kable(  NHANES[c(1,4,5,6,7,8),c(1,3,20,23,34,72)]
 
 $\rightarrow$ assess cholestorol level in population above 25.
 
-- Population is statistics is a theoretical concept
+- Population in statistics is a theoretical concept
 	- It is in continuous evolution/change
 	- Often interest to generalize conclusions to future subject $\rightarrow$ so population cannot be entirely observed at the present. 
   	- can typically be considered to be infinite. 
 
-- Populatie has to be explained clearly   
+- Population has to be explained clearly   
 
-*Inclusiecriteria* zijn karakteristieken die een subject/experimentele eenheid moet hebben om tot de populatie te behoren, b.v.
+*Inclusion criteria* are characteristics a subject/experimental unit must have to belong to the population, e.g.
 
 - age above 25
 - normal BMI
@@ -130,9 +130,8 @@ $\rightarrow$ assess cholestorol level in population above 25.
 
 *Exclusion criteria* characteristics that the subject/experimental unit is not allowed to have to belong to the population, e.g. 
 
-- diabetes
-- history of hard drugs
-- low health status
+- pregnancy in study on new type of drug
+- diabetes, history of hard drugs, low health status when the aim is to delineate a range of normal values of blood pressure in a population of healthy individuals
 - ...
 
 
@@ -140,16 +139,16 @@ $\rightarrow$ assess cholestorol level in population above 25.
 
 - Variabeles (e.g. direct cholestorol) vary in the population from subject to subject!
 
-- Variabelen are thus *random* because their value changes in the population 
+- Variables are thus *random* because their value changes in the population 
 
-- **Crucial question**: Hou precise are the conclusions on the population based on a group of subjected that are in a sample! 
+- **Crucial question**: Hou precise are the conclusions on the population based on a group of subjects in a sample! 
 
 - We will thus observe differences from sample to sample 
 
 - Variability of the data plays a crucial role!  
 
 
-# Convention
+## Convention
 
 - Use capital letters for a study characteristic (e.g. direct cholestorol) to indicate that it changes in the population without thinking about the observed value of a particular subject.
 
@@ -157,9 +156,9 @@ $\rightarrow$ assess cholestorol level in population above 25.
 
 -  Random variable $X$ is thus the unknown variable that represent a measurement that we plan to collect on a random subject, but that we have not collected yet. 
 
-- Typically a sequence of random variables $X_1,\ldots X_n$ will be collected in the study. 
+- Typically a sequence of random variables $X_1,\ldots X_n$ will be collected in the study (with n subjects or experimental units). 
 
-- They are necessary to reason on how the results and conclusions can change from sample to sample. 
+- The concept of random variables is necessary to reason on how the results and conclusions change from sample to sample. 
 
 - Random variables can be qualitative, quantitative, discrete, continuous, ... 
 
@@ -181,19 +180,24 @@ $\rightarrow$ assess cholestorol level in population above 25.
 
 - All possible values for the random variable $X$ are called the sample space $\Omega$.
 
-- For gender the sample space is $\Omega=(0,1)$ with 0 (male) or 1 (female). 
+    - For gender the sample space is $\Omega=(0,1)$ with 0 (male) or 1 (female). 
+    - Suppose that we role a dice, then the sample space is $\Omega=(1,2,3,4,5,6)$. 
 
-- Suppose that we role a dice, then the sample space is $\Omega=(1,2,3,4,5,6)$. 
-
-- An event $A$  is a subset of the sample space: e.g. get an even number when roling a dice: $A=(2,4,6)$. Can also be a  $A=(1)$ one  subset of the sample space. 
+- An event $A$  is a subset of the sample space 
+      
+      - get an even number when roling a dice: $A=(2,4,6)$
+      - Can also be $A=(1)$ one  subset of the sample space. 
 
 - Event space $\mathcal{A}$ is the class of all possible events associated with a given experiment.
 
-- Two events are multiple exclusive if they cannot occur together e.g. event of the odd numbers $A_1=(1,3,5)$ and the event of getting $A_2=(6)$. So $A_1 \bigcap A_2=\emptyset$.
+- Two events ($A_1$ and $A_2$) are multiple exclusive if they cannot occur together
+
+    - e.g. event of the odd numbers $A_1=(1,3,5)$ and the event of getting $A_2=(6)$
+    - so $A_1 \bigcap A_2=\emptyset$.
 
 - Probability $P(A)$  is a function $P: A \rightarrow [0,1]$ which satisfies
     
-    1. $P(A) \leq 0$ and $P(A) \leq 1$ for each $A \in \mathcal{A}$
+    1. $P(A) \geq 0$ and $P(A) \leq 1$ for each $A \in \mathcal{A}$
     2. $P(\Omega)=1$
     3. For multiple exclusive events $A_1, A_2, \ldots A_k$ the probability $P(A_1 \cup A_2 \ldots \cup A_k)= P(A_1) + \ldots + P(A_k)$ 
 
@@ -201,16 +205,16 @@ $\rightarrow$ assess cholestorol level in population above 25.
 
     - odd number $A=(1,3,5)$: this is the union of 3 multiple exclusive events $A_1=1$, $A_2=5$ and $A_3=5$ so
     $P(A)=P(1)+P(3)+P(5)=1/6+1/6+1/6=0.5$
-    - $\Omega=(1,2,3,4,5,6)$: P(\Omega)=1
+    - $\Omega=(1,2,3,4,5,6)$: $P(\Omega)=1$
     
-- If we draw to subjects (j and k) independently from the population then the joint probability on  
+- If we draw two subjects (j and k) independently from the population then the joint probability on  
 $P(X_j,X_k)= P(X_j)P(X_j)$
 
 #### Probability mass function 
 
 - The probability mass function for a random variable $X$ describes the probability of each possible value of the sample space
 
-- Example Gender is a binary variable (0:male, 1:female) and can be using a Bernouilli distribution. 50.2% of the subjects of the American population are female and 49.8% are male. Let $\pi$ be the probability on a female $\pi=0.502$. 
+- Example: Gender is a binary variable (0:male, 1:female) and binary variables are Bernouilli distributed. 50.8% of the subjects of the American population are female and 49.2% are male. Let $\pi$ be the probability on a female $\pi=0.508$. 
     so 
     $$ X\sim \left \{ 
     \begin{array}{lcl}
@@ -219,18 +223,38 @@ $P(X_j,X_k)= P(X_j)P(X_j)$
     \end{array} \right . $$
     
     ```{r}
-    plot(c(0,1),c(0.502,0.498),ylim=c(0,1),type="h",xlab="Gender",ylab=c("Probability"),xlim=c(-.3,1.3))
+    data.frame(X=c(0,1),prob=c(0.492,0.508)) %>%
+      ggplot(aes(x=X,xend=X,y=0,yend=prob)) +
+      geom_segment() +
+      ylab("Probability")
     ```
-    Random variable $X$ follows an Bernouilli distribution $B(\pi)$ with parameter $\pi=0.502$ 
+    
+Random variable $X$ follows an Bernouilli distribution $B(\pi)$ with parameter $\pi=0.508$ 
     $$B(\pi)= \pi^x(1-\pi)^{(x-1)}$$
 
 #### Cumulative distribution function
 
-- The cumulative distribution function is the function F(x) that calculates the probability to observe a random variable X for which holds $X\leq x$: 
+- The cumulative distribution function is the function F(x) that calculates the probability to observe a random variable X for which $X\leq x$: 
 $$ F(x) = \sum\limits_{\forall X\leq x} P(x)$$
 
 - Gender example $F(0)=1-\pi$ and F(1)=P(X=0) + P(X=1)=1
 
+    ```{r}
+    data.frame(X=c(0,1),cumprob=c(0.492,1)) %>%
+      ggplot(aes(x=X,xend=X,y=0,yend=cumprob)) +
+      geom_segment() +
+      ylab("F(x)")
+    ```
+
+- Dice: 
+
+    ```{r}
+    data.frame(X=1:6,cumprob=cumsum(rep(1/6,6))) %>%
+      ggplot(aes(x=X,xend=X,y=rep(0,6),yend=cumprob)) +
+      geom_segment() +
+      ylab("F(x)")
+    ```
+    
 #### Mean
 
 The mean or the expected value $E[X]$ of a discrete random variable is given by
@@ -240,7 +264,10 @@ $$E[X]=\sum\limits_{x\in\Omega} x P(X=x)$$
 - Gender example
     
     - $E[X]= 0 \times (1-\pi) + 1 \times \pi = \pi$
-    - The mean equals $E[X]=0.502$.
+    - The mean equals $E[X]=0.508$.
+
+- Dice example: 
+$ E[X]= 1 \times 1/6 + 2 \times 1/6 + \ldots + 6 \times 1/6 = $ `r sum(1:6)/6`
 
 #### Variance
 
@@ -261,12 +288,18 @@ $$E[(X-E[X])^2]=\sum\limits_{x\in\Omega} (x-E[X])^2 P(X=x)$$
 
 - The density function $f(x)$ describes how likely it is to observe a particular value of random variable X when we sample a random subject from the population. 
 
-- Many biological characteristics are approximatively normally distributed (upon transformation) $f(x) = N(\mu,\sigma^2)$
+- Many biological characteristics are approximatively normally distributed (upon transformation) 
     $$f(x) = \frac{1}{\sqrt{2\pi\sigma^2}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}$$
+
+- This is denoted in shorthand as $f(x) = N(\mu,\sigma^2)$
 
 - The IQ in the population is known to follow a normal distribution with mean $\mu=100$ and standard deviation $\sigma=15$.  
 $$IQ \sim N(100,15^2)$$
     
+
+- R we can use the dnorm function to calculate the density of particular values of X=x.
+
+- The arguments of `dnorm` are `mean` ($\mu$) and `sd` (standard deviation $\sigma$). 
 
 ```{r IQ, fig.align='center'}
 par(mar=c(5, 4, 4, 2) + 0.1, mai=c(1.02,0.82,0.82,0.42))
@@ -283,15 +316,23 @@ plot(grid,dnorm(grid,mean=100,sd=15),
 - Again the cumulative distribution $F(X)=P(X\leq x)$.
 
 - Because X is continuous we will calculate this probability using an integral
-$$F(x)=\int \limits_{X\leq x } f(x) dx$$
+$$F(x)=\int \limits_{-\infty}^x f(x) dx$$
+
+- Note that $f(x)=0$ if x does not belong to the sample space. 
+
+- We can calculate $F(x)$ for a normally distributed random variable using the `pnorm` function again with arguments `mean` and `sd`. 
 
 ```{r}
-plot(grid,pnorm(grid,100,15),type="l",xlab="IQ",ylab="Probability")
+plot(grid,pnorm(grid,mean=100,sd=15),type="l",xlab="IQ",ylab="Probability")
 ```
 
 So the probability that the IQ of a random subject is below 80 can be obtained by
 
-```{r nhanesNormalMetKans, fig.asp=.8, fig.align='center',echo=FALSE}
+```{r}
+pnorm(80,mean=100,sd=15)
+```
+
+```{r fig.align='center',echo=FALSE}
 grid2<-seq(40,80,.01)
 plot(grid,dnorm(grid,mean=100,sd=15),
      xlab="IQ",
@@ -299,7 +340,13 @@ plot(grid,dnorm(grid,mean=100,sd=15),
 polygon(x=c(grid2,80,40),y=c(dnorm(grid2,100,15),0,0),col=2,border=2)
 text(80,dnorm(80,mean=100,sd=15),paste0("P(X < 80) = ",round(pnorm(80,100,15)*100,1),"%"),col=2,cex=1.5,pos=4)
 ```
-- For the largest possible value of $X$ we integrate over the entire sample space $\omega$ so 
+
+```{r fig.align='center',echo=FALSE}
+plot(grid,pnorm(grid,mean=100,sd=15),type="l",xlab="IQ",ylab="Probability",lwd=2,col=2)
+lines(c(80,80,80,0),c(0,rep(pnorm(80,100,15),3)),lty=2)
+```
+
+- For the largest possible value of $X$ we integrate over the entire sample space $\Omega$ so 
 $$\int \limits_{x \in \Omega} f(x) dx=1$$
 
 - So the area under the density function equals 1! 
@@ -327,7 +374,7 @@ We therefore often use the standard deviation
 $$SD=\sqrt{E[(X-E[X])^2]}$$
 
 
-The SD for a normal distribution, $\sigma$ has the nice interpretation that approximately 68% of the population has a characteristic X in the interval of \sigma around the mean: 
+The SD for a normal distribution, $\sigma$ has the nice interpretation that approximately 68% of the population has a value for the characteristic X within the interval of one standard deviation ($\sigma$) around the mean: 
 
 $$P(\mu-\sigma < X < \mu + \sigma) \approx 0.68$$
 
@@ -346,7 +393,7 @@ text(107.5,dnorm(114.5,100,15),expression(sigma))
 text(100-15/2,dnorm(114.5,100,15),expression(sigma))
 ```
 
-- For normally distributed random variables approximately 95% of the subjects in the population have a value between two standard deviations of the mean
+- For normally distributed random variables approximately 95% of the subjects in the population have a value that lays in two standard deviations ($2 \sigma$) of the mean
 
 $$P[\mu - 2 \sigma < X < \mu + 2 \sigma]\approx 0.95$$
 ```{r fig.align='center',echo=FALSE}
@@ -364,10 +411,12 @@ text(85,dnorm(128,100,15),expression(sigma))
 ```
 
 
-- In R cumulative distribution can be calculated with the function rnorm. This function has arguments q the quantile, the mean and the standard deviation. 
+- In R cumulative distribution can be calculated with the function rnorm. This function has arguments q the quantile, the mean and the standard deviation.
+
+- If you want help you can always type
 
 ```{r}
-?rnorm
+?pnorm
 ```
 
 - What is the probability that a random subject in the population will have an IQ below 90?
@@ -386,7 +435,7 @@ pnorm(q=80,mean=100,sd=15)
 
 $$z=\frac{x-\mu}{\sigma}$$
 
-- Upon standardizatio the data follow a standard normal distribution with mean $\mu=0$ and variance $\sigma^2=1$:
+- Upon standardization the data follow a standard normal distribution with mean $\mu=0$ and variance $\sigma^2=1$:
 $$z \sim N(0,1)$$
 
 We can use the qnorm function to calculate the quantile $z_{2.5\%}$ and $z_{97.5\%}$ corresponding to $F(z_{2.5\%})=0.025$ and $F(z_{97.5\%})=0.975$, respectively. 
@@ -397,33 +446,37 @@ qnorm(0.975)
 
 ```
 
-This indeed  indicates that about 97.5%-2.5%=95% of a standard normal random variable falls within the interval [-2,2], within 2 times the standard deviation from the mean.
+This indeed  indicates that about 97.5%-2.5%=95% of a standard normal random variable falls within the interval [-2,2], or within 2 times the standard deviation ($\sigma=1$) from the mean ($\mu=0$).
 
 # Sample
 
-- For practical problems we do not know the distribution in the population
+- In real studies we typically do not know the distribution in the population
 
 - Due to financial and logistic reasons we can almost never study the entire population 
 
-- Populationparameters (e.g. mean IQ, variance of IQ)  can therefore not be obtained without error
+- The population parameters (e.g. mean IQ, variance of IQ)  can therefore not be obtained without error
 
 - Only as small subset of the population can be studied: the *sample* 
-- Sample according to a structured design: select **subject** completely at random from the population so that every subject has an equal probability to end up in the sample $\rightarrow$ **Representative sample**.
-- The distribution in the population has to be estimated. 
-
-- If we can assume that the studied characteristic follows a particular distribution then we only have to estimate the population parameters based on the sample, which we call estimates. 
+- Sample according to a structured design: select **subject completely at random from the population** so that every subject has an equal probability to end up in the sample $\rightarrow$ **Representative sample**.
 
 - The sample $x_1, x_2, . . . , x_{n}$ can be considered to be $n$ realisations of the same random variable $X$, for subjects $i = 1,2,...,n$.
+
+- The distribution in the population is unknown and has to be estimated. 
+
+- If we can assume that the studied characteristic follows a particular distribution (e.g. a normal distribution $N(\mu,\sigma^2)$ then we only have to estimate the population parameters (e.g $\mu$ and $\sigma^2$) based on the sample. 
+
+- We refer to them as estimates and denote them by $\hat \mu$ and $\hat \sigma^2$.
+
 
 ## NHANES example
 
 - Gender in the population
-- Select $n=10000$ subject at random from the American popultion
+- Select $n=10000$ subjects at random from the American popultion
 - Once the random individuals are sampled from the population we have observed $n$ realisations of the random variable $X$. 
 
 - *Convention*: Observed values $\rightarrow$ are denoted with a small letter $x$.
 
-- $x$ is a particular value and no longer an unknown variable
+- $x$ is a particular value measured/observed in a conducted experiment and no longer an unknown variable
 
 ## In summary  
 
@@ -512,7 +565,7 @@ stat_ecdf()
 
 - We can now approximate the distribution of log transformed direct cholestorol levels using a normal distribution. 
 
-- We only have to estimate two parameters: the mean and the variance. 
+- We only have to estimate two parameters: the mean and the variance. We can do this based on the sample mean ($\bar x$) and sample variance ($s^2$) or sample standard deviation ($s$). 
 
 
 ```{r}
@@ -553,7 +606,7 @@ sdBar10
 quantile(fem$DirectChol,prob=c(0.025,0.975))
 ```
 
-    - So based on the large sample, we estimate that 95% of the females in the population have a direct cholestorol level in the interval [`r quantile(fem$DirectChol,prob=c(0.025,0.975))`]. 
+- So based on the large sample, we estimate that 95% of the females in the population have a direct cholestorol level in the interval [`r quantile(fem$DirectChol,prob=c(0.025,0.975))`]. 
 
 - Small sample
 
@@ -561,13 +614,13 @@ quantile(fem$DirectChol,prob=c(0.025,0.975))
 quantile(fem10$DirectChol,prob=c(0.025,0.975))
 ``` 
     
-    - Note, that this estimate is very crude based for the small sample! We do not have enough observations to have a good approximation of the extreme quantiles. 
+- Note, that this estimate is very crude. In the small sample,  We do not have enough observations to have a good approximation of the extreme quantiles. 
     
 ### Normal approximation
 
 - We can use the function qnorm to calculate quantiles from the normal distribution. 
 
-- We also know that it is rougly in two standard deviations from the mean. 
+- We also know that a 95% reference interval is located rougly in two standard deviations around the mean. 
 
 - We will have to use the function `exp()` to transform the result back to the direct cholestorol domain. 
 
@@ -589,7 +642,7 @@ exp(xBar10 + 2 * sdBar10)
 
 ## Conclusions 
 
-- For the large sample empirical distribution (quantile function) and the normal approximation gives us approximately the same result.
+- For the large sample the empirical distribution (quantile function) and the normal approximation gives us approximately the same result.
 
 - For the small sample, however, the normal approximation works much better than the one based on the empirical distribution. 
 
@@ -602,17 +655,15 @@ exp(xBar10 + 2 * sdBar10)
 
 - Formula will be used to estimate the parameters of a distribution in the population based on the sample. We call these statistics or estimators. 
 
-- The numeric result obtained by evaluating these formulated results are also called statistics or estimates. 
+- The numeric result obtained by evaluating these formula are also called statistics or estimates. 
 
-- e.g. the sample mean $\bar X$
+- Researcher want to known the unknown parameters from the population and will thus estimate them using the statistics observed or calculated based on the sample 
 
-- Researcher want to known the unknown parameters from the population and will estimate them using the statistics observed or calculated based on the sample 
+- Because we calculate the statistics based on the observations in the sample, they will also vary from sample to sample and are random variables and we denote them with capital letters (e.g. $\bar X$ for the sample mean and $S^2$ for the sample variance). 
 
-- Because we calculate the statistics based on the observations in the sample they will also vary from sample to sample and are random variables and we denote them with capital letters (e.g. $\bar X$ for the sample mean and $S^2$ for the sample variance). 
+- So when we analyse data we have to reason on how the statistics of interest will vary from sample to sample. 
 
-- So when we analyse data we have to reason on how they will vary from sample to sample. 
-
-- When the statistics refer to a numeric value realised in a particular sample we will use a small letter: $\bar x$ and $s^2$.s
+- When the statistics refer to a numeric value realised in a particular sample we will use a small letter: $\bar x$ and $s^2$.
 
 # Convention
 
