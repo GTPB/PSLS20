@@ -1,5 +1,5 @@
 ---
-title: "Some concepts on experimental design"
+title: "3. Some concepts on experimental design"
 output:
     html_document:
       code_download: true

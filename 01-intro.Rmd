@@ -1,5 +1,5 @@
 ---
-title: "Introduction: why do we need statistics"   
+title: "1. Introduction: why do we need statistics"   
 output:
     html_document:
       code_download: true    
@@ -15,6 +15,7 @@ knitr::opts_chunk$set(include = TRUE, comment = NA, echo = TRUE,
                       message = FALSE, warning = FALSE)
 library(tidyverse)
 library(Rmisc)
+set.seed(140)
 ```
 
 #Smelly armpit example
@@ -76,7 +77,6 @@ ap %>%  ggplot(aes(x=trt,y=rel)) + geom_boxplot(outlier.shape=NA) + geom_point(p
 2. A research assistant selects 20 random people with smelly armpits from the Belgian population.
 
 ```{r echo=FALSE}
-set.seed(140)
 ap2<-ap
 hlp<-lm(rel~trt,ap)
 ap2$rel<-rnorm(20,mean=hlp$fit-20,sd=sigma(hlp)*2)
@@ -249,7 +249,6 @@ t.test(cholLog~Gender,samp2,var.equal=TRUE)
 - This is illustrated with the code below, where we will draw 20000 repeated samples with sample size 10 for females and males from the NHanes study.
 
 ```{r}
-set.seed(1)
 nsim<-20000
 nSamp<-10
 res<-matrix(0,nrow=nsim,ncol=2)

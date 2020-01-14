@@ -1,5 +1,5 @@
 ---
-title: "Basic concepts"
+title: "2. Basic concepts"
 output:
     html_document:
       code_download: true
