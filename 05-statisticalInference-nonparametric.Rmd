@@ -1,0 +1,302 @@
+---
+title: "5. Statistical Inference: non-parametric test"   
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = TRUE, comment = NA, echo = TRUE,
+                      message = FALSE, warning = FALSE)
+library(tidyverse)
+library(Rmisc)
+set.seed(140)
+```
+
+
+#Intro
+
+Inference was only correct if distributional assumptions were satisfied 
+
+- e.g Normal distribution 
+- equal variance 
+ 
+-  The $p$-value: $\text{P}_0\left[ \vert T\vert \geq \vert t \vert \right]$. 
+  	
+	- Calculated using the null distribution of $T$ that we derived under the assumptions
+	- In correct if assumptions are violated  
+	
+-  $95\%$ CI also builds upon these assumptions. If they are invalid then the intervals will not contain the population parameter with 95% probability.
+
+- Asymptotic theory is more difficult to place: the $t$-test ais symptotically non-parametric because for very large samples the distributional assumptions of normality are no longer important. 
+
+- If assumptions hold the parametric approach
+
+	- more efficient: larger power with same sample size + smaller CI.  
+	- more flexible: easier to analyse data with complex designs  
+	
+
+## Cholestorol voorbeeld
+
+- Cholestorol concentration in blood measured for 
+  - 5 patients (groep=1) two days upon a stroke
+  - 5 healty subject (groep=2). 
+
+- Is cholestorol concentration of hartpatients and healthy subjects on average different? 
+
+```{r}
+chol <- read_tsv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/chol.txt")
+chol$group <- as.factor(chol$group)
+nGroups <- table(chol$group)
+n <- sum(nGroups)
+chol
+```
+
+---
+
+
+```{r, echo=FALSE, fig.align='center'}
+chol %>%  ggplot(aes(x=group,y=cholest)) + geom_boxplot(outlier.shape=NA) + geom_point(position="jitter")
+
+chol %>% ggplot(aes(sample=cholest)) + 
+  geom_qq() +
+  geom_qq_line() +
+  facet_wrap(~group) 
+```
+
+- Possibly outliers
+- Difficult to assess distributional assumptions when only 5 observations are available. 
+
+
+#Rank Tests
+
+- Important group of non-parametric test
+  - Non-parametric, 
+  - Exact $p$-values using a permutatie null distribution. 
+  - No need for separate permutation distribution for each new dataset.  
+  - Permutation null distribution of rank tests only depends on sample size 
+  - Robust to outliers 
+  
+#Ranks
+
+Rank tests start from rank-transformed data. 
+
+- Let $Y_1, \ldots, Y_n$. 
+- In the absence of *ties* 
+  $$R_i=R(Y_i) = \#\{Y_j: Y_j\leq Y_i; j=1,\ldots, n\}$$
+- Smallest observation has rank 1, second smallest rank 2, ... , largest observation gets rank $n$ 
+
+```{r}
+chol$cholest
+rank(chol$cholest)
+```
+
+## ties 
+
+Sometimes *ties* occur: two observations with identical values 
+
+```{r}
+withTies=c(403,507,507,610,651,651,651,830,900)
+rank(withTies)
+```
+
+- Ties: 507 occurs twice, 651 occurs 3 times
+- If ties occur *midranks* are used. 
+
+- **midrank** of observation $Y_i$ becomes
+  \begin{eqnarray*}
+   R_i &=& \frac{ \#\{Y_j: Y_j\leq Y_i\} + ( \#\{Y_j: Y_j < Y_i\} +1)}{2}.
+   \end{eqnarray*}
+
+## Ranks of pooled sample
+
+- Let $Y_{ij}$, $i=1,\ldots, n_j$ be observations from two treatment groups $j=1,2$.
+- They can also be represened by $Z_1,\ldots, Z_n$ ($n=n_1+n_2$), the outcomes of the pooled sample
+
+```{r}
+t(chol)
+z=chol$cholest
+z
+rank(z)
+```
+
+# Wilcoxon-Mann-Whitney Test
+
+ Simultaneously developed by Wilcoxon, and,  Mann and Whitney:  **Wilcoxon-Mann-Whitney**, **Wilcoxon rank sum test**  or **Mann-Whitney U test**
+
+## hypotheses
+  
+Under $H_0$ the distributions of the two groups are equal 
+$$H_0: f_1=f_2$$
+  
+
+Under the alternative $H_1$ the distributions differ in location $$H_1: \mu_1\neq \mu_2$$
+  
+$H_1$ assumes **location-shift**, we will relax this assumption later on.  
+
+## Test statistic
+
+Classic T-test: difference in sample means $\bar{Y}_1-\bar{Y}_2$.
+
+Here: Difference in sample means based on rank transformed data 
+
+Ranks based on the poolde sample (upon joining the observations from the two groups): $R_{ij}=R(Y_{ij})$ is de rank of observation $Y_{ij}$ in the pooled sample. 
+
+\[
+  T = \frac{1}{n_1}\sum_{i=1}^{n_1} R(Y_{i1}) - \frac{1}{n_2}\sum_{i=1}^{n_2} R(Y_{i2}) .
+\]
+
+- Under $H_0$ we expect the average rank of the first group to be close to that of the second group so $T$ is close to zero.
+
+- Under $H_1$ we expect the mean ranks to differ so that $T$ deviates from zero. 
+
+- It is sufficient to only calculate 
+  $$S_1=\sum_{i=1}^{n_1} R(Y_{i1})$$.
+
+- $S_1$ is the sum of the ranks of the first group: *rank sum test*.
+
+- This holds because 
+\[
+  S_1+S_2 = \text{sum of all ranks} = 1+2+\cdots + n=\frac{1}{2}n(n+1).
+\]
+
+
+- $S_1$ (or $S_2$) is a good test statistic
+
+- Use permutations to determine the exact permutation distribution. (Permute the ranks between the groups) 
+
+- For a given $n$ and no *ties* the rank transformed data is always 
+  $$1, 2, \ldots, n$$ 
+- For given $n_1$ en $n_2$ the permutation distribution is always the same! 
+- With current computing power this is not so important any more. 
+
+## Standardized statistic 
+
+Often the standardized test statistic is used
+\[
+  T = \frac{S_1-\text{E}_{0}\left[S_1\right]}{\sqrt{\text{Var}_{0}\left[S_1\right]}},
+\]
+
+- with $\text{E}_{0}\left[S_1\right]$ and $\text{Var}_{0}\left[S_1\right]$ the expect mean and variance of S1 under $H_0$. 
+
+- Under $H_0$
+ \[
+   \text{E}_{0}\left[S_1\right]= \frac{1}{2}n_1(n+1) \;\;\;\;\text{ en }\;\;\;\; \text{Var}_{0}\left[S_1\right]=\frac{1}{12}n_1n_2(n+1).
+ \]
+
+- Under $H_0$ and when $\min(n_1,n_2)\rightarrow \infty$
+ \[
+    T = \frac{S_1-\text{E}_{0}\left[S_1\right]}{\sqrt{\text{Var}_{0}\left[S_1\right]}} \rightarrow N(0,1).  
+ \]
+
+Asymptotically the standardised statistic follows a standard normal distribution! 
+
+## Cholestorol example 
+
+We illustrate the result for the cholestorol example using the R function `wilcox.test`. 
+```{r}
+wilcox.test(cholest~group,data=chol)
+```
+
+- We reject $H_0$ ($p=$ `r format(wilcox.test(cholest~group,data=chol)$p.value,digits=2)` $<0.05$)
+
+- The output shows $W=$ `r wilcox.test(cholest~group,data=chol)$statistic`? 
+
+- Lets calculate 
+```{r}
+S1 <- sum(rank(chol$cholest)[chol$group==1])
+S1
+S2 <- sum(rank(chol$cholest)[chol$group==2]) 
+S2
+```
+
+- Where does $W=$ `r wilcox.test(cholest~group,data=chol)$statistic` comes from? 
+
+## Mann and Whitney test
+
+Mann and Whitney test in absence of ties:
+\[
+ U_1 = \sum_{i=1}^{n_1}\sum_{k=1}^{n_2} \text{I}\left\{Y_{i1}\geq Y_{k2}\right\}.
+\]
+
+- with $\text{I}\left\{.\right\}$ an indicator that equals 1  if the expression is true and is zero otherwise. 
+
+- U counts how many times an observation of the first group is larger or equal to an observation from the second group.
+
+```{r}
+y1=subset(chol,group==1)$cholest
+y2=subset(chol,group==2)$cholest
+u1Hlp=sapply(y1,function(y1i,y2) {y1i>=y2},y2=y2)
+colnames(u1Hlp)=y1;rownames(u1Hlp)=y2
+```
+
+```{r}
+u1Hlp
+U1=sum(u1Hlp); U1
+```
+
+It can be shown that $U_1 = S_1 - \frac{1}{2}n_1(n_1+1).$
+
+```{r}
+S1-nGroups[1]*(nGroups[1]+1)/2
+```
+
+1. $U_1$ en $S_1$ contain the same information 
+2. $U_1$ is also a rankstatistiek, and 
+3. Exact testen based on $U_1$ and $S_1$ are equivalent. 
+
+## Probabilistic index
+
+- $U_1$ has a better interpretation feature
+- Let $Y_j$ a random observation from group $j$ ($j=1,2$). Then 
+\begin{eqnarray*}
+  \frac{1}{n_1n_2}\text{E}\left[U_1\right] 
+     &=& \text{P}\left[Y_1 \geq Y_2\right].
+\end{eqnarray*}
+
+So we can estimate the probability by calculating the mean of all indicator variable values $\text{I}\left\{Y_{i1}\geq Y_{k2}\right\}$. Note, that we did $n_1 \times n_2$ comparisons
+
+```{r}
+mean(u1Hlp)
+U1/(nGroups[1]*nGroups[2])
+```
+
+- Probability $\text{P}\left[Y_1 \geq Y_2\right]$ is referred to as the *probabilistic index*. 
+- It is the probability that a random observation of the first group is larger or equal than a random observation of the second group  
+- If $H_0$ holds $\text{P}\left[Y_1 \geq Y_2\right]=\frac{1}{2}$.
+
+- R function `wilcox.test` does not return the Wilcoxon rank sum statistic. It returns the Mann-Whitney statistiek $U_1$.
+- Lets revisit the result 
+```{r}
+wTest<-wilcox.test(cholest~group,data=chol) 
+wTest
+U1
+probInd=wTest$statistic/prod(nGroups) 
+probInd
+```
+
+Because $p=$ `r format(wTest$p.value,digits=3)` $<0.05$ we conclude at the $5\%$ significance level that the mean cholestorol level of hartpatients is larger then that of healthy subjects. 
+
+  - Note that we have assumed that the location-shift model is valid in this conclusion. 
+  - We also know that higher cholestorol level are more likely for hartpatients then for healthy subjects and this probability is 
+$U1/(n_1\times n_2)=$ `r probInd*100`%. 
+  - We should assess the location shift assumption. But this is not possible with only 5 observations. 
+
+Without the location-shift assumption the conclusion in terms of the probabilistic index remains valid! 
+
+  - So when we do not assume location shift we test for 
+
+\[H_0: F_1=F_2 \text{ vs } H_1: P[Y_1 \geq Y_2] \neq 0.5.\]
+
+
+
+## Conclusion
+
+There is a significant difference in the distribution of the cholestorol concentration of hartpatients two days upon a stroke and that of healthy subject (($p=$ `r format(wTest$p.value,digits=3)`). It is more likely to observe higher cholestorol levels for hartpatients then for healthy subjects. The point estimator for this probability is `r probInd*100`%.
+
+
