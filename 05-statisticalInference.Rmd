@@ -269,6 +269,17 @@ femSamp<-matrix(nrow=n,ncol=nSim)
 for (j in 1:nSim)
 {
   femSamp[,j]<-sample(fem$DirectChol,15)
+  if (j<4) {
+    p <- femSamp %>% log %>%
+    data.frame %>% 
+    gather("sample","logCholestorol") %>%
+    ggplot(aes(x=sample,y=logCholestorol)) +
+    geom_boxplot() + 
+    stat_summary(fun.y=mean, geom="point", shape=19, size=3, color="red", fill="red") +
+    geom_hline(yintercept = mean(fem$DirectChol %>% log)) +
+    ylab("cholestorol (log)") 
+    print(p)
+  }
 }
 femSamp %>% log %>%
   data.frame %>% 
@@ -597,46 +608,7 @@ ggtitle("Means on 100 females")
 Let $X_1, \ldots, X_n$ are sequence of random variables that are drawn indepently from the same distribution (population).
 As long as the sample size n is sufficiently large, the sample mean $\bar X$ is approximately normally distributed, irrespective of the distribution of the observations $X_i$.
 
-
-#### NHANES: BMI example 
-
-1. Redo simulation study for BMI, what do you observe? 
-
-```{r}
-femBmi <- NHANES %>% filter(Gender=="female"&!is.na(BMI)) %>% select(BMI)
-femBmi %>% ggplot(aes(x=BMI))+
-   geom_histogram(aes(y=..density.., fill=..count..)) +
-   xlab("BMI") +
-   ggtitle("All females in study")
-
-femBmi %>% ggplot(aes(sample=BMI)) +
- stat_qq() +
- stat_qq_line() +
- ggtitle("All females in Nhanes study")
-
-femBmiSamp5<-sapply(1:1000,function(j,x,size) sample(x,size),size=5,x=femBmi$BMI) 
-
-femBmiSamp5 %>% colMeans %>% as.data.frame %>%  ggplot(aes(sample=.)) +
-stat_qq() +
-stat_qq_line() +
-ggtitle("Means on 5 females")
-
-femBmiSamp10<-sapply(1:1000,function(j,x,size) sample(x,size),size=10,x=femBmi$BMI) 
-
-femBmiSamp10 %>% colMeans %>% as.data.frame %>%  ggplot(aes(sample=.)) +
-stat_qq() +
-stat_qq_line() +
-ggtitle("Means on 10 females")
-
-femBmiSamp50<-sapply(1:1000,function(j,x,size) sample(x,size),size=50,x=femBmi$BMI) 
-
-femBmiSamp50 %>% colMeans %>% as.data.frame %>%  ggplot(aes(sample=.)) +
-stat_qq() +
-stat_qq_line() +
-ggtitle("Means on 50 females")
-```
-
-2. What happens when you log transform BMI, assess for sample sizes 5 and 10? 
+![](https://www.nature.com/articles/nmeth.2613.pdf){width=100%}
 
 #Interval estimators
 
@@ -865,6 +837,7 @@ res %>% filter(N==10) %>% slice(1:20) %>% ggplot(aes(x=sample,y=logChol,color=in
   ylim(range(fem$DirectChol %>% log))
 ```
 
+![](https://www.nature.com/articles/nmeth.2659.pdf){width=100%}
 
 ## Reporting?
 
@@ -1396,6 +1369,7 @@ pSim %>% as.data.frame %>% ggplot(aes(x=.)) +
 - Still the power to pick up such a small blood pressure drop remains very low.
 - A drop of 2 mmHg is also not relevant for drug companies. 
 
+![](https://www.nature.com/articles/nmeth.2738.pdf){width=100%}
 
 ### Interpretation
 
@@ -1603,6 +1577,8 @@ mean(pvalsInCor<0.05)
 - Type I error correctly controlled at $\alpha$ for two-sided test
 - Type I error not correctly controlled when we test one-sided based on what we observed in the sample. 
 
+# Nature column on testing
 
+![](https://www.nature.com/articles/nmeth.2698){width=100%}
 
 

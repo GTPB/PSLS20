@@ -13,9 +13,8 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(include = TRUE, comment = NA, echo = TRUE,
                       message = FALSE, warning = FALSE)
-library(tidyverse)
 library(Rmisc)
-set.seed(140)
+library(tidyverse)
 ```
 
 #Smelly armpit example
@@ -140,7 +139,7 @@ Suppose that we are interested in assessing the difference in direct cholestorol
     - We customize the label of the x-axis with the `xlab` command.
 
 ```{r}
-NHANES%>%filter(NHANES$Age>25)%>%
+NHANES%>%filter(Age>25)%>%
   ggplot(aes(x=DirectChol))+
   geom_histogram() +
   facet_grid(Gender~.) +
@@ -152,7 +151,7 @@ NHANES%>%filter(NHANES$Age>25)%>%
 - They are often log transformed.
 
 ```{r}
-NHANES%>%filter(NHANES$Age>25)%>%
+NHANES%>%filter(Age>25)%>%
   ggplot(aes(x=DirectChol%>%log))+
   geom_histogram() +
   facet_grid(Gender~.) +
@@ -426,7 +425,6 @@ $\rightarrow$ Good experimental design is crucial!
     3. learning from data and to generalize what we observe in the sample towards the population while quantifying, controlling and reporting variability and uncertainty (statistical modelling and statistical inference).
 
 - Therefore, statistics plays an important role in almost all sciences (e.g. column "points of significance" in Nature Methods. http://blogs.nature.com/methagora/2013/08/giving_ statistics_the_attention_it_deserves.html)
-
 
 ```{r pop2Samp2Pop, out.width='80%',fig.asp=.8, fig.align='center',echo=FALSE}
 if ("pi"%in%ls()) rm("pi")

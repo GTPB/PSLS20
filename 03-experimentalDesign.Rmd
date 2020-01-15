@@ -118,6 +118,26 @@ text(7.5,.5,"DATA EXPLORATION &\nDESCRIPTIVE STATISTICS (2)",col="black",cex=1.2
 
 ![Stratified Randomisatie](https://raw.githubusercontent.com/GTPB/PSLS20/gh-pages/assets/figs/stratification.png){ width=50% }
 
+# Blocking
+
+##Gene expression example
+
+- dm: diabetic medium, nd: non diabetic medium, co: control
+- 4 bio-reps, 2 techreps/biorep
+![](https://raw.githubusercontent.com/GTPB/PSLS20/gh-pages/assets/figs/qpcrBadDesign1.png){ width=100% }
+
+- dm: diabetic medium, nd: non diabetic medium, co: control
+- 4 bio-reps, 2 techreps/biorep, 2 plates A & B
+- treatment and plate almost entirely confounded 
+
+![](https://raw.githubusercontent.com/GTPB/PSLS20/gh-pages/assets/figs/qpcrBadDesign2.png){ width=100% }
+
+## Nature methods: Points of significance - Blocking 
+
+![](https://www.nature.com/articles/nmeth.3005.pdf){ width=100% }
+
+
+
 # Sample size 
 
 - The sample size and the design are crucial 

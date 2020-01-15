@@ -14,8 +14,8 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(include = TRUE, comment = NA, echo = TRUE,
                       message = FALSE, warning = FALSE)
-library(tidyverse)
 library(Rmisc)
+library(tidyverse)
 library(NHANES)
 ```
 
@@ -120,7 +120,7 @@ $\rightarrow$ assess cholestorol level in population above 25.
 	- Often interest to generalize conclusions to future subject $\rightarrow$ so population cannot be entirely observed at the present. 
   	- can typically be considered to be infinite. 
 
-- Population has to be explained clearly   
+- Population has to be clearly defined! 
 
 *Inclusion criteria* are characteristics a subject/experimental unit must have to belong to the population, e.g.
 
@@ -422,7 +422,7 @@ text(85,dnorm(128,100,15),expression(sigma))
 - What is the probability that a random subject in the population will have an IQ below 90?
 
 ```{r}
-pnorm(q=80,mean=100,sd=15)
+pnorm(q=90,mean=100,sd=15)
 ```
 
 - What is the probability that a random subject in the population will have an IQ below 110?
