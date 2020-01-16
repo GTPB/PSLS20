@@ -8,7 +8,7 @@ schemadotorg:
   # Course details
        # "name" -> The acronym and extended name of the course, separated by " - "
        # "description" -> Short description of the course
-  name: "COURSE_SHORT - COURSE_EXTENDED_NAME"
+  name: "PSLS20 - Practical Statistics for the Life Sciences 2020"
   description: ""
 
   # Keywords -> Consult EDAM:Topic
@@ -62,8 +62,22 @@ There is a strong emphasis in reproducible research by extensively using R/Rmark
 
 ### Practical Statistics for the Life Sciences
 
+1. [Introduction](pages/01-intro.html)
+2. [Concepts](pages/02-concepts.html)
+3. [Experimental Design](pages/03-experimentalDesign.html)
+4. [Data Exploration](pages/04-dataExploration.html)
+5. Statistical Inference
+    - [5.1. Statistical Inference](pages/05-statisticalInference.html)
+    - [5.1. two-sample t-test](pages/05-statisticalInference-twosampleT.html)
+6. [Linear Regression](pages/06-linearRegression.html)
+7. [Analysis of Variance](pages/07-Anova.html)
+8. [Multiple Regression](pages/08-MultipleRegression.html)
+9. Nonparametric Statistics:
+    - [9.1 Nonparametric Statistics: Wilcoxon-Mann-Whitney test](pages/09-NonparametericStatistics-WilcoxonMannWhitney.html)
+    - [9.2 Nonparametric Statistics: Kruskal Wallis test](pages/09-NonparametericStatistics-KruskalWallis.html)
+10. [Multiple Regression](pages/10-MultipleRegression.html)
 
-
+---
 
 
 ### [Instructors](pages/instructors.md)
