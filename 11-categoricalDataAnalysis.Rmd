@@ -1,5 +1,5 @@
 ---
-title: "11. Categorical data analysis"
+title: "11. Categorical Data Analysis"
 author: "Lieven Clement"
 date: "statOmics, Ghent University (https://statomics.github.io)"
 output:
@@ -23,9 +23,10 @@ library(NHANES)
 
 # Introduction 
 
-- Until now we used models for a continuous response in function of categorical or continuous predictor.
-- Here we will focus on a categorical response.
-- We focus on the association on a categorical outcome and a categorical predictor and touch upon methods to model a categorical outcome with a continuous response. 
+Until now we used models for a continuous response in function of categorical or continuous predictor. Here we will focus on a categorical response.
+
+- we study the association of a categorical outcome and a categorical predictor and 
+- touch upon methods to model a categorical outcome with a continuous response. 
 
 
 ---
@@ -34,7 +35,7 @@ library(NHANES)
 
 ##Saksen-study
 
-- Fairly closed populatie (few migration)
+- Fairly closed population (few migration)
 - Probability that an unborn child is male?
 
 ```{r}
@@ -43,7 +44,7 @@ n <- 6155
 ```
 
 - On `r n` unborn children `r boys` boys are observed.
-- Is there a difference in the probability that an unborn child is a boy or a girl? 
+- Is there a difference in the probability on the gender of an unborn child? 
 
 ---
 
@@ -58,15 +59,15 @@ n <- 6155
 
 ---
 
-## Bernoulli verdeling
+## Bernoulli Probability Mass Distribution
 
-- Binairy data can be modelled using a Bernoulli distribution:
+- Binary data can be modelled using a Bernoulli distribution:
   \begin{eqnarray*}
-X_i &\sim& B(\pi) \text{ met}\\
+X_i &\sim& B(\pi) \text{ with}\\
 B(\pi)&=&\pi^{X_i}(1-\pi)^{(1-X_i)},
 \end{eqnarray*}
 
-- it has one model parameter $\pi$
+- It has one model parameter $\pi$
 
     - Expected value of $X_i$: $\text{E}[X_i]=\pi,$
     - Proportion of unborn boys (children with $X=1$) in the population.
@@ -106,27 +107,30 @@ In our example $\bar x =$ `r boys` / `r n` = `r format(pi*100,digits=3)`%.
 
 ## Binomiale test
 
-- Is the observed probability `r format(pi*100,digit=3)`% for a male child, sufficient evidence to conclude that there is a higher chance on a boy than on a girl? 
+- Is the observed probability `r format(pi*100,digit=3)`% that an unborn child is male, sufficient evidence to conclude that there is a higher chance on a boy than on a girl? 
 
 - Statistical test for 
   $$H_0: \pi=1/2 \text{ versus } H_1: \pi\neq 1/2,$$
 
-- We need to known the distribution of 
-   - $X$ and $\bar X$
-   - or of the sum $S=n\bar X$.
+- We need known the distribution of 
+   
+    - $X$ and $\bar X$
+    - or of the sum $S=n\bar X$.
 
 ---
 
 
 - Suppose that $H_0:\pi=1/2$ is true (boys and girls have an equal frequency in the population)
-- Random sample of one individual from the population has a probability to be a boy that equals $$P(X=1)=\pi=1/2.$$
-- Two children that are drawn independently :
-  - Probability of $\pi=1/2$ on a boy for the first and second child (independent from each other) 
-  - Outcomes $(x_1, x_2)$ for both children 4 combinantions:
-    $(0,0),(0,1),(1,0)\text{ en }(1,1).$
-  - Each of them has a probability of $1/4 = 1/2 \times 1/2$.
+- A random individual from the population has a probability of $$P(X=1)=\pi=1/2.$$ to be a boy
 
-- Random variable $S$ is the some of the outcomes :
+- Two children that are drawn independently :
+  
+    - Probability of $\pi=1/2$ on a boy for the first and second child (independent from each other) 
+    - Outcomes $(x_1, x_2)$ for both children have 4 possible combinations:
+    $(0,0),(0,1),(1,0)\text{ en }(1,1).$
+    - Each of them has a probability of $1/4 = 1/2 \times 1/2$.
+
+- Random variable $S$ is the sum of the outcomes :
 
 $(x_1,x_2)$|$s$|$P(S = s)$|
 |:---:|:---:|:---:|
@@ -148,7 +152,7 @@ P(S=k) = \left (
 n \\
 k \\
 \end{array}
-\right ) \pi^k (1-\pi)^{n-k}  (\#eq:binomk)
+\right ) \pi^k (1-\pi)^{n-k}  
 \end{equation}
 - $1-\pi$: probability on 0 for individual observation and
 -  binomial coefficient
@@ -161,7 +165,7 @@ k \\
 \right ) = \frac{n \times (n-1) \times ...\times (n-k+1) }{ k!} = \frac{ n!}{ k!(n-k)! }
 \end{equation*}
 
-- In R you can calculate the probabilites on each $S=k$ with the function `dbinom(k,n,p)`
+- In R you can calculate the probabilities on each $S=k$ with the function `dbinom(k,n,p)`
 
 
 ---
@@ -170,14 +174,14 @@ k \\
 
 S is a:
 
--  *Binomial distributed random  variable toevalsveranderlijke* with *Binomial probability mass function*
+-  *Binomial distributed random  variable* with *Binomial probability mass function*
 
-- parameters
+- Parameters
 
     - $n$ (total number of draws from the population, is equivalent to maximal value of the outcome)  
     - $\pi$ (probability on `success` for each draw).
 
-- Calculate probability on $k$ success on $n$ independent draws for which each probability on a succes is $\pi$.
+- Calculate probability on $k$ successes on $n$ independent draws each with a succes probability of $\pi$.
 - For binary data X.
 - e.g.: wild type vs mutant of a gene, infected or not infected with HIV, ...
 - Use: Compare proportions or risks on a particular event between groups.
@@ -248,7 +252,7 @@ c(pUp,pDown, p)
 ---
 
 
-- If $\pi= 1/2$, the probability to observe at least  $\delta=$ `r delta` boys more or less than the mean under $H_0: s_0=$ `r s0` in a random sample is only `r format(p*100,digits=3)`% is: **$p$-value of binomial test.**  
+- If $\pi= 1/2$, the probability to observe at least  $\delta=$ `r delta` boys more or less than the mean under $H_0: s_0=$ `r s0` in a random sample under H_0 is only `r format(p*100,digits=3)`% is: **$p$-value of binomial test.**  
 - Very unlikely to observe such a large number of boys in a random sample when boys and girls have the same  frequency in the population (under $H_0$).
 - Hence the hypothesis that the frequency of boys and girls is the same is not supported by the data. 
 
@@ -318,7 +322,7 @@ The probability that an unborn child is male equals `r format(pi*100,digits=3)`%
 - 2 measurements on same individual
 - e.g. before and after exposure to a chemical substance
 - observe a categorical outcome before and after.
-- *gepaarde binair responses*
+- *gepaarde binary responses*
 - Statistical analysis has to account for paired design.
 
 ---
@@ -355,16 +359,16 @@ text(2.35,1.9,"\\MA",vfont=c("sans serif","bold"),cex=1.3)
 
 - The gate is opened upon 3 minutes 
 - aggressive vs non-agressive male 
-- Each female undergoes the test twice upon stay in
+- Each female undergoes the test twice: 
 
-    - hostile surrounding (high population density, shortage of feed, a lot of competition)
-    - gentle 
+    - once upon stay in hostile environment (high population density, shortage of feed, a lot of competition)
+    - and once upon stay in gentle evironment.
 
 
 ```{r catHamster, echo=FALSE}
 hamster <- matrix(c(3,17,1,13),ncol=2,byrow=TRUE)
-rownames(hamster) <- c("hostile-agressive", "hostile-non-agressive")
-colnames(hamster) <- c("friendly-agressive","friendly-non-agressive")
+rownames(hamster) <- c("hostile_agressive", "hostile_non-agressive")
+colnames(hamster) <- c("friendly_agressive","friendly_non-agressive")
 hamsterTot=matrix(0,nrow=3,ncol=3)
 hamsterTot[1:2,1:2]=hamster
 hamsterTot[3,1:2]=colSums(hamster)
@@ -377,27 +381,26 @@ knitr::kable(hamsterTot,booktabs = TRUE)
 ```
 
 ---
+### Absolute risk difference (ARD)
+- $\pi_1=P[\text{agressive male } \vert \text{hostile}]$
+- $\hat \pi_1=(e+f)/n$, with $n=e+f+g+h$.
 
-- $\pi_1=P[\text{agressive male } \vert \text{hostile}$
-- $\hat pi_1=(e+f)/n$, with $n=e+f+g+h$.
-
-- $\pi_0=P[\text{agressive male } \vert \text{ friendly}$
-- $\hat pi_0=(e+g)/n$
--Absolute riscodifference (ARV)
+- $\pi_0=P[\text{agressive male } \vert \text{ friendly}]$
+- $\hat \pi_0=(e+g)/n$
 \begin{equation*}
-\widehat{\text{ARV}}=\hat\pi_1-\hat\pi_0=\frac{e+f}{n}-\frac{e+g}{n}=\frac{f-g}{n}
+\widehat{\text{ARD}}=\hat\pi_1-\hat\pi_0=\frac{e+f}{n}-\frac{e+g}{n}=\frac{f-g}{n}
 \end{equation*}
 - Only affected by discordant pairs $f$ en $g$
 
 ---
 
-- Standard error on ARV
+- Standard error on ARD
 \begin{equation*}
-\text{SE}_{\widehat{\text{ARV}}}=\frac{1}{n}\sqrt{f+g-\frac{(f-g)^2}{n}}
+\text{SE}_{\widehat{\text{ARD}}}=\frac{1}{n}\sqrt{f+g-\frac{(f-g)^2}{n}}
 \end{equation*}
 
-- If we have large number of observations we can use the CLT to establish an $(1-\alpha)100\%$ CI on the ARV
-$$\left[\widehat{\text{ARV}}-z_{\alpha/2}\text{SE}_{\widehat{\text{ARV}}},\widehat{\text{ARV}}-z_{\alpha/2}\text{SE}_{\widehat{\text{ARV}}}\right]$$
+- If we have large number of observations we can use the CLT to establish an $(1-\alpha)100\%$ CI on the ARD
+$$\left[\widehat{\text{ARD}}-z_{\alpha/2}\text{SE}_{\widehat{\text{ARD}}},\widehat{\text{ARD}}-z_{\alpha/2}\text{SE}_{\widehat{\text{ARD}}}\right]$$
 or
 $$\left[\frac{f-g}{n}-\frac{z_{\alpha/2}}{n}\sqrt{f+g-\frac{(f-g)^2}{n}},\frac{f-g}{n}+\frac{z_{\alpha/2}}{n}\sqrt{f+g-\frac{(f-g)^2}{n}}\right] $$
 
@@ -420,14 +423,14 @@ ci
 ---
 
 \begin{equation*}
-\widehat{\text{ARV}}=\frac{17-1}{34}=0.471
+\widehat{\text{ARD}}=\frac{17-1}{34}=0.471
 \end{equation*}
-of 47.1%.
+The absolute risk difference on choosing for an agressive male is 47.1% larger upon staying in a hostile environment that when residing in a gentle environment. 
 - The standard error
 \begin{equation*}
-\text{SE}_{\widehat{\text{ARV}}}=\frac{1}{34}\sqrt{17+1-\frac{(17-1)^2}{34}}=0.0952
+\text{SE}_{\widehat{\text{ARD}}}=\frac{1}{34}\sqrt{17+1-\frac{(17-1)^2}{34}}=0.0952
 \end{equation*}
-- A 95\% confidence on the absolute risk difference on the choice of an aggressive male between a stay in a hostile and friendly environment. 
+- A 95\% confidence interval on this absolute risk difference is 
 \begin{equation*}
 \left[0.471-1.96\times 0.0952,0.471+1.96\times 0.0952\right]=[0.284,0.658]
 \end{equation*}
@@ -439,7 +442,7 @@ of 47.1%.
 knitr::kable(hamsterTot,booktabs = TRUE)
 ```
 
-- Assess if risk on choice for agressive male differs between stay in hostile and friendly environment.
+- Assess if risk on choice for agressive male differs between residing in hostile and friendly environment.
 - Only discordant pairs give information.
 - $f>g$ indication against $H_0$: choice of partner not associated with environment.
 - Evaluate probability that in a random discordant pair, a female chooses an agressive male upon a stay in a hostile environment.
@@ -487,19 +490,18 @@ binom.test(x=f,n=f+g,p=0.5)
 
 ---
 
-### Conclusie
+### Conclusion
 
 - We conclude that the partner choice is extremely signficantly associated with the environment ($p<0.001$).
-- The probability on chosing an agressive male is on average `r format(riskdiff*100,digits=3)`% higher if a female hamster resides in a hostile environment than when she resides in a friendly environment (95% CI [`r paste(format(ci*100,digits=3),collapse=",")`]%).
+- The probability on choosing an agressive male is on average `r format(riskdiff*100,digits=3)`% higher when a female hamster resides in a hostile environment than when she resides in a friendly environment (95% CI [`r paste(format(ci*100,digits=3),collapse=",")`]%).
 
 ---
 
 # Unpaired observations
 ## Genetic association study
 
-- Are genetic polymorphisms in the BRCA1 gene associated with breastcancer?
-- Retrospective case-control study with 800 breastcancer cases en 572 controls
-- R object stored in `brca.rda`
+- Are genetic polymorphisms in the BRCA1 gene associated with breast cancer?
+- Retrospective case-control study with 800 breast cancer cases en 572 controls
 
 ```{r}
 brca<-read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/brca.csv")
@@ -509,7 +511,7 @@ summary(brca)
 
 ---
 
-```{r}
+```{r echo=FALSE}
 brcaHlp <- data.frame(Genotype=c("Pro/Pro","Pro/Leu","Leu/Leu","Totaal"),Control=c("266 (a)","250 (b)","56 (c)","572 (a+b+c)"),Cases=c("342 (d)","369 (e)","89 (f)","800 (d+e+f)"),Total=c("608 (a+d)","619 (b+e)","145 (c+f)","1372 (n)"))
 knitr::kable(brcaHlp,
   booktabs = TRUE
@@ -518,7 +520,7 @@ knitr::kable(brcaHlp,
 
 - In case-control study one chooses a fixed number of cases and controls and registers which exposures they had in the past.
 - Retrospective study
-- Impossible to assess risks and risk-differences on breastcancer because the proportion of cases and controls does not reflect that in the population!
+- Impossible to assess risks and risk-differences on breast cancer because the proportion of cases and controls does not reflect that in the population!
 
 ---
 
@@ -533,8 +535,8 @@ knitr::kable(brcaHlp,
     - cases: $\pi_1=f/(d+e+f)=89/800=11.1\%$
     - controls:$\pi_0=c/(a+b+c)=56/572=9.8\%$
 - Relative risk on exposure for cases versus controls is $11.1/9.8=1.14$.
-- Women with breast cancer have a probability on the Leu/Leu genotype that is 14% higher than than of women without borstkanker.
-- It suggests an association, but it does not let us conclude how much higher the risk is on breastcancer for women with the Leu/Leu genotype as compared to the other women. 
+- The probability on the Leu/Leu genotype is 14% higher for women with breast cancer than for women without borstkanker.
+- It suggests an association, but it does not let us conclude how much higher the risk is on breast cancer for women with the Leu/Leu genotype as compared to the other women. 
 - Other statistic?
 
 ---
@@ -565,7 +567,7 @@ knitr::kable(brcaHlp,
 
 Odds on allel Leu/Leu
 
-- Cases: $\mbox{odds}_1=\frac{ f/(d+e+f)}{(d+e)/(d+e+f)}=f/(d+e)=89/711=0.125$. Women with breastcancer have a probability that is 8 times higher to have another allele combinantion than to have the double Leu/Leu variant of the BRCA gene.
+- Cases: $\mbox{odds}_1=\frac{ f/(d+e+f)}{(d+e)/(d+e+f)}=f/(d+e)=89/711=0.125$. The double Leu/Leu variant is 8 times less likely than other allele combinations in the breast cancer cases
 - Controls: $\mbox{odds}_2=c/(a+b)=56/516=0.109$.
 
 - Association between exposure and outcome:
@@ -589,7 +591,7 @@ OR_{case}=\frac{ \frac{ f}{c}}{ \frac{(d+e)}{(a+b)}} = \frac{f(a+b)}{c(d+e)}=OR_
 \end{equation*}
 - OR is a symmetric statistic! 
 - OR on borstcancer can be estimated!
-- the odds on borstcancer is 15% higher for women with this specific allele combination.
+- The odds on borstcancer is 15% higher for women with this specific allele combination.
 
 ---
 
@@ -599,7 +601,8 @@ OR_{case}=\frac{ \frac{ f}{c}}{ \frac{(d+e)}{(a+b)}} = \frac{f(a+b)}{c(d+e)}=OR_
 
 ```{r leu4, tidy=FALSE,echo=FALSE}
 brcaTab2 <- table(brca$variant2,brca$cancer)
-brcaHlp2=data.frame(Genotype=c("other","Leu/Leu","Total"),Controls=c("516 (a)","56 (b)","572 (a+b)"),Cases=c("711 (c)","89 (d)","800 (c+d)"),Totaal=c("1227 (a+c)","145 (b+d)","1372 (n)"))
+brcaTab2 <- brcaTab2[2:1,]
+brcaHlp2 <- data.frame(Genotype=c("other","Leu/Leu","Total"),Controls=c("516 (a)","56 (b)","572 (a+b)"),Cases=c("711 (c)","89 (d)","800 (c+d)"),Totaal=c("1227 (a+c)","145 (b+d)","1372 (n)"))
 knitr::kable(brcaHlp2,
   booktabs = TRUE
 )
@@ -610,16 +613,16 @@ knitr::kable(brcaHlp2,
 ## Pearson Chi-square test for independent samples
 
 - Test association between categorical exposure(e.g. variant, X) en categorical response (e.g. disease, Y).
-$$H_0: \text{Er is no association between } X \text{ and } Y \text{ vs } H_1: X \text{ and } Y \text{ are associated}$$
+$$H_0: \text{There is no association between } X \text{ and } Y \text{ vs } H_1: X \text{ and } Y \text{ are associated}$$
 
 - Consider row totals $n_\text{other}=a+c$, $n_\text{leu,leu}=b+d$ and
-- columntotals $n_\text{contr}=a+b$ en $n_\text{case}=c+d$.
+- column totals $n_\text{contr}=a+b$ en $n_\text{case}=c+d$.
 - They give information on *marginal distribution* of the exposure (variant, X) and outcome (disease, Y),
 but not on the association between these variables.
-- Under $H_0$ $X$ and $Y$ are independent and one expects the proportie $(b+d)/n$
-of the $a+b$ controls to have a Leu/Leu variant, or that $(a+b)(b+d)/n$ of them has a Leu/Leu variant 
+- Under $H_0$ $X$ and $Y$ are independent and one expects  that $(b+d)/n$
+of the $a+b$ controls have a Leu/Leu variant, or that $(a+b)(b+d)/n$ of them has a Leu/Leu variant 
 - We can calculate this expected number $E_{ij}$ under the null hypothesis for *each cell* of the $2 
-times 2$ table.
+\times 2$ table.
 
 ---
 
@@ -655,7 +658,7 @@ legend("topright",lty=1,lwd=2,col=1:3,legend=sapply(dfs, function(d) as.expressi
 
 ---
 
-- A large value of the test statistic give an indication that the null hypothesis is false.
+- A large value of the test statistic gives an indication that the null hypothesis is false.
 - The test will reject $H_0$ at the $\alpha 100\%$
 significance level as soon as the observed test-statistic is larger than the $100\%(1-\alpha)$-quantile, $\chi^2_{1,
 \alpha}$, of the $\chi^2_1$-distribution.
@@ -678,15 +681,15 @@ x2 <- sum((abs(brcaTab2-expected) - .5)^2/expected)
 
 ---
 
-- Because $O_{ij}$ are discrete values, the $X^2$ can only take discrete values and the continuous slechts $\chi^2_1$-distribution is only an approximation of the real distribution. 
+- Because $O_{ij}$ are discrete values, the $X^2$ can only take discrete values and the continuouss $\chi^2_1$-distribution is only an approximation of the real distribution. 
 - To improve the approximation one substracts 0.5 from the value in each cell: 
 *continuity-correction*
-- *Pearson Chi-squared test with Yates correction*.
-- When the correction is not used (i.e. when the values of `0.5' in the estimator $X^2$ are replaced) we use the *Pearson Chi-kwadraat toets*.
+- We refer to this test as *Pearson Chi-squared test with Yates correction*.
+- When the correction is not used (i.e. when the values of `0.5' in the estimator $X^2$ are replaced) we use the *Pearson Chi-squared test*.
 
 ---
 
-In R you can switch the correction on or of by setting the argument \texttt{correct} on TRUE or FALSE, respectively:
+In R you can switch the correction on or off by setting the argument `correct` on TRUE or FALSE, respectively:
 
 ```{r}
 chisq.test(brcaTab2)
@@ -708,12 +711,12 @@ fisher.test(brcaTab2)
 
 ## Extension to categorical variables with multiple levels
 
-- $\chi^2$-test can also be used if one of the categorical variables $X$ and $Y$ has more then 2 levels
+- The $\chi^2$-test can also be used if one of the categorical variables $X$ and $Y$ has more than 2 levels
 
-- Again: the null hypothesis $H_0: X$ and $Y$ are independent (not asociated), against the alternative $H_A: X$ and $Y$
+- Again: the null hypothesis $H_0$: $X$ and $Y$ are independent (not associated), against the alternative $H_A: X$ and $Y$
 are associated.
 
-- Let the variable in the rows have $r$ possible different outcomes and the one in the columns $c$ possible outcomes, then we obtain an $r \times c$ table.
+- Let the variable in the rows have $r$ different possible outcomes and the one in the columns $c$ possible outcomes, then we obtain an $r \times c$ table.
 
 - Again we will compare the observed values in  cell $(i,j)$, referred to as $O_{ij}$, with the expected number under $H_0$, $E_{ij}$
  - Again $E_{ij}$ is the product of the $i^\text{th}$ row-total and the $j^\text{th}$ column total devided by the overall total.
@@ -738,17 +741,17 @@ chisq.test(brcaTab)
 ```
 
 - To assess if the variant of the BRCA1 gene is associated with breast cancer we conducted a  Pearson $\chi^2$test for the $3 \times 2$ table.
-- The statistic is now `r format(chisq.test(brcaTab)$statistic,digits=4)` and follows a $\chi^2$ distribution with `r chisq.test(brcaTab)$parameter` degrees of freedom under $H_0$. The probability to obtain a $\chi^2$-test statistic in a random sample uner $H_0$ that is more extreme than `r format(chisq.test(brcaTab)$statistic,digits=4)`, is`r format(chisq.test(brcaTab)$p.value*100,digits=2)`%.
-- On the 5% level of significance we conclude that the variant of the BRCA-gene is not associated with breastcancer. 
+- The statistic is now `r format(chisq.test(brcaTab)$statistic,digits=4)` and follows a $\chi^2$ distribution with `r chisq.test(brcaTab)$parameter` degrees of freedom under $H_0$. The probability to obtain a $\chi^2$-test statistic in a random sample under $H_0$ that is more extreme than `r format(chisq.test(brcaTab)$statistic,digits=4)`, is `r format(chisq.test(brcaTab)$p.value*100,digits=2)`%.
+- On the 5% level of significance we conclude that the variant of the BRCA-gene is not associated with breast cancer. 
 
 ---
 
 # Logistic regression
 
-- Framework to model binairy data (e.g cancer vs no cancer): *logistic regression model*.
-- Model binair data with continuous and/or dummy variables.
+- Framework to model binary data (e.g cancer vs no cancer): *logistic regression model*.
+- Model binary data with continuous and/or dummy variables.
 
-- The models assume that observations for subject $i=1,\ldots,n$ are independent and follow a Bernoulli distribution.
+- The model assumes that observations for subject $i=1,\ldots,n$ are independent and follow a Bernoulli distribution.
 - The logarithm of the odds is modelled using a linear model, also referred to as linear predictor:
 \begin{equation}
 \left\{
@@ -762,7 +765,7 @@ Y_i&\sim&B(\pi_i)\\\\
 
 ## Categorical predictor
 
-- Breastcancer example: is BRCA 1  variant associated with breastcancer.
+- breast cancer example: is BRCA 1  variant associated with breast cancer.
 
 - As in the Anova context, a factor in logistic regression is coded using dummy variables.
 - 1 dummy variable less than the number of groups.
@@ -772,8 +775,6 @@ Y_i&\sim&B(\pi_i)\\\\
 \begin{eqnarray*}
   \log \frac{\pi_i}{1-\pi_i} &=& \beta_0+\beta_1 x_{i1} +\beta_2 x_{i2}
 \end{eqnarray*}
-
----
 
 - with :
 $$x_{i1} = \left\{ \begin{array}{ll}
@@ -787,13 +788,17 @@ $$x_{i2} = \left\{ \begin{array}{ll}
 
 ---
 
-We fit the model in R:
+We fit the model in R.
+
+- Note that we use the function `as.factor` to convert the cancer variable to a factor variable. - We further use the function `relevel` to specify the control treatment as the reference group.  
 ```{r}
+brca$cancer<-brca$cancer %>% as.factor %>% relevel("control")
+brca$variant<-brca$variant %>% as.factor %>% relevel("pro/pro")
 brcaLogit <- glm(cancer~variant,data=brca,family=binomial)
 summary(brcaLogit)
 ```
 
-The intercept is the log-odds on cancer in the reference class (Pro/Pro) and the slope terns are  log odds ratios between treatment and reference class:
+The intercept is the log-odds on cancer in the reference class (Pro/Pro) and the slope terms are  log odds ratios between treatment and reference class:
 \begin{eqnarray*}
 \log \text{ODDS}_\text{Pro/Pro}&=&\beta_0\\\\
 \log \text{ODDS}_\text{Pro/Leu}&=&\beta_0+\beta_1\\\\
@@ -803,7 +808,7 @@ The intercept is the log-odds on cancer in the reference class (Pro/Pro) and the
 \log  \frac{\text{ODDS}_\text{Leu/Leu}}{\text{ODDS}_\text{Pro/Pro}}&=&\beta_2
 \end{eqnarray*}
 
-- The analysis allows us to interpret the result immediately in oddses and odds-ratios!
+- The analysis allows us to interpret the result immediately in oddses and odds ratios!
 
 ---
 
@@ -811,14 +816,16 @@ The intercept is the log-odds on cancer in the reference class (Pro/Pro) and the
 anova(brcaLogit,test="Chisq")
 ```
 
-The $\chi^2$-test on the logsitic regression model also indicates that there is no significant association between outcome (cancer status) and factor (genetic variant of the BRCA gene) ($p=$ `r format(anova(brcaLogit,test="Chisq")[2,"Pr(>Chi)"],digits=3)`).
-De p-value is almost equivalent to the one of the  $\chi^2$-test in the previous section.
+The $\chi^2$-test on the logsitic regression model also indicates that there is no significant association between cancer status and the genetic variant of the BRCA gene ($p=$ `r format(anova(brcaLogit,test="Chisq")[2,"Pr(>Chi)"],digits=3)`).
+De p-value is almost equivalent to the one of the  $\chi^2$-test (see previous section).
 
 ---
 
-- Significant association? Post-hoc tests to evaluate which of the odds ratios are different from 1.
-- For BRCA1 example we did not reject the omnibus hypothesis so no post-hoc analysis
-- For your reference we include the post hoc analysis so that you would have the code. 
+- Significant association? 
+
+    - Post-hoc tests to evaluate which of the odds ratios are different from 1.
+    - For BRCA1 example we did not reject the omnibus hypothesis so no post-hoc analysis
+    - For your reference we include the post hoc analysis so that you would have the code. 
 
 ---
 
@@ -832,8 +839,8 @@ posthocTests
 ---
 
 ```{r}
-posthocBI <- confint(posthoc)
-posthocBI
+posthocCI <- confint(posthoc)
+posthocCI
 ```
 - With the `confint` function CI are obtained on the log-odds ratios corrected for multiple testing.
 
@@ -842,7 +849,7 @@ posthocBI
 - CI's can be backtransformed to odds ratios:
 
 ```{r}
-OR <- exp(posthocBI$confint)
+OR <- exp(posthocCI$confint)
 OR
 ```
 
@@ -853,7 +860,7 @@ OR
 
 ---
 
-## Continuous predictor
+## Continuous Predictor
 
 - Toxicolocal effect of carbon disulfite (CS$_2$) on beatles.
 - Research hypothesis is there an effect of the  CS$_2$ concentration on the mortality of beatles?
@@ -861,12 +868,12 @@ OR
 ##Design##
 - 32 independent experiments
 - Each time 1 beatle is exposed to one of 8 CS$_2$ concentrations (mg/l).
-- The outcole: mortality ($y=1$) or survival ($y=0$).
+- The outcome: mortality ($y=1$) or survival ($y=0$).
 
 ```{r}
-beatles<-read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/datadata/beatles.csv")
+beatles<-read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/beatles.csv")
 head(beatles)
-table(beatle$dose,beatle$status)
+table(beatles$dose,beatles$status)
 ```
 
 ---
@@ -875,7 +882,7 @@ We build a model for the log odds in function of the dose $x_i$:
 $$\log \frac{\pi_i}{1-\pi_i}=\beta_0+\beta_1 \times x_i.$$
 
 ```{r}
-beatleModel<-glm(status~dose,data=beatle,family=binomial)
+beatleModel<-glm(status~dose,data=beatles,family=binomial)
 summary(beatleModel)
 ```
 
@@ -887,7 +894,7 @@ summary(beatleModel)
 
 
 - Estimated odds ratio for the effect of dose on the mortality probability is $\exp(0.3013)=1.35$.
-- So beatles expose to a CS$_2$ concentration that is 1 mg/l large, will on average have an odds ratio on mortality of $1.35$.
+- So a beatle exposed to a CS$_2$ concentration that is 1 mg/l larger than another beatle, will on average have an odds ratio on mortality of $1.35$.
 
 ---
 
@@ -896,23 +903,17 @@ summary(beatleModel)
 
 
 ```{r}
-data.frame(grid=seq(min(beatle$dose),max(beatle$dose),.1)) %>% 
+
+beatlesTab<-table(beatles) %>% data.frame
+
+data.frame(grid=seq(min(beatles$dose),max(beatles$dose),.1)) %>% 
   mutate(piHat=predict(beatleModel,
-	      newdata=data.frame(dose=doseGrid),
+	      newdata=data.frame(dose=grid),
 	      type="response")) %>% 
   ggplot(aes(grid,piHat))+
   geom_line() +
-  xlab="dose" +
-  ylab="probability (dead)" 
-```
-
----
-
-```{r,echo=FALSE}
-plot(doseGrid, piHat, type="l",ylim=c(0,1), xlab="dose", ylab="Prob(dood)",cex.lab=1.5,cex.axis=1.5)
-#because we observe multiple beatles per dose,
-#we calculate how manu beatles survived for each dose
-#and we add this to the plot
-text(as.double(rownames(tabbeatles)),0,labels=tabbeatles[,1],cex=1.5)
-text(as.double(rownames(tabbeatles)),1,labels=tabbeatles[,2],cex=1.5)
+  xlab("dose") +
+  ylab("probability (dead)") +
+  geom_text(aes(x=dose%>%as.character%>%as.double,y=status%>%as.character%>%as.double,label=Freq),beatlesTab%>%filter(status==0)) +
+geom_text(aes(x=dose%>%as.character%>%as.double,y=status%>%as.character%>%as.double,label=Freq),beatlesTab%>%filter(status==1))
 ```
