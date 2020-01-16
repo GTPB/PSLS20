@@ -502,15 +502,15 @@ binom.test(x=f,n=f+g,p=0.5)
 - R object stored in `brca.rda`
 
 ```{r}
-load("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/brca.rda")
+brca<-read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/brca.csv")
 head(brca)
 summary(brca)
 ```
 
 ---
 
-```{r, tidy=FALSE,echo=FALSE}
-brcaHlp=data.frame(Genotype=c("Pro/Pro","Pro/Leu","Leu/Leu","Totaal"),Control=c("266 (a)","250 (b)","56 (c)","572 (a+b+c)"),Cases=c("342 (d)","369 (e)","89 (f)","800 (d+e+f)"),Total=c("608 (a+d)","619 (b+e)","145 (c+f)","1372 (n)"))
+```{r}
+brcaHlp <- data.frame(Genotype=c("Pro/Pro","Pro/Leu","Leu/Leu","Totaal"),Control=c("266 (a)","250 (b)","56 (c)","572 (a+b+c)"),Cases=c("342 (d)","369 (e)","89 (f)","800 (d+e+f)"),Total=c("608 (a+d)","619 (b+e)","145 (c+f)","1372 (n)"))
 knitr::kable(brcaHlp,
   booktabs = TRUE
 )
@@ -523,54 +523,52 @@ knitr::kable(brcaHlp,
 ---
 
 ```{r, tidy=FALSE,echo=FALSE}
-brcaHlp=data.frame(Genotype=c("Pro/Pro","Pro/Leu","Leu/Leu","Totaal"),Controles=c("266 (a)","250 (b)","56 (c)","572 (a+b+c)"),Cases=c("342 (d)","369 (e)","89 (f)","800 (d+e+f)"),Totaal=c("608 (a+d)","619 (b+e)","145 (c+f)","1372 (n)"))
+brcaHlp=data.frame(Genotype=c("Pro/Pro","Pro/Leu","Leu/Leu","Totaal"),Controls=c("266 (a)","250 (b)","56 (c)","572 (a+b+c)"),Cases=c("342 (d)","369 (e)","89 (f)","800 (d+e+f)"),Total=c("608 (a+d)","619 (b+e)","145 (c+f)","1372 (n)"))
 knitr::kable(brcaHlp,
   booktabs = TRUE
 )
 ```
 
-- Wel mogelijk om kans te schatten om allel Leu/Leu
+- Is possible to assess probability on allel Leu/Leu
     - cases: $\pi_1=f/(d+e+f)=89/800=11.1\%$
-    - controles:$\pi_0=c/(a+b+c)=56/572=9.8\%$
-- Relatief risico op blootstelling voor cases versus
-controles is bijgevolg $11.1/9.8=1.14$.
-- Vrouwen met borstkanker hebben dus 14% meer kans om de allelcombinatie Leu/Leu te hebben op het BRCA1 gen dan vrouwen zonder borstkanker.
-- Dit suggereert een associatie, maar drukt iet uit hoeveel hoger het risico op borstkanker is voor vrouwen met de allelcombinatie Leu/Leu dan voor andere vrouwen
-- Andere risicomaat?
+    - controls:$\pi_0=c/(a+b+c)=56/572=9.8\%$
+- Relative risk on exposure for cases versus controls is $11.1/9.8=1.14$.
+- Women with breast cancer have a probability on the Leu/Leu genotype that is 14% higher than than of women without borstkanker.
+- It suggests an association, but it does not let us conclude how much higher the risk is on breastcancer for women with the Leu/Leu genotype as compared to the other women. 
+- Other statistic?
 
 ---
 
 \begin{equation*}
 Odds=\frac{p}{1-p}
 \end{equation*}
-waarbij $p$ de kans is op die gebeurtenis.
+with $p$ the probability on the event.
 
-Transformatie van het risico, met volgende eigenschappen:
+Transformation of risk with following properties:
 
-  - de odds neemt waarden aan tussen nul en oneindig.
+  - odds has value between 1 and $\infty$.
 
-  - de odds is gelijk aan 1 als en slechts als de kans zelf gelijk is aan
-1/2.
+  - odds only equals 1 for probability $p=1/2$.
 
-  - de odds neemt toe als de kans toeneemt.
+  - de odds increases if probability increases.
 
-- populair bij gokkers: hoeveel waarschijnlijker het is om te winnen dan om te verliezen
+- popular in gambling: how much more likely is it to win than to loose
 
 ---
 
 ```{r, tidy=FALSE,echo=FALSE}
-brcaHlp=data.frame(Genotype=c("Pro/Pro","Pro/Leu","Leu/Leu","Totaal"),Controles=c("266 (a)","250 (b)","56 (c)","572 (a+b+c)"),Cases=c("342 (d)","369 (e)","89 (f)","800 (d+e+f)"),Totaal=c("608 (a+d)","619 (b+e)","145 (c+f)","1372 (n)"))
+brcaHlp=data.frame(Genotype=c("Pro/Pro","Pro/Leu","Leu/Leu","Totaal"),Controls=c("266 (a)","250 (b)","56 (c)","572 (a+b+c)"),Cases=c("342 (d)","369 (e)","89 (f)","800 (d+e+f)"),Total=c("608 (a+d)","619 (b+e)","145 (c+f)","1372 (n)"))
 knitr::kable(brcaHlp,
   booktabs = TRUE
 )
 ```
 
-Odds op allel Leu/Leu
+Odds on allel Leu/Leu
 
-- Cases: $\mbox{odds}_1=\frac{ f/(d+e+f)}{(d+e)/(d+e+f)}=f/(d+e)=89/711=0.125$. Vrouwen met borstkanker hebben ongeveer 8 keer meer kans om de allelcombinatie Leu/Leu niet te hebben op het BRCA1 gen dan om het wel te hebben.
-- Controles: $\mbox{odds}_2=c/(a+b)=56/516=0.109$.
+- Cases: $\mbox{odds}_1=\frac{ f/(d+e+f)}{(d+e)/(d+e+f)}=f/(d+e)=89/711=0.125$. Women with breastcancer have a probability that is 8 times higher to have another allele combinantion than to have the double Leu/Leu variant of the BRCA gene.
+- Controls: $\mbox{odds}_2=c/(a+b)=56/516=0.109$.
 
-- Associatie tussen blootstelling en uitkomst:
+- Association between exposure and outcome:
 $$
 OR_{Leu/Leu}=\frac{\mbox{odds}_T}{\mbox{odds}_C}= \frac{f/(d+e)}{c/(a+b)}=\frac{f/(d+e)}{c/(a+b)}=1.15
 $$
@@ -579,31 +577,29 @@ $$
 
 
 ```{r, tidy=FALSE,echo=FALSE}
-brcaHlp=data.frame(Genotype=c("Pro/Pro","Pro/Leu","Leu/Leu","Totaal"),Controles=c("266 (a)","250 (b)","56 (c)","572 (a+b+c)"),Cases=c("342 (d)","369 (e)","89 (f)","800 (d+e+f)"),Totaal=c("608 (a+d)","619 (b+e)","145 (c+f)","1372 (n)"))
+brcaHlp=data.frame(Genotype=c("Pro/Pro","Pro/Leu","Leu/Leu","Totaal"),Controls=c("266 (a)","250 (b)","56 (c)","572 (a+b+c)"),Cases=c("342 (d)","369 (e)","89 (f)","800 (d+e+f)"),Total=c("608 (a+d)","619 (b+e)","145 (c+f)","1372 (n)"))
 knitr::kable(brcaHlp,
   booktabs = TRUE
 )
 ```
 
-- Was de bovenstaande studie echter een volledig lukrake steekproef geweest
-(waarbij het aantal cases en controles niet per design werden vastgelegd),
-- dan konden we daar ook de odds ratio op borstkanker berekenen voor mensen
-met versus zonder het allel Leu/leu.
+- If the study would have been a random sample of the population (number of cases and controls not fixed by design) then we would be able to calculate the odds ratio on breast cancer for people with and without the double Leu/leu variant.
 \begin{equation*}
 OR_{case}=\frac{ \frac{ f}{c}}{ \frac{(d+e)}{(a+b)}} = \frac{f(a+b)}{c(d+e)}=OR_{Leu/Leu}=1.15,
 \end{equation*}
-- OR is een symmetrische maat! OR op borstkanker kan wel worden geschat!
-- De odds op borstkanker is bijgevolg 15% hoger bij vrouwen met die specifieke allelcombinatie.
+- OR is a symmetric statistic! 
+- OR on borstcancer can be estimated!
+- the odds on borstcancer is 15% higher for women with this specific allele combination.
 
 ---
 
-- Is verschil groot genoeg zodat we het effect die we in de steekproef zien kunnen veralgemenen naar de populatie toe.
+- Is the difference large enough to generalize the effect in the sample towards the population? 
 
-- Hiertoe zullen we de kruistabel eerst herschrijven tot een 2x2 tabel
+- We will first rewrite the data in a 2x2 table
 
 ```{r leu4, tidy=FALSE,echo=FALSE}
 brcaTab2 <- table(brca$variant2,brca$cancer)
-brcaHlp2=data.frame(Genotype=c("andere","Leu/Leu","Totaal"),Controles=c("516 (a)","56 (b)","572 (a+b)"),Cases=c("711 (c)","89 (d)","800 (c+d)"),Totaal=c("1227 (a+c)","145 (b+d)","1372 (n)"))
+brcaHlp2=data.frame(Genotype=c("other","Leu/Leu","Total"),Controls=c("516 (a)","56 (b)","572 (a+b)"),Cases=c("711 (c)","89 (d)","800 (c+d)"),Totaal=c("1227 (a+c)","145 (b+d)","1372 (n)"))
 knitr::kable(brcaHlp2,
   booktabs = TRUE
 )
@@ -611,30 +607,31 @@ knitr::kable(brcaHlp2,
 
 ---
 
-## 8.3.3. De Pearson Chi-kwadraat test voor ongepaarde gegevens
+## Pearson Chi-square test for independent samples
 
-- Testen voor associatie tussen de categorische blootstelling (bvb. variant, X) en de categorische uitkomst (bvb. ziekte, Y).
-$$H_0: \text{Er is geen associatie tussen } X \text{ en } Y \text{ vs } H_1: X \text{ en } Y \text{ zijn geassocieerd}$$
+- Test association between categorical exposure(e.g. variant, X) en categorical response (e.g. disease, Y).
+$$H_0: \text{Er is no association between } X \text{ and } Y \text{ vs } H_1: X \text{ and } Y \text{ are associated}$$
 
-- Beschouw de rijtotalen $n_\text{andere}=a+c$, $n_\text{leu,leu}=b+d$ enerzijds en
-- de kolomtotalen $n_\text{contr}=a+b$ en $n_\text{case}=c+d$ anderzijds.
-- Zij verstrekken informatie over de *marginale verdeling* van de blootstelling (bvb. variant, X) en de uitkomst (bvb. ziekte, Y),
-maar niet over de associatie tussen die veranderlijken.
-- Onder $H_0$ zijn $X$ en $Y$ onafhankelijk zijn en verwacht men een proportie $(b+d)/n$
-van $a+b$ controles met een Leu/Leu variant, of dat $(a+b)(b+d)/n$ een Leu/Leu variant hebben
-- Analoog kan men verwachte aantal $E_{ij}$ berekenen dat onder de nulhypothese in *elke cel* van de $2\times 2$ tabel zou liggen.
+- Consider row totals $n_\text{other}=a+c$, $n_\text{leu,leu}=b+d$ and
+- columntotals $n_\text{contr}=a+b$ en $n_\text{case}=c+d$.
+- They give information on *marginal distribution* of the exposure (variant, X) and outcome (disease, Y),
+but not on the association between these variables.
+- Under $H_0$ $X$ and $Y$ are independent and one expects the proportie $(b+d)/n$
+of the $a+b$ controls to have a Leu/Leu variant, or that $(a+b)(b+d)/n$ of them has a Leu/Leu variant 
+- We can calculate this expected number $E_{ij}$ under the null hypothesis for *each cell* of the $2 
+times 2$ table.
 
 ---
 
-- $E_{11}$ = het verwachte aantal onder $H_0$ in de (1,1)-cel = `r sum(brcaTab2[1,])` $\times$ `r sum(brcaTab2[,1])`/`r sum(brcaTab2)` = `r format(sum(brcaTab2[1,])*sum(brcaTab2[,1])/sum(brcaTab2),digits=4)` ;
+- $E_{11}$ = Expected number under $H_0$ in  (1,1)-cell = `r sum(brcaTab2[1,])` $\times$ `r sum(brcaTab2[,1])`/`r sum(brcaTab2)` = `r format(sum(brcaTab2[1,])*sum(brcaTab2[,1])/sum(brcaTab2),digits=4)` ;
 
-- $E_{12}$ = het verwachte aantal onder $H_0$ in de (1,2)-cel = `r sum(brcaTab2[1,])` $\times$ `r sum(brcaTab2[,2])`/`r sum(brcaTab2)` = `r format(sum(brcaTab2[1,])*sum(brcaTab2[,2])/sum(brcaTab2),digits=4)` ;
+- $E_{12}$ = Expected number under $H_0$ in  (1,2)-cell = `r sum(brcaTab2[1,])` $\times$ `r sum(brcaTab2[,2])`/`r sum(brcaTab2)` = `r format(sum(brcaTab2[1,])*sum(brcaTab2[,2])/sum(brcaTab2),digits=4)` ;
 
-- $E_{21}$ = het verwachte aantal onder $H_0$ in de (2,1)-cel = `r sum(brcaTab2[2,])` $\times$ `r sum(brcaTab2[,1])`/`r sum(brcaTab2)` = `r format(sum(brcaTab2[2,])*sum(brcaTab2[,1])/sum(brcaTab2),digits=4)` ;
+- $E_{21}$ = Expected number under $H_0$ in  (2,1)-cell = `r sum(brcaTab2[2,])` $\times$ `r sum(brcaTab2[,1])`/`r sum(brcaTab2)` = `r format(sum(brcaTab2[2,])*sum(brcaTab2[,1])/sum(brcaTab2),digits=4)` ;
 
-- $E_{22}$ = het verwachte aantal onder $H_0$ in de (2,2)-cel = `r sum(brcaTab2[2,])` $\times$ `r sum(brcaTab2[,2])`/`r sum(brcaTab2)` = `r format(sum(brcaTab2[2,])*sum(brcaTab2[,2])/sum(brcaTab2),digits=4)` ;
+- $E_{22}$ = Expected number under $H_0$ in  (2,2)-cell = `r sum(brcaTab2[2,])` $\times$ `r sum(brcaTab2[,2])`/`r sum(brcaTab2)` = `r format(sum(brcaTab2[2,])*sum(brcaTab2[,2])/sum(brcaTab2),digits=4)` ;
 
-Toetsstatistiek:
+Test-statistic:
 \begin{eqnarray*}
 X^2 &=& \frac{\left (|O_{11} - E_{11}| - .5 \right)^2 }{ E_{11}} + \frac{
 \left ( |O_{12} - E_{12}| - .5 \right)^2 }{E_{12} }+ \\
@@ -647,10 +644,10 @@ X^2 &=& \frac{\left (|O_{11} - E_{11}| - .5 \right)^2 }{ E_{11}} + \frac{
 
 ---
 
-```{r, out.width='100%', fig.asp=.8, fig.align='center',echo=FALSE}
-grid=seq(0,10,.1)
+```{r echo=FALSE}
+grid <- seq(0,10,.1)
 plot(grid,dchisq(grid,1),type="l",lwd=2)
-dfs=c(1,2,5)
+dfs <- c(1,2,5)
 for (i in 2:3)
 	lines(grid,dchisq(grid,dfs[i]),col=i,lwd=2)
 legend("topright",lty=1,lwd=2,col=1:3,legend=sapply(dfs, function(d) as.expression(substitute(chi[df==val]^2,list(val=d)))))
@@ -658,20 +655,13 @@ legend("topright",lty=1,lwd=2,col=1:3,legend=sapply(dfs, function(d) as.expressi
 
 ---
 
-- Een grote waarde van de toetsingsgrootheid geeft een indicatie van een
-afwijking van de nulhypothese.
-- Concreet zal een toets op het $\alpha 100\%$
-significantieniveau de nulhypothese verwerpen zodra de geobserveerde waarde
-van de toetsingsgrootheid het $100\%(1-\alpha)$-percentiel, $\chi^2_{1,
-\alpha}$, van de $\chi^2_1$-verdeling overschrijdt.
-- Ze kan niet verwerpen in
-het andere geval.
-- De p-waarde voor een 2-zijdige toets is in dit geval de
-kans om een grotere waarde voor de toetsingsgrootheid te observeren dan de
-geobserveerde waarde $x^2$ als de nulhypothese waar is.
-- Dit is de kans dat
-een $\chi^2_1$-verdeelde toevalsveranderlijke waarden groter dan $x^2$
-aanneemt.
+- A large value of the test statistic give an indication that the null hypothesis is false.
+- The test will reject $H_0$ at the $\alpha 100\%$
+significance level as soon as the observed test-statistic is larger than the $100\%(1-\alpha)$-quantile, $\chi^2_{1,
+\alpha}$, of the $\chi^2_1$-distribution.
+- Otherwise we do not reject $H_0$.
+- The p-value of a 2-sided test is the probability to observe a larger test-statistic in a random sample under the null than what we observed in our sample. 
+$$p=P_0[\chi^2_1 \geq x^2]$$.
 
 ---
 
@@ -688,25 +678,15 @@ x2 <- sum((abs(brcaTab2-expected) - .5)^2/expected)
 
 ---
 
-- Omdat de observaties $O_{ij}$ in feite discrete getallen zijn, kan de
-toetsingsgrootheid $X^2$ slechts discrete waarden aannemen en kan een
-continue verdeling zoals de $\chi^2_1$-verdeling slechts een benadering zijn
-voor haar werkelijke verdeling.
-- Om de discrete verdeling beter bij de
-continue $\chi^2_1$-verdeling te doen aansluiten, heeft men in de
-uitdrukking van de toetsingsgrootheid voor elke cel telkens 0.5 afgetrokken.
-- Dit wordt een
-*continu??teitscorrectie* genoemd.
-- In dit geval gaat het om de
-correctie van Yates en noemt men deze toets dan ook de *Pearson
-Chi-kwadraat toets met Yates correctie*.
-- Wanneer de correctie niet gebruikt
-wordt (d.w.z. wanneer de getallen `0.5' in de uitdrukking voor $X^2$ door 0
-vervangen worden), dan spreekt men van de *Pearson Chi-kwadraat toets*.
+- Because $O_{ij}$ are discrete values, the $X^2$ can only take discrete values and the continuous slechts $\chi^2_1$-distribution is only an approximation of the real distribution. 
+- To improve the approximation one substracts 0.5 from the value in each cell: 
+*continuity-correction*
+- *Pearson Chi-squared test with Yates correction*.
+- When the correction is not used (i.e. when the values of `0.5' in the estimator $X^2$ are replaced) we use the *Pearson Chi-kwadraat toets*.
 
 ---
 
-In R kan je deze toetsen uitvoeren door de optie \texttt{correct} op TRUE of FALSE te zetten:
+In R you can switch the correction on or of by setting the argument \texttt{correct} on TRUE or FALSE, respectively:
 
 ```{r}
 chisq.test(brcaTab2)
@@ -715,13 +695,9 @@ chisq.test(brcaTab2,correct=FALSE)
 
 ---
 
-- Zelfs met continu??teitscorrectie is $\chi^2_1$ benadering slechts
-verantwoord als in geen enkele van de cellen het verwachte aantal onder
-$H_0$ kleiner is dan 5.
-- Wanneer de $\chi^2$-benadering niet verantwoord is, kan men een  *Fisher's exact test* uitvoeren.
--  De nulhypothese van deze test is eveneens dat $X$ en $Y$ onafhankelijk zijn, en de alternatieve hypothese dat $X$ en $Y$
-afhankelijk zijn.
-- Een nadeel van de exacte test, is dat ze conservatiever is
+- Even with the $\chi^2_1$ correction the approximation is only valid if non of the cells has an expected count below 5 under $H_0$.
+- When the $\chi^2$-approximation is invalid we will use *Fisher's exact test*.
+-  Null hypothesis is also that $X$ and $Y$ are independent, and, the alternative hypothesis that $X$ and $Y$ are dependent.
 
 ```{r}
 fisher.test(brcaTab2)
@@ -730,19 +706,17 @@ fisher.test(brcaTab2)
 ---
 
 
-### 8.3.3.1. Uitbreiding naar categorische variabelen met meerdere niveaus
+## Extension to categorical variables with multiple levels
 
-- $\chi^2$-toets kan ook als minstens 1 van de discrete variabelen $X$ en $Y$ meer dan 2 mogelijke waarden aanneemt
+- $\chi^2$-test can also be used if one of the categorical variables $X$ and $Y$ has more then 2 levels
 
-- Opnieuw: nulhypothese $H_0: X$ en $Y$ zijn onafhankelijk (niet-geassocieerd), ten opzichte van het tweezijdig alternatief $H_A: X$ en $Y$
-zijn niet onafhankelijk (geassocieerd).
+- Again: the null hypothesis $H_0: X$ and $Y$ are independent (not asociated), against the alternative $H_A: X$ and $Y$
+are associated.
 
-- Als de variabele voorgesteld op de rijen $r$ mogelijke uitkomsten heeft en die op de kolommen $c$ mogelijke uitkomsten,
-dan noemt men de kruistabel die $X$ tegenover $Y$ uitzet, een $r \times c$ tabel.
+- Let the variable in the rows have $r$ possible different outcomes and the one in the columns $c$ possible outcomes, then we obtain an $r \times c$ table.
 
-- Zoals voorheen vergelijkt men het aantal geobserveerde waarden in cel $(i,j)$, $O_{ij}$ genoteerd, met het aantal verwachte waarden onder de nulhypothese, $E_{ij}$
- -Opnieuw is $E_{ij}$ product van het $i$-de rijtotaal met het $j$-de
-kolomtotaal gedeeld door het algemene totaal.
+- Again we will compare the observed values in  cell $(i,j)$, referred to as $O_{ij}$, with the expected number under $H_0$, $E_{ij}$
+ - Again $E_{ij}$ is the product of the $i^\text{th}$ row-total and the $j^\text{th}$ column total devided by the overall total.
 
 \begin{equation*}
 X^2 = \sum_{ij} \frac{\left (O_{ij} - E_{ij}\right)^2 }{ E_{ij}}
@@ -750,11 +724,10 @@ X^2 = \sum_{ij} \frac{\left (O_{ij} - E_{ij}\right)^2 }{ E_{ij}}
 
 ---
 
-- Men kan aantonen dat ze een Chi-kwadraat verdeling volgt met $(r-1) \times
-(c-1)$ vrijheidsgraden als de nulhypothese waar is.
-- De continu??teitscorrectie wordt meestal niet gebruikt bij meer dan 2 rijen of
-kolommen.
-- **Pearson $\chi^2$ test** is analogon van de one-way variantie-analyse voor kwalitatieve i.p.v. continue variabelen.
+- We can show that the statistic follows a $\chi^2$ distribution with $(r-1) \times
+(c-1)$ degrees of freedom under $H_0$.
+- No continuity correction
+- **Pearson $\chi^2$ test** is analogon of one-way ANOVA for qualitative variables.
 
 ---
 
@@ -764,19 +737,19 @@ brcaTab <- table(brca$variant,brca$cancer)
 chisq.test(brcaTab)
 ```
 
-- Om te onderzoeken of het BRCA1 gen geassocieerd is met borstkanker, berekenen we de Pearson chi-kwadraat toets voor de case-controle studie uit Tabel \@ref(tab:leu3).
-- De toetsingsgrootheid bedraagt nu `r format(chisq.test(brcaTab)$statistic,digits=4)` en volgt een Chi-kwadraat verdeling met `r chisq.test(brcaTab)$parameter` vrijheidsgraden. De kans dat zo???n $\chi^2$- verdeelde toevalsveranderlijke extremer is dan `r format(chisq.test(brcaTab)$statistic,digits=4)`, bedraagt `r format(chisq.test(brcaTab)$p.value*100,digits=2)`%.
-- Op het 5% significantieniveau kunnen we dus niet besluiten dat het BRCA1 gen geassocieerd is met borstkanker.
+- To assess if the variant of the BRCA1 gene is associated with breast cancer we conducted a  Pearson $\chi^2$test for the $3 \times 2$ table.
+- The statistic is now `r format(chisq.test(brcaTab)$statistic,digits=4)` and follows a $\chi^2$ distribution with `r chisq.test(brcaTab)$parameter` degrees of freedom under $H_0$. The probability to obtain a $\chi^2$-test statistic in a random sample uner $H_0$ that is more extreme than `r format(chisq.test(brcaTab)$statistic,digits=4)`, is`r format(chisq.test(brcaTab)$p.value*100,digits=2)`%.
+- On the 5% level of significance we conclude that the variant of the BRCA-gene is not associated with breastcancer. 
 
 ---
 
-# 8.4. Logistische regressie
+# Logistic regression
 
-- Raamwerk voor het modelleren van binaire data (vb. kanker vs geen kanker): *logistische regressie-modellen*.
-- Binaire gegevens modelleren a.d.h.v. continue en/of dummy variabelen.
+- Framework to model binairy data (e.g cancer vs no cancer): *logistic regression model*.
+- Model binair data with continuous and/or dummy variables.
 
-- De modellen veronderstellen dat de observaties voor subject $i=1,\ldots,n$ onafhankelijk zijn en een Bernoulli verdeling volgen.
-- Het logaritme van de odds wordt dan gemodelleerd d.m.v. een lineair model, ook wel lineaire predictor genoemd:
+- The models assume that observations for subject $i=1,\ldots,n$ are independent and follow a Bernoulli distribution.
+- The logarithm of the odds is modelled using a linear model, also referred to as linear predictor:
 \begin{equation}
 \left\{
 \begin{array}{ccl}
@@ -787,14 +760,14 @@ Y_i&\sim&B(\pi_i)\\\\
 
 ---
 
-## 8.4.1. Categorische predictor
+## Categorical predictor
 
-- Borstkanker voorbeeld: is BRCA 1 variant geassocieerd is met het krijgen van borstkanker.
+- Breastcancer example: is BRCA 1  variant associated with breastcancer.
 
-- Net zoals in de anova context, factor in het regressieraamwerk d.m.v. dummy variabelen.
-- 1 dummy variable minder nodig hebben dan er groepen zijn.
+- As in the Anova context, a factor in logistic regression is coded using dummy variables.
+- 1 dummy variable less than the number of groups.
 
-- Voor het BRCA 1 voorbeeld zijn dus twee dummy variabelen nodig en kunnen we de data dus modelleren met onderstaande lineaire predictor:
+- For BRCA 1 we need two dummy variables and obtain the following linear predictor:
 
 \begin{eqnarray*}
   \log \frac{\pi_i}{1-\pi_i} &=& \beta_0+\beta_1 x_{i1} +\beta_2 x_{i2}
@@ -802,25 +775,25 @@ Y_i&\sim&B(\pi_i)\\\\
 
 ---
 
-- Waarbij de predictoren dummy-variabelen zijn:
+- with :
 $$x_{i1} = \left\{ \begin{array}{ll}
-1 & \text{ als subject $i$ heterozygoot is, Pro/Leu variant} \\
-0 & \text{ als subject $i$ homozygoot is, (Pro/Pro of Leu/Leu variant)} \end{array}\right. .$$
+1 & \text{ if subject $i$ is heterozygous, Pro/Leu variant} \\
+0 & \text{if subject $i$ is homozygous, (Pro/Pro or Leu/Leu variant)} \end{array}\right. .$$
 $$x_{i2} = \left\{ \begin{array}{ll}
-1 & \text{ als subject $i$ homozygoot is in de Leucine mutatie: Leu/Leu } \\
-0 & \text{ als subject $i$ niet homozygoot is in de Leu/Leu variant} \end{array}\right. .$$
+1 & \text{ if subject $i$ is homozygous is the Leucine mutation: Leu/Leu } \\
+0 & \text{ of subject $i$ is not homozygous in the Leu/Leu variant} \end{array}\right. .$$
 
-- Homozygositeit in het wild type allel Pro/Pro wordt voor  dit model de **referentiegroep**.
+- Homozygosity in the  wild type allele Pro/Pro is the  **reference group**.
 
 ---
 
-Het model wordt als volgt in R gefit:
+We fit the model in R:
 ```{r}
 brcaLogit <- glm(cancer~variant,data=brca,family=binomial)
 summary(brcaLogit)
 ```
 
-Het intercept is de log-odds op kanker in de referentieklasse (Pro/Pro) en de hellingstermen zijn log odds ratio's tussen de behandeling en de referentieklasse:
+The intercept is the log-odds on cancer in the reference class (Pro/Pro) and the slope terns are  log odds ratios between treatment and reference class:
 \begin{eqnarray*}
 \log \text{ODDS}_\text{Pro/Pro}&=&\beta_0\\\\
 \log \text{ODDS}_\text{Pro/Leu}&=&\beta_0+\beta_1\\\\
@@ -830,7 +803,7 @@ Het intercept is de log-odds op kanker in de referentieklasse (Pro/Pro) en de he
 \log  \frac{\text{ODDS}_\text{Leu/Leu}}{\text{ODDS}_\text{Pro/Pro}}&=&\beta_2
 \end{eqnarray*}
 
-- De analyse laat dus toe om de resultaten onmiddellijk te interpreteren in termen van Odds'es en Odds-ratio's!
+- The analysis allows us to interpret the result immediately in oddses and odds-ratios!
 
 ---
 
@@ -838,15 +811,14 @@ Het intercept is de log-odds op kanker in de referentieklasse (Pro/Pro) en de he
 anova(brcaLogit,test="Chisq")
 ```
 
-De $\chi^2$-test op het logistische regressiemodel geeft eveneens aan dat er geen significante associatie is tussen de uitkomst (voorkomen van kanker) en de factor ( de genetische variant van het BRCA gen) ($p=$ `r format(anova(brcaLogit,test="Chisq")[2,"Pr(>Chi)"],digits=3)`).
-De p-waarde is bijna equivalent aan de p-waarde van de $\chi^2$-test uit de vorige sectie.
+The $\chi^2$-test on the logsitic regression model also indicates that there is no significant association between outcome (cancer status) and factor (genetic variant of the BRCA gene) ($p=$ `r format(anova(brcaLogit,test="Chisq")[2,"Pr(>Chi)"],digits=3)`).
+De p-value is almost equivalent to the one of the  $\chi^2$-test in the previous section.
 
 ---
 
-- Significante associatie? Post-hoc tests om te evalueren welke odds ratio's verschillend zijn.
-- Voor het BRCA1 voorbeeld zouden we uiteraard geen post-hoc testen
-- Toch illustratie zodat jullie over de code beschikken
-
+- Significant association? Post-hoc tests to evaluate which of the odds ratios are different from 1.
+- For BRCA1 example we did not reject the omnibus hypothesis so no post-hoc analysis
+- For your reference we include the post hoc analysis so that you would have the code. 
 
 ---
 
@@ -863,82 +835,84 @@ posthocTests
 posthocBI <- confint(posthoc)
 posthocBI
 ```
-- Door middel van de `confint` functie worden BI's verkregen op de log-odds ratios die gecorrigeerd zijn voor multiple testing.
+- With the `confint` function CI are obtained on the log-odds ratios corrected for multiple testing.
 
 ---
 
-- BI's kunnen als volgt worden teruggetransformeerd naar odds ratios:
+- CI's can be backtransformed to odds ratios:
 
 ```{r}
 OR <- exp(posthocBI$confint)
 OR
 ```
 
-- De odds ratios die worden bekomen met het logistisch regressiemodel zijn exact gelijk aan de odds ratios die we zouden bekomen op basis van Tabel:
-- vb.  $\text{OR}_\text{Leu/Leu-Pro/Pro}=89\times 266/(56\times 342)=$ `r format((89/56)/(342/266),digits=4)`.
+- De odds ratios that we obtain is exactly equal to the one we calculated based on the contingency table:
+- e.g  $\text{OR}_\text{Leu/Leu-Pro/Pro}=89\times 266/(56\times 342)=$ `r format((89/56)/(342/266),digits=4)`.
 
-- Merk op dat de statistische besluitvorming bij logistische modellen beroep doet op asymptotische theorie.
+- Note, that statistical inference for logistic regression relies on asymptotic theory.
 
 ---
 
-## 8.4.2. Continue predictor
+## Continuous predictor
 
-- Toxicologisch effect van koolstofdisulfide (CS$_2$) op kevers.
-- De centrale onderzoeksvraag is of de concentratie van CS$_2$ een effect heeft op de mortaliteit (i.e. kans op sterven) van de kevers?
+- Toxicolocal effect of carbon disulfite (CS$_2$) on beatles.
+- Research hypothesis is there an effect of the  CS$_2$ concentration on the mortality of beatles?
 
-**Design**
-- 32 onafhankelijk experimenten
-- Telkens 1 kever blootgesteld aan ????n van 8 concentraties (mg/l) van CS$_2$ voor een gegeven periode.
-- De uitkomst van het experiment is: de kever sterft ($y=1$) of de kever overleeft ($y=0$).
+##Design##
+- 32 independent experiments
+- Each time 1 beatle is exposed to one of 8 CS$_2$ concentrations (mg/l).
+- The outcole: mortality ($y=1$) or survival ($y=0$).
 
 ```{r}
-load("dataset/kevers.rda")
-head(kevers)
-table(kevers$dosis,kevers$status)
+beatles<-read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/datadata/beatles.csv")
+head(beatles)
+table(beatle$dose,beatle$status)
 ```
 
 ---
 
-We bouwen nu een logistisch regressiemodel waarbij we de log odds modelleren in functie van de dosis $x_i$:
+We build a model for the log odds in function of the dose $x_i$:
 $$\log \frac{\pi_i}{1-\pi_i}=\beta_0+\beta_1 \times x_i.$$
 
 ```{r}
-keverModel<-glm(status~dosis,data=kevers,family=binomial)
-summary(keverModel)
+beatleModel<-glm(status~dose,data=beatle,family=binomial)
+summary(beatleModel)
 ```
 
 ----
 
-- Intercept heeft als betekenis de log odds op mortaliteit wanneer er geen $\text{CS}_2$ gas wordt toegediend.
-- Erg lage odds op sterfte ($\pi/(1-\pi)=\exp(-53.2)$) en dus op een kans die nagenoeg nul is.
-- Merk op: heel sterke extrapolatie: minimum dosis in de dataset `r min(kevers$dosis)` mg/l.
+- Intercept has an interpretation of a log odds on mortality when no $\text{CS}_2$ gas is applied.
+- Very small odds on mortality ($\pi/(1-\pi)=\exp(-53.2)$) so the probability is almost 0.
+- Note that this is a very large extrapolation: minimum dose in dataset is `r min(beatles$dose)` mg/l.
 
 
-- Geschatte odds ratio voor het effect van dosis op de mortaliteitskans is $\exp(0.3013)=1.35$.
-- Dus bij een toename van de dosis CS$_2$ met 1 mg/l, is de odds ratio voor de mortaliteit $1.35$.
+- Estimated odds ratio for the effect of dose on the mortality probability is $\exp(0.3013)=1.35$.
+- So beatles expose to a CS$_2$ concentration that is 1 mg/l large, will on average have an odds ratio on mortality of $1.35$.
 
 ---
 
-- We besluiten dat dit effect heel significant is ($p=$ `r round(summary(keverModel)$coef[2,4],3)`).
-- Een toename in de CS$_2$  dosis doet de kans op sterven toenemen.
+- We conclude that this effect is very significant ($p=$ `r round(summary(beatleModel)$coef[2,4],3)`).
+- Increasing the CS$_2$ dose increases the mortality.
 
 
 ```{r}
-dosisGrid=seq(min(kevers$dosis),max(kevers$dosis),.1)
-piHat=predict(keverModel,
-	      newdata=data.frame(dosis=dosisGrid),
-	      type="response")
+data.frame(grid=seq(min(beatle$dose),max(beatle$dose),.1)) %>% 
+  mutate(piHat=predict(beatleModel,
+	      newdata=data.frame(dose=doseGrid),
+	      type="response")) %>% 
+  ggplot(aes(grid,piHat))+
+  geom_line() +
+  xlab="dose" +
+  ylab="probability (dead)" 
 ```
 
 ---
 
 ```{r,echo=FALSE}
-plot(dosisGrid, piHat, type="l",ylim=c(0,1), xlab="dosis", ylab="Prob(dood)",cex.lab=1.5,cex.axis=1.5)
-#omdat we meerdere observaties hebben voor elke dosis,
-#zullen we berekenen hoeveel kevers er leefden voor elke dosis
-#en dat uitzetten in de grafiek
-#zodat de ruwe gegevens ook worden weergegeven.
-tabKevers=table(kevers)
-text(as.double(rownames(tabKevers)),0,labels=tabKevers[,1],cex=1.5)
-text(as.double(rownames(tabKevers)),1,labels=tabKevers[,2],cex=1.5)
+plot(doseGrid, piHat, type="l",ylim=c(0,1), xlab="dose", ylab="Prob(dood)",cex.lab=1.5,cex.axis=1.5)
+#because we observe multiple beatles per dose,
+#we calculate how manu beatles survived for each dose
+#and we add this to the plot
+text(as.double(rownames(tabbeatles)),0,labels=tabbeatles[,1],cex=1.5)
+text(as.double(rownames(tabbeatles)),1,labels=tabbeatles[,2],cex=1.5)
 ```
