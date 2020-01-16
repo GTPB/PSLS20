@@ -91,22 +91,22 @@ knitr::kable(  NHANES[c(1,4,5,6,7,8),c(1,3,20,23,34,72)]
 ```
 
 
-# Variabeles
+# Variables
 
 - We measure *variables* on subjects in the sample
 - A variabele is a charactistic e.g. Direct cholestorol, Age, Gender,, ...
 - It varies from subject tot subject in the population and thus also within the sample as well as from sample to sample.
 
 
-## *Types* of variabeles
+## *Types* of variables
 
-1. *Qualitative variabeles*: a limited number of outcome catergories, non-numeric. 
-	-  *nominal variabeles*: no natural ordening, e.g. gender, blood group, eye color, ... 
-	-  *ordinal variabeles*: ordening, e.g. BMI class, smoking status (1: never smoked, 2: stopped smoking, 3: smoker)
+1. *Qualitative variables*: a limited number of outcome catergories, non-numeric. 
+	-  *nominal variables*: no natural ordening, e.g. gender, blood group, eye color, ... 
+	-  *ordinal variables*: ordening, e.g. BMI class, smoking status (1: never smoked, 2: stopped smoking, 3: smoker)
 
-2. *Numeric variabeles*:
-   	- *discrete variabeles*: counts e.g. number of parners in life span, ...
-	- *continuous variabeles*: can (in theory) take each possible value between certain limits e.g. Age, Weight, BMI, fluorescence measurement in ELISA assay 
+2. *Numeric variables*:
+   	- *discrete variables*: counts e.g. number of parners in life span, ...
+	- *continuous variables*: can (in theory) take each possible value between certain limits e.g. Age, Weight, BMI, fluorescence measurement in ELISA assay 
 	
 	- Often dichotomised to turn it in a nominal qualitative variable $\rightarrow$ information loss
 	
@@ -139,7 +139,7 @@ $\rightarrow$ assess cholestorol level in population above 25.
 
 # Random Variables
 
-- Variabeles (e.g. direct cholestorol) vary in the population from subject to subject!
+- variables (e.g. direct cholestorol) vary in the population from subject to subject!
 
 - Variables are thus *random* because their value changes in the population 
 
