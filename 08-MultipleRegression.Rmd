@@ -631,36 +631,35 @@ summary(lmVWS_IntVW)
 cor(cbind(prostate$lcavol,prostate$lweight,prostate$lcavol*prostate$lweight))
 ```
 
-- hoge correlatie tussen log-tumorvolume en interactieterm. 
-- Is een gekend probleem voor hogere orde termen (interacties en kwadratische termen) 
+- high correlation between log-tumor volume and interaction. 
+- It is a known problem for higher order terms (interactions and kwadratic terms) 
 
 --- 
 
-- Multicollineariteit opsporen a.d.h.v. correlatie matrix of scatterplot matrix is niet ideaal. 
-- Geen idee in welke mate de geobserveerde multicollineariteit de resultaten onstabiel maakt.
-- In modellen met 3 of meerdere predictoren, zeg X1, X2, X3 kan er zware multicollineariteit optreden ondanks dat alle paarsgewijze correlaties tussen de predictoren laag zijn. 
-- Ook multicollineariteit als er een hoge correlatie is tussen X1 en een lineaire combinatie van X2 en X3.
+- Detect multicollineariteit based on the correlation matrix or scatterplot matrix is suboptimal. 
+- In models with 3 or more predicts, say X1, X2, X3 we can have high multicollinearity while alle pairswise correlations between the predictors are low. 
+- We also have multicollinearity if there is a high correlations between X1 and a linair combination of X2 and X3.
 
 ---
 
 # Variance inflation factor (VIF)
 
-Voor de $j$-de parameter in het regressiemodel gedefinieerd wordt als 
+For parameter $j$ in de regression model 
 \[\textrm{VIF}_j=\left(1-R_j^2\right)^{-1}\]
 
-- In deze uitdrukking stelt $R_j^2$ de meervoudige determinatieco??ffici??nt voor van een lineaire regressie van de $j$-de predictor op alle andere predictoren in het model. 
-- VIF is 1 als $j$-de predictor niet lineair geassocieerd is met de andere predictoren in het model.
-- VIF is groter dan 1 in alle andere gevallen. 
-- VIF is factor waarmee geobserveerde variantie groter is dan wanneer alle predictoren onafhankelijk zouden zijn. 
-- VIF > 10 $\rightarrow$ ernstige multicollineariteit. 
+- In this expression $R_j^2$ is the multiple determination coefficient of the linear regression of predictor j on the remaining predictors in the model. 
+- VIF is 1 if predictor j is not linear associated with the remaining predictors in the model. 
+- VIF is larger than 1 in all andere cases. 
+- VIF is the factor with which the observed variance inflates as compared to a model for which all predictoren would be independend. 
+- VIF > 10 $\rightarrow$ stron multicollinearity. 
 
 ---
 
-# Vetpercentage voorbeeld
+# Body fat example
 
 ```{r out.width='90%', fig.asp=.8, fig.align='center', message=FALSE,echo=FALSE}
-bodyfat <- read.table("dataset/bodyfat.txt",header=TRUE)
-plot(bodyfat)
+bodyfat <- read_delim("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/bodyfat.txt",delim=" ")
+bodyfat %>% ggpairs()
 ```
 
 ---
