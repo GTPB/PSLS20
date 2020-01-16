@@ -1,5 +1,5 @@
 ---
-title: "6. Analysis of variance" 
+title: "7. Analysis of variance" 
 author: "Lieven Clement"
 date: "statOmics, Ghent University (https://statomics.github.io)"
 output:

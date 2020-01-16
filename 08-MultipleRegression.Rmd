@@ -1,5 +1,5 @@
 ---
-title: "6. Analysis of variance" 
+title: "10. Multiple regression" 
 author: "Lieven Clement"
 date: "statOmics, Ghent University (https://statomics.github.io)"
 output:
@@ -18,22 +18,6 @@ knitr::opts_chunk$set(include = TRUE, comment = NA, echo = TRUE,
 library(tidyverse)
 ```
 
----
-title: Algemeen lineair model 
-subtitle: 2$^\text{de}$ bach. in de Biologie, Chemie, Biochemie en Biotechnologie en Biomedische Wetenschappen
-author: Lieven Clement
-date: 
-fontsize: 10pt
-output:
-  beamer_presentation:
-#    keep_tex: true
-#    toc: true
-    includes:
-      in_header: header2.tex
----
-```{r package_options, include=FALSE}
-knitr::opts_knit$set(global.par = TRUE)
-```
 
 # Intro
 
@@ -67,6 +51,7 @@ $\rightarrow$ Extend simple linear regression to multiple predictors.
 ```{r}
 prostate<-read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/prostate.csv")
 prostate
+prostate$svi<-as.factor(prostate$svi)
 ```
 
 ---
@@ -80,7 +65,7 @@ prostate %>% select(-pgg45)  %>% ggpairs()
 
 # Additive  multiple linair model
 
-Separate linair modellen, like 
+Separate simple linair models, like 
 
 $$E(Y|X_v)=\alpha+\beta_v X_v$$
 
@@ -124,7 +109,13 @@ E(Y|X_1=x_1,...,X_j=x_j+\delta,...,X_{p-1}=x_{p-1}) \\
 \end{array}
 $$
 
-Interpretation $\beta_j$: difference in mean outcome between subjects that differ in one unit of $X_j$, but have the same value for the remaining predictors in the model.  
+Interpretation $\beta_j$: 
+
+- difference in mean outcome between subjects that differ in one unit of $X_j$, but have the same value for the remaining predictors in the model.  
+
+or 
+
+- Effect of predictor j corrected for the remaining predictors.  e.g. effect of cancer volume correct for prostate weight and the svi status. 
 
 ---
 
@@ -180,9 +171,9 @@ surf3D(x.pred3D,y.pred3D,z2.pred3D,col="red",facets=NA,add=TRUE)
 If data are representative than the least squares estimators for the intercept and slopes are unbiased.
 $$E[\hat \beta_j]=\beta_j,\quad j=0,\ldots,p-1.$$
 
-- To gain insight in the distribution of the parameter estimators to be able to generalize the observations from the sample to the population. 
+- Gain insight in the distribution of the parameter estimators so as to generalize the effect in the sample to the population. 
 
-- Additional assumptions are needed to do this based on one sample.  
+- Additional assumptions are needed for inference.  
 
 1. *Linearity*
 
@@ -267,14 +258,15 @@ The svi status and the log-prostaatgewicht ($x_w$) do not influence the contribu
 - The average difference in lpsa for patients that differ in one unit of the log-tumor volume can for instance can be higher for patients wiht a high tumor weight then for those with a low tumor weight. 
 - The effect of the tumor volume on the PSA depends on the prostate weight.  
 
-To model this **interactie** or **effectmodification** we can add a product term of both variables to the model
+To model this **interactie** or **effect modification** we can add a product term of both variables to the model
 
 $$
 Y_i = \beta_0 + \beta_v x_{iv} + \beta_w x_{iw} +\beta_s x_{is} + \beta_{vw} x_{iv}x_{iw} +\epsilon_i
 $$
 
 This term quantifies the *interactie-effect* of predictors $x_v$ en $x_w$ on the mean outcome. 
-In this model terms $\beta_vx_{iv}$ and $\beta_wx_{iw}$ are referred to as *main effects* of predictors $x_v$ and $x_w$.
+
+Terms $\beta_vx_{iv}$ and $\beta_wx_{iw}$ are referred to as *main effects* of predictors $x_v$ and $x_w$.
 
 ---
 
@@ -343,7 +335,8 @@ surf3D(x.pred3D,y.pred3D,z.pred3D,col="blue",facets=NA,add=TRUE)
 ---
 
 - Note that the interaction effect that is observed is not statistically significant (p=`r round(summary(lmVWS_IntVW)$coef[5,4],2)`). 
-- The main effects that are involved in the interaction cannot be interpreted separately from one another. We will therefore remove non-significant interaction terms from the model.
+- The main effects that are involved in the interaction cannot be interpreted separately from one another. 
+- We will therefore remove non-significant interaction terms from the model.
 - Upon removal of non-significant interaction terms the main effects can be interpreted. 
 
 ---
@@ -373,7 +366,7 @@ Because $X_S$ is a dummy variabele we obtain to distinct regression planes:
    Y&=&\beta_0+\beta_vX_v+\beta_s+\beta_wX_w+\beta_{vs}X_v + \beta_{ws}X_w +\epsilon\\
   &=& (\beta_0+\beta_s)+(\beta_v+\beta_{vs})X_v+(\beta_w+\beta_{ws})X_w+\epsilon
   \end{array}$$ 
-with intercept $\beta_0+\beta_s$ and slopes $\beta_v+\beta_{vs}$ and $ \beta_w+\beta_{ws}$
+with intercept $\beta_0+\beta_s$ and slopes $\beta_v+\beta_{vs}$ and $\beta_w+\beta_{ws}$
 
 ---
 
@@ -452,7 +445,7 @@ $$
 We have following degrees of freedom and mean sum of squares: 
 
 - SSTot has $n-1$ degrees of freedom and $\text{SSTot}/(n-1)$ is an estimator for the total variance in $Y$ (marginal distribution of $Y$). 
-- SSE has $n-p$ vrijheidsgraden and $\text{MSE}=\text{SSE}/(n-p)$ is an schatter for the residual variance of $Y$ given the predictores (i.e. an estimator for the residual variance $\sigma^2$ of the error term $\epsilon$).
+- SSE has $n-p$ degrees of freedom and $\text{MSE}=\text{SSE}/(n-p)$ is an schatter for the residual variance of $Y$ given the predictores (i.e. an estimator for the residual variance $\sigma^2$ of the error term $\epsilon$).
 - SSR has $p-1$ degrees of freedom   and $\text{MSR}=\text{SSR}/(p-1)$ is the mean sum of squares of the regression. 
 
 The determination coefficients remains as before,  i.e.
@@ -502,7 +495,7 @@ $$
   \text{SSR}_{2\mid 1} = \text{SSE}_1-\text{SSE}_2=\text{SSR}_2-\text{SSR}_1.
 $$  
 
-Note that,  $\text{SSE}_1-\text{SSE}_2=\text{SSR}_2-\text{SSR}_1$ is triviaal is because of the decomposition of the totale sum of squares. 
+Note that,  $\text{SSE}_1-\text{SSE}_2=\text{SSR}_2-\text{SSR}_1$ is triviaal is because of the decomposition of the total sum of squares. 
 
 The additional sum of squares $\text{SSR}_{2\mid 1}$ can simply be interpreted as the additional variability that can be explained by adding predictor $x_2$ to the model with predictor $x_1$. 
 
@@ -540,7 +533,7 @@ Y_i = \beta_0 + \sum_{j=1}^{s} \beta_j x_{ij} + \epsilon_i
 $$
 wuth $\epsilon_i\text{ iid } N(0,\sigma^{2})$.
 
-- The the corresponding sum of squares are denoted as $\text{SSR}_{s}$ and $\text{SSE}_{s}$. 
+- The corresponding sum of squares are denoted as $\text{SSR}_{s}$ and $\text{SSE}_{s}$. 
 - The sequence of models gives rise to the following sums of squares: $\text{SSR}_{s\mid 1,\ldots, s-1}$. 
 - The latter sum of squares is referred to as type I sums of squares. Note that they depend on the order in which the models were added to the model. 
 
@@ -550,17 +543,17 @@ We can show for model Model with $s=p-1$ that
 $$
  \text{SSTot} = \text{SSR}_1 + \text{SSR}_{2\mid 1} + \text{SSR}_{3\mid 1,2} + \cdots + \text{SSR}_{p-1\mid 1,\ldots, p-2} + \text{SSE},
 $$
-with $\text{SSE}$ the reisudal sum of squares of the model with all $p-1$ regressors 
+with $\text{SSE}$ the residual sum of squares of the model with all $p-1$ predictors 
 $$
   \text{SSR}_1 + \text{SSR}_{2\mid 1} + \text{SSR}_{3\mid 1,2} + \cdots + \text{SSR}_{p-1\mid 1,\ldots, p-2} = \text{SSR}
 $$
-with $\text{SSR}$ the sum of squares of all  $p-1$ regressoren.
+with $\text{SSR}$ the sum of squares of all  $p-1$ predictors.
 
 - The interpretation of each term depends on the order of the sequence of the regression models. 
 
 ---
 
-- Each type I SSR involves 1 regressor and has 1 vrijheidsgraad (note that multiple dummies for a factor are typically removed together). 
+- Each type I SSR involves 1 predictor and has 1 degree of freedom (note that multiple dummies for a factor are typically removed together). 
 - For each type I SSR term the mean sum of squares is defined by  $\text{MSR}_{j\mid 1,\ldots, j-1}=\text{SSR}_{j\mid 1,\ldots, j-1}/1$.
 - And teststatistic $F=\text{MSR}_{j\mid 1,\ldots, j-1}/\text{MSE}$ follows a $F_{1;n-(j+1)}$ distribution under  $H_0:\beta_j=0$ with $s=j$.
 - These sums of squares are the default sum of squares in the anova function of R. 
@@ -569,15 +562,15 @@ with $\text{SSR}$ the sum of squares of all  $p-1$ regressoren.
 
 ### Type III Sums of squares
 
- Type III sum of squares for regressor $x_j$ are given by the additional sum of squares
+ Type III sum of squares for predictor $x_j$ are given by the additional sum of squares
 $$
   \text{SSR}_{j \mid 1,\ldots, j-1,j+1,\ldots, p-1} = \text{SSE}_1-\text{SSE}_2
 $$
 
-- $\text{SSE}_2$ the sum of squares of the residuals of the model with all $p-1$ regressoren.
-- $\text{SSE}_1$ sum of squares of the residuals woth all $p-1$ regressoren, except for regressor $x_j$. 
+- $\text{SSE}_2$ the sum of squares of the residuals of the model with all $p-1$ predictors.
+- $\text{SSE}_1$ sum of squares of the residuals with all $p-1$ predictors, except for predictor $x_j$. 
 
-The type III sum of squares $\text{SSR}_{j \mid 1,\ldots, j-1,j+1,\ldots, p-1}$ quantifies the contribution in the totale variance of the outcome explained by $x_j$ that cannot be explained by the remaining $p-2$ predictors. 
+The type III sum of squares $\text{SSR}_{j \mid 1,\ldots, j-1,j+1,\ldots, p-1}$ quantify the contribution in the total variance of the outcome explained by $x_j$ that cannot be explained by the remaining $p-2$ predictors. 
 
 ---
 
@@ -595,13 +588,14 @@ library(car)
 Anova(lmVWS,type=3)
 ```
 
-The p-values are identical to twee-sided t-testen
+The p-values are identical to those of two-sided t-tests
 
 Note, however, that all dummies for factors with multiple levels will be taken out of the model at once. So then the type III sum of squares will have as many degrees of freedom as the number of dummies and an omnibus test is performed for the effect of the factor. 
 
 ---
 
-##Diagnostics: 1. Multicollineariteit
+#Diagnostics
+## Multicollineariteit
 
 ```{r echo=FALSE}
 summary(lmVWS)
@@ -617,13 +611,19 @@ summary(lmVWS_IntVW)
 
 - Estimates are different from those in the additive model and the standard errors are much higher! 
 
-- This is cause by the multicollinearity problem. 
+- This is caused by the multicollinearity problem. 
+
 - If 2 predictors are strongly correlated than they share a lot of information. 
+
 - It is therefore difficult to estimate the individual contribution of each predictor on the outcome. 
-- Least squares estimators become instable
-- Standard errors become inflated
-- As long as we only do predictions on the basis of the regression model without extrapolating beyond the range of the predictors observed in the sample multicolinearity is not problematic.  
-- But for inference it is problematic
+
+- Least squares estimators become instable.
+
+- Standard errors become inflated.
+
+- As long as we only do predictions on the basis of the regression model without extrapolating beyond the range of the predictors observed in the sample multicolinearity is not problematic.
+
+- But for inference it is problematic.
 
 ---
 
@@ -631,18 +631,18 @@ summary(lmVWS_IntVW)
 cor(cbind(prostate$lcavol,prostate$lweight,prostate$lcavol*prostate$lweight))
 ```
 
-- high correlation between log-tumor volume and interaction. 
-- It is a known problem for higher order terms (interactions and kwadratic terms) 
+- High correlation between log-tumor volume and interaction. 
+- It is a known problem for higher order terms (interactions and quadratic terms) 
 
 --- 
 
 - Detect multicollineariteit based on the correlation matrix or scatterplot matrix is suboptimal. 
-- In models with 3 or more predicts, say X1, X2, X3 we can have high multicollinearity while alle pairswise correlations between the predictors are low. 
-- We also have multicollinearity if there is a high correlations between X1 and a linair combination of X2 and X3.
+- In models with 3 or more predictors, say X1, X2, X3 we can have high multicollinearity while alle pairswise correlations between the predictors are low. 
+- We also have multicollinearity if there is a high correlation between X1 and a linair combination of X2 and X3.
 
 ---
 
-# Variance inflation factor (VIF)
+### Variance inflation factor (VIF)
 
 For parameter $j$ in de regression model 
 \[\textrm{VIF}_j=\left(1-R_j^2\right)^{-1}\]
@@ -651,11 +651,11 @@ For parameter $j$ in de regression model
 - VIF is 1 if predictor j is not linear associated with the remaining predictors in the model. 
 - VIF is larger than 1 in all andere cases. 
 - VIF is the factor with which the observed variance inflates as compared to a model for which all predictoren would be independend. 
-- VIF > 10 $\rightarrow$ stron multicollinearity. 
+- VIF > 10 $\rightarrow$ strong multicollinearity. 
 
 ---
 
-# Body fat example
+### Body fat example
 
 ```{r out.width='90%', fig.asp=.8, fig.align='center', message=FALSE,echo=FALSE}
 bodyfat <- read_delim("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/bodyfat.txt",delim=" ")
@@ -684,21 +684,22 @@ summary(lmMidarm)
 
 ---
 
-We evalueren nu de VIF in het prostaatkanker voorbeeld voor het additieve model en het model met interactie.
+
+We evaluate the VIF in the prostate cancer example for the additive model and the model with interactie.
 
 ```{r}
 vif(lmVWS)
 vif(lmVWS_IntVW)
 ```
 
-- Inflatie voor interactietermen wordt vaak veroorzaakt door het feit dat het hoofdeffect een andere interpretatie krijgt. 
+- Inflation in interaction terms often caused because main effect get another interpretation. 
 
 ---
 
-###Invloedrijke observaties
+## Influencial Observaties
 
 
-```{r   out.width='60%', out.height='70%', fig.asp=.8,fig.align='center', message=FALSE,echo=FALSE}
+```{r}
 set.seed(112358)
 nobs<-20
 sdy<-1
@@ -721,20 +722,22 @@ legend("topleft",col=1:4,lty=1:4,legend=paste("lm",c("",as.character(1:3))),text
 
 ---
 
-- Niet wenselijk is dat een enkele observatie het resultaat van een lineaire regressie-analyse grotendeels bepaalt. 
-- Diagnostieken die ons toelaten om extreme observaties op te sporen
-- *Studentized residu's* om outliers op te sporen
-- *leverage (invloed, hefboom)* om observaties met extreem covariaatpatroon op te sporen
+- It is not desirable that a single observation largely influences the result of a linear regression analysis
+
+- Diagnostics allow us to detect extreme observations. 
+- *Studentized residuals* to spot outliers 
+- *Leverage* to spot observations with extreem covariate pattern
 
 ---
 
-###Cook's distance
+### Cook's distance
 
-- Een meer rechtstreekse maat om de invloed van elke observatie op de regressie-analyse uit te drukken 
-- Cook's distance voor $i$-de observatie is een diagnostische maat voor de invloed van die observatie op alle predicties of voor haar invloed  op *alle* geschatte parameters. 
+- A statistics to assess the influence the effect of a single observation on the regression analysis  
+- Cook's distance for observation i is diagnostic measure for this particular observation on all all predictions or on *all* estimated parameters. 
 \[D_i=\frac{\sum_{j=1}^n(\hat{Y}_j-\hat{Y}_{j(i)})^2}{p\textrm{MSE}}\] 
-- Als Cook's distance $D_i$ groot is, dan heeft de $i$-de observatie een grote invloed op de predicties en geschatte parameters. 
-- Extreme Cook's distance als het het 50\% percentiel van de $F_{p+1,n-(p+1)}$-verdeling overschrijdt.
+
+- Observation $i$ has a large influence on the regression parameters and predictions if the  Cook's distance $D_i$ is large. 
+- Extreme Cook's distance if it is larger than the 50% quantile of an $F_{p+1,n-(p+1)}$-distribution.
 
 ---
 
@@ -751,10 +754,10 @@ abline(h=qf(0.5,length(lmVWS_IntVW$coef),nrow(prostate)-length(lmVWS_IntVW$coef)
 
 ---
 
-- Eenmaal men vastgesteld heeft dat een observatie invloedrijk is, kan men zogenaamde *DFBETAS* gebruiken om te bepalen op welke parameter(s) ze een grote invloed uitoefent. 
--  DFBETAS van de $i$-de observatie vormen een diagnostische maat voor de invloed van die observatie *op elke regressieparameter afzonderlijk*
+- Once we established that an observation is influential we can use *DFBETAS* to find the parameters for which the estimates are largely affected by the observation
+-  DFBETAS of observatie i is a diagnostic measure for *each model parameter separately*. 
 $$\textrm{DFBETAS}_{j(i)}=\frac{\hat{\beta}_{j}-\hat{\beta}_{j(i)}}{\textrm{SD}(\hat{\beta}_{j})}$$ 
--  DFBETAS extreem is wanneer ze 1 overschrijdt in kleine tot middelgrote datasets en $2/\sqrt{n}$ in grote datasets
+-  DFBETAS is extreme when it is larger than 1 in small to moderate datasets or exceeds $2/\sqrt{n}$ in large datasets.
 
 ---
 
