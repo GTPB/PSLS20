@@ -502,7 +502,7 @@ binom.test(x=f,n=f+g,p=0.5)
 - R object stored in `brca.rda`
 
 ```{r}
-load("data/brca.rda")
+load("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/brca.rda")
 head(brca)
 summary(brca)
 ```
@@ -510,15 +510,15 @@ summary(brca)
 ---
 
 ```{r, tidy=FALSE,echo=FALSE}
-brcaHlp=data.frame(Genotype=c("Pro/Pro","Pro/Leu","Leu/Leu","Totaal"),Controles=c("266 (a)","250 (b)","56 (c)","572 (a+b+c)"),Cases=c("342 (d)","369 (e)","89 (f)","800 (d+e+f)"),Totaal=c("608 (a+d)","619 (b+e)","145 (c+f)","1372 (n)"))
+brcaHlp=data.frame(Genotype=c("Pro/Pro","Pro/Leu","Leu/Leu","Totaal"),Control=c("266 (a)","250 (b)","56 (c)","572 (a+b+c)"),Cases=c("342 (d)","369 (e)","89 (f)","800 (d+e+f)"),Total=c("608 (a+d)","619 (b+e)","145 (c+f)","1372 (n)"))
 knitr::kable(brcaHlp,
   booktabs = TRUE
 )
 ```
 
-- In case-controle studies kiest men een vast aantal cases en controles en spoort men voor hen op welke blootstellingen ze in het verleden ondervonden hebben.
-- Dergelijke studies noemt men ook retrospectief
-- Onmogelijk om het risico's and riscoverschillen op borstkanker te schatten: proportie van cases en controles weerspiegelt populatie niet!
+- In case-control study one chooses a fixed number of cases and controls and registers which exposures they had in the past.
+- Retrospective study
+- Impossible to assess risks and risk-differences on breastcancer because the proportion of cases and controls does not reflect that in the population!
 
 ---
 
