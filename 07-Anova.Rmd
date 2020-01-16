@@ -1,0 +1,616 @@
+---
+title: "6. Analysis of variance" 
+author: "Lieven Clement"
+date: "statOmics, Ghent University (https://statomics.github.io)"
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = TRUE, comment = NA, echo = TRUE,
+                      message = FALSE, warning = FALSE)
+library(Rmisc)
+library(tidyverse)
+```
+
+
+# Prostacyclin Example
+
+Researchers study the effect of arachidonic acid on prostacyclin level in blood plasma. They use 3 different concentrations of arachidonic acid: low, medium and high dose and measure the prostacycline levels in blood plasma using an elisa fluorescence measurement.
+
+---
+
+```{r}
+prostacyclin <- read_tsv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/prostacyclin.txt")
+prostacyclin$dose <- as.factor(prostacyclin$dose)
+head(prostacyclin)
+```
+
+---
+
+##Data exploration
+
+```{r}
+prostacyclin %>% 
+  ggplot(aes(x=dose,y=prostac,fill=dose)) +
+  geom_boxplot() +
+  geom_point(position="jitter")
+  ylab("prostacyclin (ng/ml)")
+  
+prostacyclin %>% 
+  ggplot(aes(sample=prostac)) +
+  geom_qq() +
+  geom_qq_line() + 
+  facet_grid(~dose)
+```
+
+
+Data in three groups is approximately Normally distributed with equal variance:
+\[Y_i \vert \text{group j} \sim N(\mu_j,\sigma^2),\]
+with $j= \text{1, 2, 3}$
+
+## Research question
+
+Research question can translated in the following hypotheses 
+
+- $H_0$: the arachidonic acid concentration has no effect on the mean prostacyclin level in blood plasma in rats
+\[
+  H_0:\mu_1=\mu_2 = \mu_3
+\]
+
+- $H_1$: the arachidonic acid concentration has an effect on the mean prostacyclin level in blood plasma in rats, which implies that the at least two means are different:
+\[H_1: \exists\ j,k \in \{1,\ldots,g\} : \mu_j\neq\mu_k\]
+
+In terms of the model parameters this becomes
+
+\[
+  H_0:\mu_1=\mu_2 = \mu_3
+\]
+en
+\[H_1: \exists\ j,k \in \{1,\ldots,g\} : \mu_j\neq\mu_k\]
+
+
+Alternative approach: split null hypothesis in partial hypotheses: 
+\[
+  H_{0jk}: \mu_j=\mu_k \text{ versus } H_{1jk}: \mu_j \neq \mu_k
+\]
+
+Each hypothesis can be testedd via two-sample t-tests $\rightarrow$ multiple testing problem + loss of power.
+
+$\rightarrow$ assess $H_0:\mu_1=\mu_2=\mu_3$ with a *single test*.
+
+
+
+# Analyse of Variance
+
+Correct solution for testing problem: ANalysis Of VAriance (ANOVA)
+- We develop the method for 3 groups (prostacycline example)
+- Model data with linear model by using dummy variables.
+- 1 dummy variable less than the number of groups. Here we need 2 dummy variables.
+- Generalizing to g groups $g>3$ is trivial (extra dummy variables)
+
+### Model
+
+\begin{eqnarray}
+  Y_i &=& g(x_{i1},x_{i2}) + \epsilon_i\\
+  Y_i &=& \beta_0+\beta_1 x_{i1} +\beta_2 x_{i2} +\epsilon_i (\#eq:regmu3)
+\end{eqnarray}
+
+- $Y_i$ de outcome for observatie $i$ ($i=1,\ldots, n$)
+\vspace{7pt}
+- $\epsilon_i\text{i.i.d.} N(0,\sigma^2)$
+\vspace{7pt}
+- and dummy variables 
+$$x_{i1} = \left\{ \begin{array}{ll}
+1 & \text{ if observation $i$ belongs to middle dose group (M)} \\
+0 & \text{ if observation $i$ belongs to other dose group} \end{array}\right.$$
+$$x_{i2} = \left\{ \begin{array}{ll}
+1 & \text{ if observation $i$ belongs to high dose group (H)} \\
+0 & \text{if observation $i$ belongs to other dose group} \end{array}\right. .$$
+\vspace{7pt}
+ - Low dose group (L) with $x_{i1}=x_{i2}=0$ is  *referencd group*
+
+Regression-model can be rewritten as a model for each group :
+\vspace{-20pt}
+\begin{eqnarray*}
+ Y_{i\vert \text{dose=L}} &=& \beta_0+\epsilon_i \\
+ Y_{i\vert \text{dose=M}} &=& \beta_0+\beta_1+ \epsilon_i  \\
+ Y_{i\vert \text{dose=H}} &=& \beta_0+\beta_2 + \epsilon_i
+\end{eqnarray*}
+with $\epsilon_i \sim N(0,\sigma^2)$
+\vspace{10pt}
+
+Interpretation of model parameters:
+\vspace{-20pt}
+ \begin{eqnarray*}
+   \beta_0 &=&  \text{E}\left[Y_i \mid \text{treatment with low dose group L}\right] \\
+   \beta_1 &=&  (\beta_0+\beta_1)-\beta_0 = \text{E}\left[Y_i \mid \text{treatment M}\right] - \text{E}\left[Y_i \mid \text{treatment L}\right] \\
+   \beta_2 &=&  (\beta_0+\beta_2)-\beta_0 = \text{E}\left[Y_i \mid \text{treatment H}\right]-\text{E}\left[Y_i \mid \text{treatment L}\right].
+ \end{eqnarray*}
+
+ 1.  $\beta_0$ is the mean outcome for group L
+ \vspace{7pt}
+ 2.  $\beta_1$ is effect (difference in mean  concentration) of group M vs group L
+ \vspace{7pt}
+ 3.  $\beta_2$ is effect of group H vs group L
+
+
+ We reformulate the model by using $\mu$-notaties:
+ \vspace{-7pt}
+ \begin{eqnarray*}
+  Y_{i\vert \text{dose=L}} &=& \beta_0+\epsilon_i = \mu_1+\epsilon_i \\
+  Y_{i\vert \text{dose=M}} &=& \beta_0+\beta_1+ \epsilon_i = \mu_2+\epsilon_i \\
+  Y_{i\vert \text{dose=H}} &=& \beta_0+\beta_2 + \epsilon_i = \mu_3+\epsilon_i .
+ \end{eqnarray*}
+ with $\epsilon_i \sim N(0,\sigma^2)$ and
+ $$  \mu_j = \text{E}\left[Y_i \mid \text{treatment group } j\right].$$
+
+ Original null hypothese $H_0:\mu_1=\mu_2=\mu_3$ can be formulated as
+ $$H_0: \beta_1=\beta_2=0.$$
+
+Model allows to use all methods we derived for linear regression models
+
+- Parameter estimators for means, variances and  standard errors
+\vspace{10pt}
+- Inference: Confidence intervals, hypothesis tests
+\vspace{10pt}
+  - Test $H_0: \beta_1=\beta_2=0$ with $F$-test.
+
+## Prostacyclin example
+
+```{r}
+model1 <- lm(prostac~dose,data=prostacyclin)
+summary(model1)
+```
+
+
+# Sum of squares and Anova
+
+Similar to simple linear regression we will use sum of squares to derive the F-test.
+\vspace{-10pt}
+\begin{eqnarray*}
+\text{SSR}&=&\sum\limits_{i=1}^n (\hat Y_i -\bar Y)^2\\
+&=& \sum\limits_{i=1}^n (\hat{g} (x_{i1},x_{i2}) - \bar Y)^2\\
+&=& \sum\limits_{i=1}^n (\hat\beta_0+\hat\beta_1x_{i1}+\hat\beta_2x_{i2}) - \bar Y)^2\\
+&=& \sum\limits_{i=1}^{n_1} (\hat\beta_0 - \bar Y)^2 +\sum\limits_{i=1}^{n_2} (\hat\beta_0 + \hat\beta_1 - \bar Y)^2+\sum\limits_{i=1}^{n_3} (\hat\beta_0 + \hat\beta_2 - \bar Y)^2\\
+&=& \sum\limits_{i=1}^{n_1} (\bar Y_1- \bar Y)^2 +\sum\limits_{i=1}^{n_2} (\bar Y_2- \bar Y)^2+\sum\limits_{i=1}^{n_3} (\bar Y_3 - \bar Y)^2\\
+\end{eqnarray*}
+with $n_1$, $n_2$ en $n_3$ the number of observations in each group (here $n-1=n_2=n_3=12$).
+
+---
+
+\begin{eqnarray*}
+\text{SSR}&=&\sum\limits_{i=1}^n (\hat Y_i -\bar Y)^2
+\end{eqnarray*}
+
+- Sum of squares is again equivalent with comparison of model (1) and reduced model with an intercept, only. 
+- For reduced model the intercept is estimated by the sample mean.  
+- This sum of squares has g-1=2 degrees of freedom:  
+
+  - g=3 model parameters - 1 parameter to estimate overall sample mean or
+  - g=3 par. in complex model - 1 par. in reduced model.
+
+
+### Decomposition of Total Sum of Squares
+
+ - The convention in the Anova setting is to denote the sum of squares as SST, de **\alert{Sum of Squares of the Treatment (treatment)}** or as SSBetween.
+- The sum of squares of the regression indeed reflects the variability between the groups. 
+- The corresponding mean som of squares becomes  $\text{MST}=\text{SST}/2$.
+
+The decomposition of SSTot can be written as 
+\[
+  \text{SSTot} = \text{SST} + \text{SSE}
+\]
+
+###SSTot
+
+\vspace{10pt}
+
+```{r echo=FALSE, warning=FALSE}
+par(mfrow=c(1,2))
+jitIk=runif(36,-.2,.2)+rep(1:3,each=12)
+plot(prostac~dose,data=prostacyclin,xlab="Arachidonic acid dose ",ylab="Prostacyclin (ng/ml)",cex.axis=1.5,cex.lab=1.5,cex.main=1.5)
+points(jitIk,prostacyclin$prostac,col=col,pch=19)
+points(jitIk,prostacyclin$prostac,col=4)
+points(1:3,predict(model1,data.frame(dose=factor(c(10,25,50)))),pch=17,col=c("bisque","coral","darkcyan"),cex=1.5)
+points(1:3,predict(model1,data.frame(dose=factor(c(10,25,50)))),pch=2,col=1,cex=1.5)
+abline(h=mean(prostacyclin$prostac),lty=1)
+for (i in 1:36) lines(rep(jitIk[i],2),c(mean(prostacyclin$prostac),prostacyclin$prostac[i]),col=4,lty=2)
+jitIk=runif(36,-.2,.2)+rep(1:3,each=12)
+
+plot(rep(1,36),prostacyclin$prostac-mean(prostacyclin$prostac),xaxt="none",ylab="Deviations",cex.lab=1.5,cex.main=1.5,cex.axis=1.5,col=as.character(prostacyclin$col),xlim=c(1,3),pch=19,xlab="")
+points(rep(1,36),prostacyclin$prostac-mean(prostacyclin$prostac),pch=1,col=4)
+axis(at=1:3,labels=c(expression(paste(y[i]," - ",bar(y))),expression(paste(bar(y)[j]," - ",bar(y))),expression(paste(y[i]," - ",bar(y)[j]))),side=1,cex.axis=1.5)
+```
+
+---
+
+###SST
+
+\vspace{10pt}
+
+```{r echo=FALSE, warning=FALSE}
+par(mfrow=c(1,2))
+plot(prostac~dose,data=prostacyclin,xlab="Arachidonic acid dose ",ylab="Prostacyclin (ng/ml)",cex.axis=1.5,cex.lab=1.5,cex.main=1.5)
+points(jitIk,prostacyclin$prostac,col=col,pch=19)
+points(jitIk,prostacyclin$prostac,col=4)
+points(1:3,predict(model1,data.frame(dose=factor(c(10,25,50)))),pch=17,col=c("bisque","coral","darkcyan"),cex=1.5)
+points(1:3,predict(model1,data.frame(dose=factor(c(10,25,50)))),pch=2,col=2,cex=1.5)
+abline(h=mean(prostacyclin$prostac),lty=1)
+for (i in 1:3) lines(rep(i,2),c(mean(prostacyclin$prostac),predict(model1,data.frame(dose=levels(prostacyclin$dose)[i]))),col=2,lty=2)
+
+plot(rep(1,36),prostacyclin$prostac-mean(prostacyclin$prostac),xaxt="none",ylab="Deviations",cex.lab=1.5,cex.main=1.5,cex.axis=1.5,col=as.character(prostacyclin$col),xlim=c(1,3),pch=19,xlab="")
+points(rep(1,36),prostacyclin$prostac-mean(prostacyclin$prostac),pch=1,col=4)
+points(rep(2,3),predict(model1,data.frame(dose=factor(c(10,25,50))))-mean(prostacyclin$prostac),pch=17,col=unique(prostacyclin$col),cex=1.5)
+points(rep(2,3),predict(model1,data.frame(dose=factor(c(10,25,50))))-mean(prostacyclin$prostac),pch=2,cex=1.5,col=2)
+axis(at=1:3,labels=c(expression(paste(y[i]," - ",bar(y))),expression(paste(bar(y)[j]," - ",bar(y))),expression(paste(y[i]," - ",bar(y)[j]))),side=1,cex.axis=1.5)
+```
+
+---
+
+###SSE
+
+\vspace{10pt}
+
+```{r echo=FALSE, warning=FALSE}
+par(mfrow=c(1,2))
+plot(prostac~dose,data=prostacyclin,xlab="Arachidonic acid dose ",ylab="Prostacyclin (ng/ml)",cex.axis=1.5,cex.lab=1.5,cex.main=1.5)
+points(jitIk,prostacyclin$prostac,col=col,pch=19)
+points(jitIk,prostacyclin$prostac,col=1)
+points(1:3,predict(model1,data.frame(dose=factor(c(10,25,50)))),pch=17,col=c("bisque","coral","darkcyan"),cex=1.5)
+points(1:3,predict(model1,data.frame(dose=factor(c(10,25,50)))),pch=2,col=2,cex=1.5)
+for (i in 1:3) lines(c(i-.2,i+.2),rep(predict(model1,data.frame(dose=levels(prostacyclin$dose)[i])),2),col=c("bisque","coral","darkcyan")[i])
+abline(h=mean(prostacyclin$prostac),lty=1)
+for (i in 1:36) lines(rep(jitIk[i],2),c(prostacyclin$prostac[i],model1$fitted[i]),col=1,lty=2)
+
+plot(rep(1,36),prostacyclin$prostac-mean(prostacyclin$prostac),xaxt="none",ylab="Deviations",cex.lab=1.5,cex.main=1.5,cex.axis=1.5,col=as.character(prostacyclin$col),xlim=c(1,3),pch=19,xlab="")
+points(rep(1,36),prostacyclin$prostac-mean(prostacyclin$prostac),pch=1,col=4)
+points(rep(2,3),predict(model1,data.frame(dose=factor(c(10,25,50))))-mean(prostacyclin$prostac),pch=17,col=unique(prostacyclin$col),cex=1.5)
+points(rep(2,3),predict(model1,data.frame(dose=factor(c(10,25,50))))-mean(prostacyclin$prostac),pch=2,col=2,cex=1.5)
+points(rep(3,36),model1$res,pch=19,col=as.character(prostacyclin$col))
+points(rep(3,36),model1$res,pch=1)
+axis(at=1:3,labels=c(expression(paste(y[i]," - ",bar(y))),expression(paste(bar(y)[j]," - ",bar(y))),expression(paste(y[i]," - ",bar(y)[j]))),side=1,cex.axis=1.5)
+```
+
+
+## Anova test
+
+Testen $H_0: \beta_1=\beta_2=0$ via $F$-test.
+\[
+  F = \frac{\text{MST}}{\text{MSE}}
+\]
+
+with
+
+- $\text{MST}=\text{SST}/(g-1)$  
+\vspace{10pt}
+- $\text{MSE}=\text{SSE}/(n-p)$
+\vspace{10pt}
+- Test statistic compares the variability explained by  model (MST) with the residual variability (MSE)
+
+or
+
+- Variability between groups (MST) to variability within groups (MSE)
+\vspace{10pt}
+- Under $H_0$: $F \sim F_{g-1,n-g}$, with g=3.
+
+
+## Anova Table
+
+| |Df|Sum Sq|Mean Sq|F value|Pr(>F)|
+|---|---|---|---|---|---|
+|Treatment|d.f. SST|SST|MST|F-statistiek|p-waarde|
+|Error|d.f. SSE|SSE|MSE| | |
+
+```{r}
+anova(model1)
+```
+
+
+### F-distribution with critical value  ($\alpha$=5%) and observed F-statistiek for prostacyclin example
+```{r prostacF, out.width='100%', fig.asp=.8, fig.align='center',echo=FALSE}
+grid <- seq(0,17,.01)
+df1=anova(model1)[1,1]
+df2=anova(model1)[2,1]
+fval=anova(model1)[1,4]
+crit=qf(0.95,df1,df2)
+reject=c(crit,grid[which(grid>crit)])
+accept=c(grid[which(grid<crit)],crit)
+plot(grid,df(grid,df1,df2),type="l",ylab="Density",xlab="F-statistic",cex.axis=1.5,cex.lab=1.5)
+polygon(c(0,accept,crit,0),c(0,df(accept,df1,df2),0,0),col="blue",border="blue")
+text(crit/2,.97,labels="accept\n95%",col="blue",cex=1.5)
+polygon(c(crit,reject,15,crit),c(0,df(reject,df1,df2),0,0),col="red",border="red")
+abline(v=crit,col="red",lwd=2)
+text(crit+(fval-crit)/2,.97,labels="reject\n5%",col="red",cex=1.5)
+text(pos=4,crit,df(crit,2,33),labels=paste0("F(0.05,",df1,",",df2,")"),col="red",cex=1.5)
+text(pos=4,fval,df(crit,df1,df2),labels=paste0("f=",round(fval,1)),col="darkorange",cex=1.5)
+abline(v=fval,col="darkorange",lwd=2,lty=2)
+text(15.5,.97,labels=paste0("p-value\n",format(anova(model1)[1,5],digits=2)),col="darkorange",cex=1.5)
+arrows(x0=17.5,x1=fval,y0=.9,y1=.9,col="darkorange")
+```
+
+
+### F-distributions with different number of degrees of freedom in the nominator and denominator 
+```{r ftheo, out.width='100%', fig.asp=.8, fig.align='center',echo=FALSE}
+plot(grid,df(grid,1,5),type="l",ylab="Density",xlab="F-statistic",xlim=c(0,5),ylim=c(0,1.5),lwd=2,cex.axis=1.5,cex.lab=1.5)
+lines(grid,df(grid,5,5),type="l",col=2,lwd=2)
+lines(grid,df(grid,10,30),type="l",col=3,lwd=2)
+lines(grid,df(grid,20,30),type="l",col=4,lwd=2)
+lines(grid,df(grid,50,50),type="l",col=5,lwd=2)
+legend("topright",lty=1,col=c(1,2,3,4,5),legend=c("F(1,5)","F(5,5)","F(10,30)","F(20,30)","F(50,50)"),lwd=2,cex=1.5)
+```
+
+###Prostacyclin example: which groups are different?
+
+```{r}
+summary(model1)
+```
+
+With model output we can assess if the mean prostacyclin concentration differs between middle and low dose group ($\beta_1$: dose25), and, between high and low dose group ($\beta_2$: dose50).
+
+The p-values do not account for multiple testing.  
+
+# Post hoc analysis: Multiple comparisons of means
+
+## Naive method
+
+In the first part we developed the $F$-test to assess
+
+$$  H_0: \mu_1=\cdots = \mu_g \text{ versus } H_1: H_1: \exists\ j,k \in \{1,\ldots,g\} : \mu_j\neq\mu_k$$
+
+
+- If we reject $H_0$ we conclude that at least two means are different
+- The methode does not allow to identify which means are different.
+
+A first naive method is to split $H_0$  in partial hypotheses
+$$H_{0jk}: \mu_j=\mu_k \text{ versus } H_{1jk}: \mu_j \neq \mu_k$$
+
+- falsify partiale null hypotheses with two-sample $t$-testen
+
+- Comparison of group $j$ with group $k$ with two-sample $t$-test under the equality of means:
+$$T_{jk} = \frac{\bar{Y}_j-\bar{Y}_k}{S_p\sqrt{\frac{1}{n_j}+\frac{1}{n_k}}} \sim t_{n-2}$$
+
+With
+
+- $S_p^2$ the pooled variance estimator,
+$$S_p^2 = \frac{(n_j-1)S_j^2 + (n_k-1)S_k^2}{n_j+n_k-2}$$
+
+- with $S_j^2$ and $S_k^2$ the sample variances of group $j$ en $k$, respectively. 
+
+In ANOVA context we assume that the variance of **all** $g$ groups is equal, i.e. the residual variance $\sigma^2$.
+
+- Use of $S_p^2$ is not efficient because it does not make use of all data
+
+- We can gain efficiency by using MSE
+$$\text{MSE}= \sum_{j=1}^g \frac{(n_j-1)S_j^2}{n-g}$$
+
+- The $t$-testen are thus best based on
+$$T_{jk} = \frac{\bar{Y}_j-\bar{Y}_k}{\text{MSE}\sqrt{\frac{1}{n_j}+\frac{1}{n_k}}} \sim t_{n-g}.$$
+
+---
+
+```{r}
+with(prostacyclin,pairwise.t.test(prostac,dose,"none"))
+```
+
+When we perform $m$-tests on the $\alpha$ significance level we cannot correctly control the type I error.
+
+## We show with simulation that naive method does not work
+
+1. We simulate from an ANOVA model with $g=3$ groupen.
+2. The means in the ANOVA model are equal to each other, so that $$H_0: \mu_1=\mu_2=\mu_3$$.
+3. For each simulated dataset we conduct $m=3$ pairwise two-sample $t$-test
+4. As soon as one of the $p$-values is below significantie level $\alpha=5\%$, we reject $H_0: \mu_1=\mu_2=\mu_3$ because two means are different according to the  $t$-testen.
+5. We rapport th erelative frequency of rejection of the global null hypothesis, i.e. the probability on a type I error  $H_0: \mu_1=\mu_2=\mu_3$.
+
+
+```{r}
+g<-3 # number of treatments (g=3)
+ni<-12 # number of observations in each group
+n<-g*ni # totaal number observation
+alpha<-0.05 # significance level of individual test 
+N=10000 # number of simulaties
+set.seed(302) #seed to reproduce results exactly 
+trt=factor(rep(1:g,ni)) #factor
+cnt<-0 #counter for erroneous rejections
+for(i in 1:N) {
+#if (i%%1000==0) cat(i,"/",N,"\n")
+y <- rnorm(n)
+tests<-pairwise.t.test(y,trt,"none")
+reject<-min(tests$p.value,na.rm=T)<alpha
+if(reject) cnt<-cnt+1
+}
+cnt/N
+```
+
+---
+
+- Probability on the type I error equals `r round(cnt/N,3)*100`%
+- It is more then twice $\alpha=5$%.
+- If we repeat the simulation with g = 5 groups (i.e. 10 pairwise t-tests) we find a type I error of 28.0% instead of the desired 5%.
+
+- The simulation study illustrates the  **multiplicity** problem
+
+  - classical p-values can only be compared with the significance level $\alpha$, if the conclusion is based on a single p-value.
+  - Her the final decision is based on $m=g\times(g-1)/2$ $p$-values.
+
+- We first discuss on the extension of the concept of type I errors and then introduce some solutions
+
+## Family-wise error rate
+
+- When $m>1$ tests are used to from one decision it is necessary to correct for the risk on false positive results (type I errors).
+- Most procedures for multiple testing assume that *alle $m$ null hypotheses are true*.
+
+- So one tries to control the*risk on at least 1 false positive* on the **family wise error rate (FWER) $\alpha_F$**, typical $\alpha_F=0.05$.
+
+## Bonferroni correction
+
+When we conduct $m$ independent test each on the significantie level $\alpha$, then
+\begin{eqnarray*}
+\alpha_F&=&\text{P}[\text{minstens 1 Type I fout}]\\
+&=&1-(1-\alpha)^m \leq m\alpha
+\end{eqnarray*}
+
+- If we assess 5 test on the 5% significance level then  the FWER $\approx 25\%$. {10pt}
+- By conducting then at the 1% significance level the FWER $\approx 5\%$.
+
+- The Bonferroni correction controls the FWER on $\alpha_F$ by setting $$\alpha=\alpha_E/m$$ for each of the $m$ pairwise comparisons
+
+An alternative approach is to report
+
+  1. *adjusted p-values* that can be compared to the FWER $\alpha_F$ level: $$\tilde{p}=min(m\times p,1)$$
+  2. and $(1-\alpha_E/m)100\%$ confidence intervals.
+
+### prostacyclin example 
+
+```{r}
+with(prostacyclin,pairwise.t.test(prostac,dose, data = prostacyclin, p.adjust.method="bonferroni"))
+```
+
+- The conclusions remain similar, except that the FWER is now controled at $\alpha_E=5\%$ and the $\tilde{p}$-values are larger with a factor 3. 
+
+The same analysis can be conducted in the `multcomp` R package that is developed for multiple testing in linear models.
+```{r}
+library(multcomp)
+```
+
+```{r}
+model1.mcp<-glht(model1,linfct=mcp(dose="Tukey"))
+summary(model1.mcp,test=adjusted("bonferroni"))
+```
+
+Note, that the user has to define costum functions to obtain Bonferonni adjusted confidence intervals. 
+
+- Bonferonni confidence intervals are not implemented because better methods exist for multiple testing. 
+
+- The function below is just here for completeness, but we will generally use the default method for multiple testing in multcomp.
+
+```{r}
+calpha_bon_t<-function(object,level)
+ abs(
+   qt(
+     (1-level)/2/nrow(object$linfct),
+     object$df
+     )
+    )
+```
+
+```{r}
+confint(model1.mcp,calpha=calpha_bon_t)
+```
+
+### Evaluate Bonferroni methode via simulation
+
+```{r}
+g<-3 # number of treatments (g=3)
+ni<-12 # number of observations in each group
+n<-g*ni # totaal number observation
+alpha<-0.05 # significance level of individual test 
+N=10000 # number of simulaties
+set.seed(302) #seed to reproduce results exactly 
+trt=factor(rep(1:g,ni)) #factor
+cnt<-0 #counter for erroneous rejections
+for(i in 1:N) {
+#if (i%%1000==0) cat(i,"/",N,"\n")
+y <- rnorm(n)
+tests<-pairwise.t.test(y,trt,"bonferroni")
+reject<-min(tests$p.value,na.rm=T)<alpha
+if(reject) cnt<-cnt+1
+}
+cnt/N
+```
+
+
+- We find an FWER of `r round(cnt/N*100,1)`%, which is slightly conservative. 
+- For simulaties of $g=5$ group the FWER is $4.1\%$ (more conservatieve).
+
+- By using Bonferroni the probability on at least one false positive result is lower than $< \alpha_F$.
+- Power loss because the real FWER is smaller than 5%
+
+## Tukey Method
+
+- less conservatieve
+- Implementation approximates the null distribution of posthoc tests via simulations
+- Results can change slightly if the posthoc analysis is repeated 
+- Details on the method falls outside the scope of the short course  
+- is the default in the multcomp package:
+
+    - adjusted p-values
+    - adjusted confidence intervals 
+    
+### Captopril example
+
+```{r}
+model1.mcp<-glht(model1,linfct=mcp(dose="Tukey"))
+summary(model1.mcp)
+```
+
+
+```{r}
+confint(model1.mcp)
+```
+
+
+```{r out.width='100%', fig.asp=.8, fig.align='center'}
+plot(confint(model1.mcp))
+```
+
+###Evaluate Tukey methode
+
+```{r}
+g<-3 # number of treatments (g=3)
+ni<-12 # number of observations in each group
+n<-g*ni # totaal number observation
+alpha<-0.05 # significance level of individual test 
+N <- 10000 # number of simulaties
+set.seed(302) #seed to reproduce results exactly 
+trt <- factor(rep(1:g,ni)) #factor
+cnt<-0 #counter for erroneous rejections
+for(i in 1:N) {
+#if (i%%1000==0) cat(i,"/",N,"\n")
+y <- rnorm(n)
+m<-lm(y~trt)
+m.mcp<-glht(m,linfct=mcp(trt="Tukey"))
+tests<-summary(m.mcp)$test
+reject<-min(as.numeric(tests$pvalues),na.rm=T)<alpha
+if(reject) cnt<-cnt+1
+}
+cnt/N
+```
+
+
+# Conclusions: Prostacyclin example 
+
+Entire analysis for prostacyclin example 
+
+1. Anova before posthoc tests: F-test has a higher power than  pairswise t-test
+
+    - F-test uses all data
+    - for F-test we do not need to correct for multiple testing: one test for the general omnibus hypothesis
+
+```{r}
+model1 <- lm(prostac~dose,data=prostacyclin)
+anova(model1)
+```
+
+```{r}
+model1.mcp<-glht(model1,linfct=mcp(dose="Tukey"))
+summary(model1.mcp)
+```
+
+```{r}
+confint(model1.mcp)
+```
+
+
+- There is an extreme significant effect of arachidonic acid on the average prostacyclin blood concentration in rats ($p<0.001$).
+The average prostacyclin concentration is higher in the high dose group than in the low and moderate dose group (both p-values are smaller than $p<0.001$).
+- The average concentration in the high dose group is `r round(confint(model1.mcp)$confint[2,1],1)`ng/ml (95% CI [`r paste(round(confint(model1.mcp)$confint[2,2:3],1),collapse=",")`]ng/ml) and `r round(confint(model1.mcp)$confint[3,1],1)`ng/ml (95% BI [`r paste(round(confint(model1.mcp)$confint[3,2:3],1),collapse=",")`]ng/ml) higher than in the low and middle dose group.
+- The difference in average prostacyclin concentration between the moderate and low dose group is not significant  (p=`r round(summary(model1.mcp)$test$pvalues[1],2)`).
+(All p-values and confidence intervals for post-hoc tests are corrected for multiple testing using the Tukey method).

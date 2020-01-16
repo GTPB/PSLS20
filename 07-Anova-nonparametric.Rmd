@@ -1,0 +1,21 @@
+---
+title: "5. Statistical Inference: non-parametric statistics - Wilcoxon-Mann-Withney test"  
+author: "Lieven Clement"
+date: "statOmics, Ghent University (https://statomics.github.io)"
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = TRUE, comment = NA, echo = TRUE,
+                      message = FALSE, warning = FALSE)
+library(tidyverse)
+library(Rmisc)
+set.seed(140)
+```

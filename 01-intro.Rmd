@@ -1,5 +1,7 @@
 ---
-title: "1. Introduction: why do we need statistics"   
+title: "1. Introduction: why do we need statistics" 
+author: "Lieven Clement"
+date: "statOmics, Ghent University (https://statomics.github.io)"
 output:
     html_document:
       code_download: true    
@@ -38,7 +40,7 @@ Another group of abundant bacteria are the *Staphylococcus spp.*, these bacteria
 
 ## Import the data
 ```{r}
-read_lines("https://raw.githubusercontent.com/statOmics/psls20/master/data/armpit.csv?token=AF2MWG5H3QKFBWLFS4SDQSK6D4T2M")
+read_lines("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit.csv")
 ```
 
 The file is comma separated and in tidy format

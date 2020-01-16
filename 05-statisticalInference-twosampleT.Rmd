@@ -1,5 +1,7 @@
 ---
 title: "5. Statistical Inference: Two-sample t-test"   
+author: "Lieven Clement"
+date: "statOmics, Ghent University (https://statomics.github.io)"
 output:
     html_document:
       code_download: true    
