@@ -41,6 +41,9 @@ schemadotorg:
   url: "https://gtpb.github.io/PSLS20"
 ---
 
+
+![IntroFig](./assets/introFig.png)
+
 ## Course Description
 
 This intermediate level course is one of our Foundations courses. It covers essential statistical concepts and methods for extracting insights from empirical data in the life sciences. The course positions applied statistics, starting from important aspects of experimental design and data exploration. We then move into statistical modeling and data analysis. We will focus on the link between linear regression and analysis of variance. Together, these methods contribute to the study of General Linear Models. The course also introduces the basics of non-parametric testing, and addresses categorical data analysis and logistic regression.
@@ -76,6 +79,7 @@ There is a strong emphasis in reproducible research by extensively using R/Rmark
     - [9.1 Nonparametric Statistics: Wilcoxon-Mann-Whitney test](pages/09-NonparametericStatistics-WilcoxonMannWhitney.html)
     - [9.2 Nonparametric Statistics: Kruskal Wallis test](pages/09-NonparametericStatistics-KruskalWallis.html)
 10. [Multiple Regression](pages/10-MultipleRegression.html)
+11. [Categorical Data Analysis](pages/11-categoricalDataAnalysis.html)
 
 ---
 
