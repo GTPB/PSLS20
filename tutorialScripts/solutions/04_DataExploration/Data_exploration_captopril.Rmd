@@ -15,11 +15,9 @@ visualize data yourself! You will work with one specific dataset;
 
 # The captopril dataset
 
-The captopril dataset holds information on a small experiment with
-15 patients that have increased blood pressure values. 
-More specifically, for each patient we will have four values;
-one value for systolic blood pressure and one for diastolyic,
-both before and after treating the patient with a drug named captopril.
+The captopril dataset stems from a small experiment with
+15 patients with hypertension. 
+For each patient systolic and diasystolic blood pressure measurements where taken before and after administering captopril.
 
 
 # Import the data
@@ -55,16 +53,18 @@ captopril %>%
   gather(type,bp,-id)
 ```
 
-Again, not all visualization types will be equally informative.
-Let us first make a barplot of the data.
+## Barplot
+
+A Barplot is a plot that you will commonly find in papers.
 
 ```{r}
 captopril %>% 
   gather(type,bp,-id) %>% 
   group_by(type) %>%
-    summarize_at("bp",list(mean=mean,
-              sd=sd,
-              n=length)) %>%
+     summarize_at("bp",
+               list(mean=~mean(.,na.rm=TRUE),
+                    sd=~sd(.,na.rm=TRUE),
+                    n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
   mutate(se=sd/sqrt(n)) %>%
   ggplot(aes(x=type,y=mean,fill=type)) + 
   scale_fill_brewer(palette="RdGy") +
@@ -75,16 +75,24 @@ captopril %>%
   ylab("blood pressure (mmHg)")
 ```
 
-This barplot is not very informative. De height of the bars
+A barplot, however, is not very informative. The height of the bars
 only provides us with information of the mean blood pressure.
 However, we don't see the actual underlying values, so we for
 instance don't have any information on the spread of the data.
 It is usually more informative to represent to underlying 
 values as _raw_ as possible. Boxplots are ideal for this!
 
-Note that it in theory it is possible to add the raw data on
+Note that it is possible to add the raw data on
 the barplot, but we still would not see any measures of the
 spread, such as the interquartile range.
+
+## Boxplot 
+
+With the boxplot, we get a lot of useful information.
+We immediately see multiple features of the spread of
+the data, such as the median, the 25% and 75% quantiles
+and outliers. Since we only have 15 raw values (patients),
+we can easily add them to the plot without getting messy.
 
 ```{r}
 captopril %>% 
@@ -98,11 +106,6 @@ captopril %>%
   ylab("blood pressure (mmHg)") + stat_summary(fun.y=mean, geom="point", shape=5, size=3, color="black", fill="black")
 ```
 
-With the boxplot, we get a lot of useful information.
-We immediately see multiple features of the spread of
-the data, such as the median, the 25% and 75% quantiles
-and outliers. Since we only have 15 raw values (patients),
-we can easily add them to the plot without getting messy.
 
 In terms of interpretation, we can see that the median 
 systolic and diastolic blood pressure values are lower 
@@ -110,6 +113,7 @@ after treatment with captopril than before. If we want to
 have visual inference on the mean values (cfr. class on t-test),
 we can add them to the plot `stat_summary` function.
 
+## Paired data
 An important feature of this dataset is that it contains
 paired data; for each patient, we have blood pressure values
 (systolic and diastolic) before and after treatment with
@@ -132,19 +136,6 @@ pressure is lower after captopril treatment than before.
 Note that we could not see this from the boxplot, directly;
 
 
-```{r}
-captopril %>% 
-  gather(type,bp,-id) %>% 
-  filter(type%in%c("SBPa","SBPb")) %>%
-  ggplot(aes(x=type,y=bp,fill=type)) + 
-  scale_fill_brewer(palette="RdGy") +
-  theme_bw() +
-  geom_boxplot(outlier.shape=NA) + 
-  geom_jitter(width = 0.2) +
-  ggtitle("Boxplot of blood pressure measures before and after treatment") +
-  ylab("blood pressure (mmHg)") + stat_summary(fun.y=mean, geom="point", shape=5, size=3, color="black", fill="black")
-```
-
 Another good way to visualise the paired data is by using a line plot that is grouped by subject.
 Note, that we make a factor of the type and that we choose order of the levels so that the level "b" before becomes before the level "a". Otherwise the after measurements will appear first in the plot. 
 
@@ -159,14 +150,8 @@ captopril %>%
   geom_point()
 ```
 
-A typical next step is to perform a test to find out
-whether the mean systolic blood pressure value after
-captopril treatment is _significantly_ different from
-the mean systolic blood pressure value before treatment.
-
-Analagously, we may subtract the `after` measurement from the
-`before` measurement, and test if the difference between the 
-two sets of values is significantly different from zero.
+Analogously, we may immediately difference the `after` measurement from the
+`before` measurement because we have paired data.
 
 ```{r}
 captopril %>% 
@@ -185,8 +170,10 @@ The mean difference is lower than zero. It seems
 that on average the captopril treatment has lowered
 the blood pressure by about 20 mmHg. 
 
+## Assumptions: QQ-plot
+
 In the next lecture we will assess if this difference is statistically significant. 
-Therefore we rely on the assumption that the differences are normally distributed. 
+We will introduce a statistical test that relies on the assumption that the differences are normally distributed. 
 We can check this with a QQ-plot: 
 
 ```{r}
@@ -200,7 +187,39 @@ captopril %>%
 
 The plot shows no large deviations of the straight line indicating that the data are approximately normally distributed. 
 
+#Descriptive statistics
 
+Descriptive statistics for all blood pressure measurements are found below. 
+
+```{r}
+captopril %>% 
+  gather(type,bp,-id) %>% 
+  group_by(type) %>%
+     summarize_at("bp",
+               list(mean=~mean(.,na.rm=TRUE),
+                    sd=~sd(.,na.rm=TRUE),
+                    n=function(x) x%>%is.na%>%`!`%>%sum))%>%
+  mutate(se=sd/sqrt(n))
+```
+
+It is also very useful to calculate the descriptive statistics for the systolic bloodpressure difference because we can assess the effect size of administering captopril for every patient. 
+
+```{r}
+captopril %>% 
+  mutate(bp_diff = SBPa-SBPb) %>%
+     summarize_at("bp_diff",
+               list(mean=~mean(.,na.rm=TRUE),
+                    sd=~sd(.,na.rm=TRUE),
+                    n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+  mutate(se=sd/sqrt(n))
+```
+
+
+# Wrap-up 
+
+Next, time if you explore paired data, you can immediately adopt section 3.3 the line plot and the boxplot of the differences so as to acknowledge the pairing and section 3.4. 
+
+It is not useful to report the barplot. 
 
 
 

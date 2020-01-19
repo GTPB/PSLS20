@@ -1,5 +1,5 @@
 ---
-title: "1. Introduction: why do we need statistics" 
+title: "1. Introduction: Why do we need statistics" 
 author: "Lieven Clement"
 date: "statOmics, Ghent University (https://statomics.github.io)"
 output:
@@ -129,7 +129,7 @@ We first explain what a boxplot.
 
 ```{r fig.align='center',echo=FALSE}
 fem <- NHANES::NHANES %>% filter(Gender=="female" & !is.na(DirectChol)) %>% select(DirectChol)
-boxplot(fem$DirectChol, ylab="Direct Cholestorol",cex.lab=1.5,cex.axis=1.5,cex.main=1.5)
+boxplot(fem$DirectChol, ylab="Direct cholesterol",cex.lab=1.5,cex.axis=1.5,cex.main=1.5)
 rangeCl<-quantile(fem$DirectChol,c(.25,.75))+c(-1,1)*diff(quantile(fem$DirectChol,c(.25,.75)))*1.5
 boxYs<-c(range(fem$DirectChol[fem$DirectChol<=rangeCl[2]&fem$DirectChol>=rangeCl[1]]),quantile(fem$DirectChol,c(.25,.5,.75)),rangeCl[2]+(max(fem$DirectChol)-rangeCl[2])/2)
 text(1.3,boxYs,labels=c("wisker","wisker","x25","mediaan","x75","outliers"),pos=4,cex=1.3)
@@ -260,10 +260,10 @@ glimpse(NHANES)
 ## Data exploration
 
 
-Suppose that we are interested in assessing the difference in direct cholestorol levels between males and females older than 25 years.
+Suppose that we are interested in assessing the difference in direct cholesterol levels between males and females older than 25 years.
 
 1. We pipe the dataset to the function `filter` to filter the data according to age. 
-2. We plot the direct cholestorol levels.
+2. We plot the direct cholesterol levels.
     - We select the data with the command `ggplot(aes(x=DirectChol))`
     - We add a histogram with the command `geom_histogram()`
     - We make to vertical panels using the command `facet_grid(Gender~.)`
@@ -274,12 +274,12 @@ NHANES%>%filter(Age>25)%>%
   ggplot(aes(x=DirectChol))+
   geom_histogram() +
   facet_grid(Gender~.) +
-  xlab("Direct Cholestorol (mg/dl)")
+  xlab("Direct cholesterol (mg/dl)")
 ```
 
 ---
 
-- Cholestorol levels and concentration measurements are often skewed.
+- Cholesterol levels and concentration measurements are often skewed.
 - Concentrations cannot be lower than 0.
 - They are often log transformed.
 
@@ -289,7 +289,7 @@ NHANES%>%
   ggplot(aes(x=DirectChol%>%log2))+
   geom_histogram() +
   facet_grid(Gender~.) +
-  xlab("Direct Cholestorol (log2)")
+  xlab("Direct cholesterol (log2)")
 ```
 
 We see that the data are more or less bell shaped upon log transformation.
@@ -299,8 +299,8 @@ We see that the data are more or less bell shaped upon log transformation.
 We will now create a subset of the data that we will use to sample from in the next sections.
 
   1. We filter on age and remove subjects with missing values (NA).
-  2. We only select the variables Gender and DirectChol from the dataset to avoid unnessary variables.
-  3. With the mutate function we can add a new variable logChol with log transformed direct cholestorol levels.
+  2. We only select the variables Gender and DirectChol from the dataset to avoid unnecessary variables.
+  3. With the mutate function we can add a new variable logChol with log transformed direct cholesterol levels.
 
 ```{r}
 nhanesSub<- NHANES%>%
@@ -330,10 +330,10 @@ cholLogSum
 
 ## Experiment
 
-- Suppose that we have no access to cholestorol levels of the American population,
+- Suppose that we have no access to cholesterol levels of the American population,
 - we will have to setup an experiment.
 - Suppose we have a budget for assessing 10 females and 10 males,
-- we will subset 10 females and 10 males at random from the American population and measure their direct cholestorol levels.
+- we will subset 10 females and 10 males at random from the American population and measure their direct cholesterol levels.
 
 ```{r}
 fem<-nhanesSub%>%filter(Gender=="female")%>%sample_n(size=10)
@@ -352,7 +352,7 @@ samp %>%
   ggplot(aes(x=cholLog))+
   geom_histogram(binwidth = .1) +
   facet_grid(Gender~.) +
-  xlab("Direct Cholestorol (log2)")
+  xlab("Direct cholesterol (log2)")
 
 samp%>% 
   ggplot(aes(x=Gender,y=cholLog)) +
@@ -397,7 +397,7 @@ samp2%>%
   ggplot(aes(x=DirectChol%>%log))+
   geom_histogram(binwidth = .1) +
   facet_grid(Gender~.) +
-  xlab("Direct Cholestorol (log)")
+  xlab("Direct cholesterol (log)")
 
 samp2%>% 
   ggplot(aes(x=Gender,y=cholLog)) +
@@ -429,7 +429,7 @@ samp3%>%
   ggplot(aes(x=DirectChol%>%log))+
   geom_histogram(binwidth = .1) +
   facet_grid(Gender~.) +
-  xlab("Direct Cholestorol (log)")
+  xlab("Direct cholesterol (log)")
 
 samp3%>% 
   ggplot(aes(x=Gender,y=cholLog)) +
@@ -452,9 +452,9 @@ t.test(cholLog~Gender,samp3,var.equal=TRUE)
 
 ## Summary
 
-- Because we sampled other subjects in each sample, we obtain diffent cholestorol levels.
-- However, not only the cholestorol levels differ from sample to sample but also the summary statistics: means, standard deviations and standard errors.
-- Note, that in the last sample the log cholestorol levels are on average lower for females than for males; based on this sample we even would wrongly conclude that the cholestorol levels for females are on average larger than those of males.
+- Because we sampled other subjects in each sample, we obtain different cholesterol levels.
+- However, not only the cholesterol levels differ from sample to sample but also the summary statistics: means, standard deviations and standard errors.
+- Note, that in the last sample the log cholesterol levels are on average lower for females than for males; based on this sample we even would wrongly conclude that the cholesterol levels for females are on average larger than those of males.
 
 - This implies that our conclusions are also subjected to uncertainty and might change from sample to sample.
 
@@ -494,7 +494,7 @@ names(res) <- c("delta","pvalue")
 res %>% 
   ggplot(aes(x=delta,y=-log10(pvalue),color=pvalue<0.05)) + 
   geom_point() + 
-  xlab("Average cholestorol difference") +
+  xlab("Average cholesterol difference") +
   ylab("- log10(pvalue)") +
   scale_color_manual(values=c("black","red"))
 
@@ -505,7 +505,7 @@ res %>%
   xlab("")
 ```
 
-Only in `r sum(res[,2]<0.05&res[,1]<0)` out of 20000 samples we conclude that the mean cholestorol level of males is significantly lower than for females. For the remaining samples the cholestorol levels for males were on average significantly lower than for females (`r sum(res[,2]<0.05&res[,1]>0)` samples) or the average difference in cholestorol levels were not statistically significant (`r sum(res[,2]>0.05)` samples). The latter is because the power is rather low to detect the difference with 10 samples in each group.
+Only in `r sum(res[,2]<0.05&res[,1]<0)` out of 20000 samples we conclude that the mean cholesterol level of males is significantly lower than for females. For the remaining samples the cholesterol levels for males were on average significantly lower than for females (`r sum(res[,2]<0.05&res[,1]>0)` samples) or the average difference in cholesterol levels were not statistically significant (`r sum(res[,2]>0.05)` samples). The latter is because the power is rather low to detect the difference with 10 samples in each group.
 
 ---
 
@@ -520,11 +520,11 @@ Only in `r sum(res[,2]<0.05&res[,1]<0)` out of 20000 samples we conclude that th
 
 # Salk Study
 
-- In 1916, the US experienced the first large epidemy of polio.
+- In 1916, the US experienced the first large epidemic of polio.
 - John Salk developed a vaccine with promising results in the lab in the early fifties.
 - In 1954, the National Foundation
 for Infantile Paralysis (NFIP) has setup a large study to assess the effectiveness of the Salk vaccine.
-- Suppose that the NFIP would have vaccinated a large number of childeren in 1954 and would have observed that the polio incidence in 1954 was lower than in 1953. Could they have concluded that the vaccine was effective?
+- Suppose that the NFIP would have vaccinated a large number of children in 1954 and would have observed that the polio incidence in 1954 was lower than in 1953. Could they have concluded that the vaccine was effective?
 
 ---
 
@@ -588,7 +588,7 @@ A new study was conducted: Randomized double blind study
   - Treatment: vaccination with vaccine
   - double blinding:
     - parents did not know if their child was vaccinated or received the placebo
-    - care-giver/researchers did not know if the child was vaccinated  or recieved placebo
+    - care-giver/researchers did not know if the child was vaccinated  or received placebo
 
 ---
 
@@ -692,7 +692,7 @@ for (i in 1:50)
 	radius=sample(grid,prob=grid^2*pi/sum(grid^2*pi),size=1)
 	kopvoeter(3+radius*cos(angle1/180*pi),8+radius*sin(angle1/180*pi),angle=angle2)
 }
-text(7.5,8,"Cholestorol in population",col="red",cex=1.2)
+text(7.5,8,"cholesterol in population",col="red",cex=1.2)
 
 rect(0,0,10,4,border="blue",lwd=2)
 text(.5,2,"sample",srt=90,col="blue",cex=2)
@@ -703,7 +703,7 @@ for (i in 0:2)
 
 	kopvoeter(2.1+j*(3.9-2.1)/4,1.1+i)
 }
-text(7.5,2,"Cholestorol in sample",col="blue",cex=1.2)
+text(7.5,2,"cholesterol in sample",col="blue",cex=1.2)
 
 arrows(3,5.9,3,4.1,col="black",lwd=3)
 arrows(7,4.1,7,5.9,col="black",lwd=3)

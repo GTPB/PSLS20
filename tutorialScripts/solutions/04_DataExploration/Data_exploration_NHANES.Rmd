@@ -11,7 +11,7 @@ output:
 ---
 
 In this tutorial, we will learn how to import, tidy, wrangle and 
-visualize data. We will work with one speficic dataset;
+visualize data. We will work with one specific dataset;
 
 # The NHANES dataset
 
@@ -72,7 +72,7 @@ library(tidyverse)
 
 ** Important ** 
 If you are not familiar yet with the concepts of tidy data,
-have a lookt at the preliminary_tidyverse.Rmd file!
+have a look at the preliminary_tidyverse.Rmd file!
 
 If we consider our `NHANES` dataframe, we see it is already in 
 a tidy format, as;
@@ -84,7 +84,7 @@ a tidy format, as;
 Each row contains all of the information on 
 a single subject (US civilian) in the study. 
 
-In te next tutorial, we will work with a dataset on the 
+In the next tutorial, we will work with a dataset on the 
 effects of a certain drug, _captopril_, on the systolic
 and diastolic blood pressure of patients. This will not be 
 a _tidy_ dataset. As such, the details of tidying data 
@@ -99,7 +99,7 @@ library(dplyr)
 
 
 The `dplyr` package provides us with a large set of 
-functions for handeling our data. We refer to the 
+functions for handling our data. We refer to the 
 preliminary_tidyverse.Rmd file for a more detailed
 description of these functions.
 
@@ -133,7 +133,7 @@ Let's say we want to investigate how many subjects are
 
 ```{r warning=FALSE,message=FALSE}
 NHANES %>% 
-  select(c("Gender","Age","Weight","Height")) %>% ## select the colums of interest
+  select(c("Gender","Age","Weight","Height")) %>% ## select the columns of interest
   filter(Gender == "male", 
          Age > 18,
          Height > 150,
@@ -144,7 +144,7 @@ NHANES %>%
 Filtering the dataset based on thee three filtering criteria
 retain 3.601 subjects. Note that the `select` step was not
 strictly necessary, but since we could answer the question
-based on only these 4 colums, there is no need to retain the
+based on only these 4 columns, there is no need to retain the
 the rest of the data (if this is the only question).
 
 ## Arrange
@@ -173,7 +173,7 @@ functionalities. Let's try to explore another one!
 
 Assume that we don't trust the BMI values in our dataset
 and we decide to calculate them ourselves. BMI is typically 
-calculated by taking a person's weigth (in kg) and dividing
+calculated by taking a person's weight (in kg) and dividing
 it by the its height (in m) squared. Based on this rule,
 generate a new column, BMI_self, for the subset of the
 NHANES dataset that we obtained from the previous question.
@@ -190,13 +190,13 @@ NHANES %>%
 Note that now we need to include the _Weight_ and _BMI_
 columns in the `select` statement, because we need that
 input for the `mutate` function. Good news: It turns out 
-that the BMI colum in the original dataset was computed
+that the BMI column in the original dataset was computed
 correctly after all! But now we are interested in the
 mean value of the BMI_Self column. This requires a fifth
-`dplyr` function: `summarise()`.
+`dplyr` function: `summarize()`.
 
 
-## Summarise
+## summarize
 
 Given the filtering of the question above, compute the mean
 value of the BMI_self column.
@@ -206,7 +206,7 @@ NHANES %>%
   select(c("Race1", "Gender","MaritalStatus","Height","Weight","BMI")) %>%
   filter(MaritalStatus != "Married", Race1 == "Hispanic", Gender == "male") %>% 
   mutate(BMI_self = Weight/(Height/100)**2) %>%
-  summarise(avg_BMI_self = mean(BMI_self, na.rm = TRUE))
+  summarize(avg_BMI_self = mean(BMI_self, na.rm = TRUE))
 ## the addition argument na.rm = TRUE makes sure to remove missing
 ## values for the purpose of calculating the mean
 ```
@@ -256,7 +256,7 @@ we will add a final one: `group_by()`.
 
 The `group_by()` verb is and incredibly powerful
 function in `dplyr`. It allows us, for example,
-to calculate summarisy statistics for different
+to calculate summary statistics for different
 groups of observations.
 
 If we take our example from above, let's say 
@@ -272,7 +272,7 @@ NHANES %>%
   filter(MaritalStatus != "Married", Race1 == "Hispanic", Gender == "male") %>% 
   mutate(BMI_self = Weight/(Height/100)**2) %>%
   group_by(MaritalStatus) %>% ##  group the subjects by their marital status
-  summarise(avg_BMI_self = mean(BMI_self, na.rm = TRUE)) ## calculate the mean BMI_self value of each group
+  summarize(avg_BMI_self = mean(BMI_self, na.rm = TRUE)) ## calculate the mean BMI_self value of each group
 ```
 
 We have successfully combined six of the most important
@@ -390,7 +390,7 @@ method for displaying two variables.
 ### Create scatter plots using `geom_point()` 
 
 For the NHANES dataset, we can for instance look
-at the relationship between a person's height and weigth
+at the relationship between a person's height and weight
 values.
 
 ```{r}
@@ -568,16 +568,17 @@ summary_NHANES <- NHANES %>%
   filter(between(Age,40,65)) %>% ## filter the subjects on age, retains 2522 subjects
   distinct(ID,.keep_all=TRUE) %>% ## removes duplicated IDs, retains 1467 subjects
   filter(Smoke100n == "Non-Smoker", Diabetes == "No", HardDrugs == "No", HealthGen != "Poor", SleepTrouble == "No", BMI_WHO%in%c("18.5_to_24.9","25.0_to_29.9")) %>%
-  summarise(log2BPSysAve=BPSysAve%>%log2%>%mean,
-            sd=BPSysAve%>%log2%>%sd,
-            n=is.na(BPSysAve)%>% `!` %>%sum) %>%
-  mutate(se=sd/n)
+  summarize_at("rel",
+               list(mean=~mean(.,na.rm=TRUE),
+                    sd=~sd(.,na.rm=TRUE),
+                    n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+  mutate(se=sd/sqrt(n))
 
-paste("Mean value (log2):", summary_NHANES$log2BPSysAve)
-paste("Geometric mean value (log2):", 2^summary_NHANES$log2BPSysAve)
+paste("Mean value (log2):", summary_NHANES$mean)
+paste("Geometric mean value (log2):", 2^summary_NHANES$mean)
 paste("Standard deviation (log2):", summary_NHANES$sd)
-paste0("Reference interval (log2): [", summary_NHANES$log2BPSysAve - 2*summary_NHANES$sd, ";", summary_NHANES$log2BPSysAve + 2*summary_NHANES$sd, "]")
-paste0("Reference interval (log2): [", 2^(summary_NHANES$log2BPSysAve - 2*summary_NHANES$sd), ";", 2^(summary_NHANES$log2BPSysAve + 2*summary_NHANES$sd), "]")
+paste0("Reference interval (log2): [", summary_NHANES$mean - 2*summary_NHANES$sd, ";", summary_NHANES$mean + 2*summary_NHANES$sd, "]")
+paste0("Reference interval (log2): [", 2^(summary_NHANES$mean - 2*summary_NHANES$sd), ";", 2^(summary_NHANES$mean + 2*summary_NHANES$sd), "]")
 ```
 
 The log2 systolic blood pressure for healthy subjects is approximately normally distributed. We have calculated the
@@ -587,12 +588,12 @@ what we can consider to be _normal_ blood pressure values. Any of the
 later patients who's values do not fall within this interval, we can
 consider _abnormal_. 
 
-The log2 mean blood pressure value of the healthy subset is `r round(summary_NHANES$log2BPSysAve,2)`, with
+The log2 mean blood pressure value of the healthy subset is `r round(summary_NHANES$mean,2)`, with
 a standard deviation of `r round(summary_NHANES$sd,2)`. When we replace the population average
 and population standard deviation with these estimates, we obtain a 
-95% reference interval of [`r round(summary_NHANES$log2BPSysAve - 2*summary_NHANES$sd,2)`;`r round(summary_NHANES$log2BPSysAve + 2*summary_NHANES$sd,2)`] on log scale and [`r round(2^(summary_NHANES$log2BPSysAve - 2*summary_NHANES$sd),2)`,`r round(2^(summary_NHANES$log2BPSysAve + 2*summary_NHANES$sd),2)`] mmHg on the original scale. 
+95% reference interval of [`r round(summary_NHANES$mean - 2*summary_NHANES$sd,2)`;`r round(summary_NHANES$mean + 2*summary_NHANES$sd,2)`] on log scale and [`r round(2^(summary_NHANES$mean - 2*summary_NHANES$sd),2)`,`r round(2^(summary_NHANES$mean + 2*summary_NHANES$sd),2)`] mmHg on the original scale. 
 
-Note that in the literature a value 140 mmHg for the systolic blood 
+Note, that in the literature a value 140 mmHg for the systolic blood 
 pressure is typically considered to be the upper limit of _normality_. 
 
 

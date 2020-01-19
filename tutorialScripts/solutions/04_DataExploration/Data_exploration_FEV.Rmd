@@ -16,7 +16,7 @@ visualize data yourself! You will work with one specific dataset;
 # The FEV dataset
 
 The forced expiratory volume, FEV,
-is a measure of how much air a person can exhale (in liters) 
+is a measure of how much air a person can exhale (in liter) 
 during  a forced breath. In this dataset, the FEV of 606 children,
 between the ages of 6 and 17, were measured. The dataset
 also provides additional information on these children:
@@ -27,7 +27,7 @@ The goal of this experiment was to find out whether or not
 smoking has an effect on the FEV of children.
 
 Note: to analyse this dataset properly, we will need some
-relatively advanced modeling techniques. At the end of this 
+relatively advanced modelling techniques. At the end of this 
 week, you will have seen all three required steps to analyse
 such a dataset! For now, we will limit ourselves to exploring
 the data.
@@ -57,7 +57,7 @@ factors.
 2. The `height` variable is written in inches. Assuming that
 this audience is mainly Portuguese/Belgian, inches are hard to
 interpret. Let's add a new column, `height_cm`, with the values
-converted to centimeters usin the `mutate` function. 
+converted to centimeter using the `mutate` function. 
 
 ```{r}
 fev <- fev %>%
@@ -91,7 +91,7 @@ Did you expect these results?
 
 It appears that children that smoke have a higher
 median FEV than children that do not smoke. 
-Should we change legistlations worldwide and make 
+Should we change legislations worldwide and make 
 smoking obligatory for children?
 
 Maybe there is something else going on in the data.
@@ -124,7 +124,7 @@ the smoking status and FEV values only, we probably would've
 obtained completely incorrect results.
 
 Can provide an even better visualization of the data, taking
-into account more useful explanattory variables with respect
+into account more useful explanatory variables with respect
 to the FEV?
 
 ```{r}
@@ -140,7 +140,7 @@ fev %>%
   facet_grid(rows = vars(gender))
 ```
 
-This plot holds one extra level of informattion, the gender 
+This plot holds one extra level of information, the gender 
 of the child. Especially for higher ages, the median FEV
 is higher for males as compared to females.
 
@@ -163,7 +163,7 @@ fev %>%
 
 There is a clear relationship between height and FEV.
 In addition, we see that for the large height values
-(>175cm), we mainly find male sujects.
+(>175cm), we mainly find male subjects.
 
 
 
