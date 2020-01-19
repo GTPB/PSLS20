@@ -706,6 +706,18 @@ Generally the standard deviation is unknown and has to be estimated e.g. by $S$
 
 ### NHANES log cholestorol example
 
+#### One sample
+```{r}
+samp50<-sample(fem$DirectChol,50)
+
+ll<-mean(samp50 %>% log2) - 1.96*sd(samp50 %>% log2)/sqrt(50)
+ul<-mean(samp50 %>% log2) + 1.96*sd(samp50 %>% log2)/sqrt(50)
+popMean<-mean(fem$DirectChol%>%log2)
+
+c(ll=ll,ul=ul,popMean=popMean)
+```
+
+#### Repeated sampling
 ```{r}
 res$ll<-res$mean-1.96*res$se
 res$ul<-res$mean+1.96*res$se

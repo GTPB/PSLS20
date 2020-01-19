@@ -1,0 +1,532 @@
+17a18
+> library(Rmisc)
+23c24
+< - Smelly armpits are not caused by sweat, itself. The smell is caused by specific micro-organisms belonging to the group of *Corynebacterium spp.* that metabolise sweat.
+---
+> - Smelly armpits are not caused by sweat itself. The smell is caused by specific micro-organisms belonging to the group of *Corynebacterium spp.* that metabolise sweat.
+26c27
+< - The CMET-groep at Ghent University does research to on transplanting the armpit microbiome to save people with smelly armpits.
+---
+> - The CMET-groep at Ghent University does research on transplanting the armpit microbiome to safe people from smelly armpits.
+34c35
+<     - 20 subjects with smelly armpits are attributed to one of two treatment groups
+---
+>     - 20 students with smelly armpits are attributed to one of two treatment groups
+36,37c37,38
+<     - transplant (antibiotica followed by microbial transplant).
+<     - The microbiome is sampled 6 weeks upon the treatment
+---
+>     - transplant (antibiotics followed by microbial transplant)
+>     - The microbiome is sampled 6 weeks upon the treatment.
+40,41d40
+< ---
+< 
+54,145d52
+< ---
+< 
+< ## Data Exploration and Descriptive Statistics
+< 
+< - Data exploration is extremely important to get insight in the data. 
+< - It is often underrated and overlooked. 
+< 
+< ### Descriptive statistics
+< We first summarize the data and calculate the mean, standard deviation, number of observations and standard error and store the result in an object apRelSum via 'apRelSum<-`
+< 
+< 1. We pipe the `ap` dataframe to the group_by function to group the data by treatment trt `group_by(trt)`
+< 2. We pipe the result to the `summarize_at` function to summarize the "rel" variable and calculate the mean, standard deviation and the number of observations 
+< 3. We pipe the result to the `mutate` function to make a new variable in the data frame `se` for which we calculate the standard error 
+< 
+< 
+< ```{r}
+< apRelSum<-ap%>%
+<   group_by(trt)%>%
+<   summarize_at("rel",
+<                list(mean=~mean(.,na.rm=TRUE),
+<                     sd=~sd(.,na.rm=TRUE),
+<                     n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+<   mutate(se=sd/sqrt(n))
+< 
+< apRelSum
+< ```
+< 
+< ---
+< 
+< ### Plots
+< We will use ggplot2 to make our plots. 
+< With the ggplot2 library we can easily build plots by adding layers.
+< 
+< #### barplot
+< 
+< 1. We pipe our summarized data to the `ggplot` function and we select the treatment variable trt and the variable mean for plotting `aes(x=trt,y=mean)`
+< 
+< 2. We make a barplot based on this data using the `geom_bar` function. The statistic is `stat="identity"` because the bar height should be equal the value for the mean of the relative abundance.
+< 
+< ```{r}
+< apRelSum%>% 
+<   ggplot(aes(x=trt,y=mean)) +
+<   geom_bar(stat="identity") 
+< ```
+< 
+< - Is this plot informative??
+< 
+< ---
+< 
+< We will now add standard errors to the plot
+< using `geom_errorbar` function and specify the minimum and maximum value for of the error bar, the width command is used to set the width of the error bar smaller than the width of the bar. 
+< 
+< ```{r}
+< apRelSum%>% 
+<   ggplot(aes(x=trt,y=mean)) +
+<   geom_bar(stat="identity") + 
+<   geom_errorbar(aes(ymin=mean-se,ymax=mean+se),width=.2)
+< ```
+< 
+< - Is this plot informative??
+< 
+< ---
+< 
+< #### boxplots
+< 
+< I consider barplots to be bad plots
+< 
+< - They are not informative
+< - They just visualize a two point summary of the data. It is better to do this in a table
+< - They use a lot of space (e.g. from zero up to the minimum relative abundance) where no data are present. 
+< 
+< It is better to get a view on the distribution of the data. We can use a boxplot for this purpose.
+< We first explain what a boxplot. 
+< 
+< ---
+< 
+< ```{r fig.align='center',echo=FALSE}
+< fem <- NHANES::NHANES %>% filter(Gender=="female" & !is.na(DirectChol)) %>% select(DirectChol)
+< boxplot(fem$DirectChol, ylab="Direct Cholestorol",cex.lab=1.5,cex.axis=1.5,cex.main=1.5)
+< rangeCl<-quantile(fem$DirectChol,c(.25,.75))+c(-1,1)*diff(quantile(fem$DirectChol,c(.25,.75)))*1.5
+< boxYs<-c(range(fem$DirectChol[fem$DirectChol<=rangeCl[2]&fem$DirectChol>=rangeCl[1]]),quantile(fem$DirectChol,c(.25,.5,.75)),rangeCl[2]+(max(fem$DirectChol)-rangeCl[2])/2)
+< text(1.3,boxYs,labels=c("wisker","wisker","x25","mediaan","x75","outliers"),pos=4,cex=1.3)
+< lines(c(1.1,1.3,1.3,1.1),c(rangeCl[2],rangeCl[2]+(max(fem$DirectChol)-rangeCl[2])/2,rangeCl[2]+(max(fem$DirectChol)-rangeCl[2])/2,max(fem$DirectChol)),lty=2)
+< ```
+< 
+< ---
+< 
+< We will now make a boxplot for the ap data
+< 
+< 1. We pipe the `ap` dataframe to the ggplot command
+< 2. We select the data with the command `ggplot(aes(x=trt,y=rel))`
+< 3. We add a boxplot with the command `geom_boxplot()`
+147,157c54
+< ```{r}
+< ap %>%  
+<   ggplot(aes(x=trt,y=rel)) + 
+<   geom_boxplot()
+< ```
+< 
+< ---
+< 
+< - Note, that we do not have so many observations.
+< 
+< - It is always better to show the data as raw as possible!
+---
+> ## Data exploration
+159c56
+< We will now add the raw data to the plot.
+---
+> We plot the direct relative abundances in function of the treatment group. With the ggplot2 library we can easily build plots by adding layers.
+161,162c58,61
+< - Note that we set the outlier.shape=NA in the geom_boxplot function because because we will add all raw data anyway.
+< - We add the raw data using `geom_point(position="jitter")`, with the argument position='jitter' we will add some random noise to the x coordinate so that we can see all data.
+---
+>     1. We pipe the `ap` dataframe to the ggplot command.
+>     2. We select the data with the command `ggplot(aes(x=trt,y=rel))`.
+>     3. We add a boxplot with the command `geom_boxplot(outlier.shape=NA)` and we set the argument outlier.shape equal to NA so that the outliers are not plotted. We do this because we will add all raw data anyway.
+>     4. We add the raw data using `geom_point(position="jitter")`, with the argument position='jitter'. We will add some random noise to the x coordinate so that we can see all data.
+165,168c64
+< ap %>%  
+<   ggplot(aes(x=trt,y=rel)) +
+<   geom_boxplot(outlier.shape=NA) +
+<   geom_point(position="jitter")
+---
+> ap %>%  ggplot(aes(x=trt,y=rel)) + geom_boxplot(outlier.shape=NA) + geom_point(position="jitter")
+171,173d66
+< This is an informative plot!
+< 
+< ---
+183c76
+< 1. A research assistant selects 20 male students from his faculty with smelly armpits
+---
+> 1. A research assistant selects 20 male students from his faculty with smelly armpits.
+187,188d79
+< ---
+< 
+197,208c88
+< ap %>%  
+<   ggplot(aes(x=trt,y=rel)) +
+<   geom_boxplot(outlier.shape=NA) +
+<   geom_point(position="jitter") + 
+<   ylim(0,100)
+< 
+< ap2 %>%  
+<   ggplot(aes(x=trt,y=rel)) +
+<   geom_boxplot(outlier.shape=NA) +
+<   geom_point(position="jitter") + 
+<   ylim(0,100)
+< ```
+---
+> ap %>%  ggplot(aes(x=trt,y=rel)) + geom_boxplot(outlier.shape=NA) + geom_point(position="jitter") + ylim(0,100)
+210c90,91
+< ---
+---
+> ap2 %>%  ggplot(aes(x=trt,y=rel)) + geom_boxplot(outlier.shape=NA) + geom_point(position="jitter") + ylim(0,100)
+> ```
+218,219d98
+< ---
+< 
+222c101
+< - So the choice depends on to which group the researchers want to generalize their conclusions to
+---
+> - Based on a sample of subjects, the researchers want to come to conclusions that hold for
+224c103
+<     - all kind of people
+---
+>     - all kinds of people
+232,234c111,113
+<     - all subjects in the population should have the same probability of being selected in the sample
+<     - the selection of a subject in the sample should be independent from the selection of the other subjects in the sample.
+<     - The sample is thus supposed to be representative for the population, but still it is random.
+---
+>     - All subjects in the population should have the same probability of being selected in the sample.
+>     - The selection of a subject in the sample should be independent from the selection of the other subjects in the sample.
+>     - The sample is thus supposed to be representative for the population, but is still random.
+238,239d116
+< ---
+< 
+244c121
+<   - Since 1960 approximately individuals of all ages are interviewed in their homes every year
+---
+>   - Since 1999 approximately 5000 individuals of all ages are interviewed in their homes every year.
+249,250d125
+< ---
+< 
+257c132
+< ---
+---
+> Suppose that we are interested in assessing the difference in direct cholesterol levels between males and females older than 25 years.
+261,265c136,137
+< 
+< Suppose that we are interested in assessing the difference in direct cholestorol levels between males and females older than 25 years.
+< 
+< 1. We pipe the dataset to the function `filter` to filter the data according to age. 
+< 2. We plot the direct cholestorol levels.
+---
+> 1. We filter the data according to age.
+> 2. We plot the direct cholesterol levels.
+276c148
+<   xlab("Direct Cholestorol (mg/dl)")
+---
+>   xlab("Direct Cholesterol (mg/dl)")
+279,282c151,152
+< ---
+< 
+< - Cholestorol levels and concentration measurements are often skewed.
+< - Concentrations cannot be lower than 0.
+---
+> - Cholesterol levels and concentration measurements are often skewed.
+> - They cannot be lower than 0.
+286,288c156,157
+< NHANES%>%
+<   filter(Age>25)%>%
+<   ggplot(aes(x=DirectChol%>%log2))+
+---
+> NHANES%>%filter(Age>25)%>%
+>   ggplot(aes(x=DirectChol%>%log))+
+291c160
+<   xlab("Direct Cholestorol (log2)")
+---
+>   xlab("Direct Cholesterol (log)")
+296,297d164
+< ---
+< 
+301,314c168,169
+<   2. We only select the variables Gender and DirectChol from the dataset to avoid unnessary variabeles
+<   3. With the mutate function we can add a new variable logChol with log transformed direct cholestorol levels.
+< 
+< ```{r}
+< nhanesSub<- NHANES%>%
+<   filter(Age>25&!is.na(DirectChol)) %>%
+<   select(c("Gender","DirectChol")) %>%
+<   mutate(cholLog=log2(DirectChol))
+< ```
+< 
+< ---
+< 
+< We will calculate the summary statistics for the cholLog variable for males and females in the large dataset. 
+< So we group by Gender
+---
+>   2. We only select the variables Gender and DirectChol from the dataset to avoid unnessary variabeles.
+>   3. With the mutate function we can add a new variable logChol with log transformed direct cholesterol levels.
+317,323c172
+< cholLogSum<- nhanesSub %>% 
+<   group_by(Gender) %>%
+<    summarize_at("cholLog",
+<                list(mean=~mean(.,na.rm=TRUE),
+<                     sd=~sd(.,na.rm=TRUE),
+<                     n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+<   mutate(se=sd/sqrt(n))
+---
+> nhanesSub<- NHANES%>%filter(Age>25&!is.na(DirectChol)) %>% select(c("Gender","DirectChol")) %>% mutate(cholLog=log(DirectChol))
+325c174
+< cholLogSum
+---
+> summarySE(measurevar = "cholLog","Gender",data=nhanesSub)
+328d176
+< ---
+332,335c180,184
+< - Suppose that we would  have no access to cholestorol levels of the American population.
+< - Then, we would have to setup an experiment.
+< - Suppose that we have a budget for assessing 10 females and 10 males
+< - We will subset 10 females and 10 males at random from the American population and measure their direct cholestorol levels.
+---
+> 
+> - Suppose we have no access to cholesterol levels of the American population,
+> - we will have to setup an experiment.
+> - Suppose we have a budget for assessing 10 females and 10 males,
+> - we will subset 10 females and 10 males at random from the American population and measure their direct cholesterol levels.
+342,347d190
+< samp
+< ```
+< 
+< ---
+< 
+< We will now plot the data with a histogram and boxplots
+349d191
+< ```{r}
+351c193
+<   ggplot(aes(x=cholLog))+
+---
+>   ggplot(aes(x=DirectChol%>%log))+
+354,373c196
+<   xlab("Direct Cholestorol (log2)")
+< 
+< samp%>% 
+<   ggplot(aes(x=Gender,y=cholLog)) +
+<   geom_boxplot(outlier.shape=NA) +
+<   geom_point(position="jitter")
+< ```
+< 
+< ---
+< 
+< We summarize the data
+< ```{r}
+< samp %>% 
+<   group_by(Gender) %>%
+<    summarize_at("cholLog",
+<                list(mean=~mean(.,na.rm=TRUE),
+<                     sd=~sd(.,na.rm=TRUE),
+<                     n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+<   mutate(se=sd/sqrt(n))
+< ```
+---
+>   xlab("Direct Cholesterol (log)")
+375c198
+< Note that the sample mean is different from that of the large experiment ("population") we sampled from. 
+---
+> samp%>% ggplot(aes(x=Gender,y=cholLog)) + geom_boxplot(outlier.shape=NA) + geom_point(position="jitter")
+377,379c200
+< We test for the difference between Males and females
+< 
+< ```{r}
+---
+> summarySE(measurevar = "cholLog","Gender",data=samp)
+383d203
+< ---
+387,388c207
+< If we would do the experiment again we would select other people and we will obtain different results.
+< 
+---
+> If we do the experiment again, we will have to select other people and we will obtain different results.
+395,396c214
+< samp2%>%
+<   ggplot(aes(x=DirectChol%>%log))+
+---
+> samp2%>%ggplot(aes(x=DirectChol%>%log))+
+399c217
+<   xlab("Direct Cholestorol (log)")
+---
+>   xlab("Direct Cholesterol (log)")
+401,412c219
+< samp2%>% 
+<   ggplot(aes(x=Gender,y=cholLog)) +
+<   geom_boxplot(outlier.shape=NA) +
+<   geom_point(position="jitter")
+< 
+< samp2 %>% 
+<   group_by(Gender) %>%
+<    summarize_at("cholLog",
+<                list(mean=~mean(.,na.rm=TRUE),
+<                     sd=~sd(.,na.rm=TRUE),
+<                     n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+<   mutate(se=sd/sqrt(n))
+---
+> samp2%>% ggplot(aes(x=Gender,y=cholLog)) + geom_boxplot(outlier.shape=NA) + geom_point(position="jitter")
+413a221
+> summarySE(measurevar = "cholLog","Gender",data=samp2)
+417,418d224
+< ---
+< 
+426,428c232,233
+< samp3<-rbind(fem,mal)
+< samp3%>%
+<   ggplot(aes(x=DirectChol%>%log))+
+---
+> samp2<-rbind(fem,mal)
+> samp2%>%ggplot(aes(x=DirectChol%>%log))+
+431c236
+<   xlab("Direct Cholestorol (log)")
+---
+>   xlab("Direct Cholesterol (log)")
+433,445c238
+< samp3%>% 
+<   ggplot(aes(x=Gender,y=cholLog)) +
+<   geom_boxplot(outlier.shape=NA) +
+<   geom_point(position="jitter")
+< 
+< 
+< samp3 %>% 
+<   group_by(Gender) %>%
+<    summarize_at("cholLog",
+<                list(mean=~mean(.,na.rm=TRUE),
+<                     sd=~sd(.,na.rm=TRUE),
+<                     n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+<   mutate(se=sd/sqrt(n))
+---
+> samp2%>% ggplot(aes(x=Gender,y=cholLog)) + geom_boxplot(outlier.shape=NA) + geom_point(position="jitter")
+447c240,241
+< t.test(cholLog~Gender,samp3,var.equal=TRUE)
+---
+> summarySE(measurevar = "cholLog","Gender",data=samp2)
+> t.test(cholLog~Gender,samp2,var.equal=TRUE)
+450,451d243
+< ---
+< 
+453,460c245,249
+< 
+< - Because we sampled other subjects in each sample, we obtain diffent cholestorol levels.
+< - However, not only the cholestorol levels differ from sample to sample but also the summary statistics: means, standard deviations and standard errors.
+< - Note, that in the last sample the log cholestorol levels are on average lower for females than for males so based on this sample we even would wrongly conclude that the cholestorol levels for females are on average larger than those of males.
+< 
+< - So, also our conclusions are subjected to uncertainty and might change from sample to sample.
+< 
+< - Samples as the one where the effect swaps and is statistically significant, however, are very rare.
+---
+> - Because we sampled other subjects in each sample, we obtain different cholesterol levels.
+> - However, not only the cholesterol levels differ from sample to sample but also the summary statistics: means, standard deviations and standard errors.
+> - Note that in the last sample the log cholesterol levels are on average lower for females than for males; based on this sample we would wrongly conclude that the cholesterol levels for females are on average larger than those of males.
+> - This means that also our conclusions are subject to uncertainty and might change from sample to sample.
+> - The sample with results as extreme as the last sample, however, are very rare.
+493,504c282,283
+< res %>% 
+<   ggplot(aes(x=delta,y=-log10(pvalue),color=pvalue<0.05)) + 
+<   geom_point() + 
+<   xlab("Average cholestorol difference") +
+<   ylab("- log10(pvalue)") +
+<   scale_color_manual(values=c("black","red"))
+< 
+< res %>% 
+<   ggplot(aes(y=delta)) +
+<   geom_boxplot() +
+<   geom_point(aes(x=0,y=c(mean(fem$cholLog)-mean(mal$cholLog)),color="pop. diff")) +
+<   xlab("")
+---
+> res %>% ggplot(aes(x=delta,y=-log10(pvalue),color=pvalue<0.05)) + geom_point() + xlab("Average cholesterol difference") + ylab("- log10(pvalue)") + scale_color_manual(values=c("black","red"))
+> res %>% ggplot(aes(y=delta)) +geom_boxplot() + geom_point(aes(x=0,y=c(mean(fem$cholLog)-mean(mal$cholLog)),color="pop. diff")) +xlab("")
+507,509c286
+< Only in `r sum(res[,2]<0.05&res[,1]<0)` out of 20000 samples we conclude that the mean cholestorol level of males is significantly lower than for females. For the remaining samples the cholestorol levels for males were on average significantly lower than for females (`r sum(res[,2]<0.05&res[,1]>0)` samples) or the average difference in cholestorol levels were not statistically significant (`r sum(res[,2]>0.05)` samples). The latter is because the power is rather low to detect the difference with 10 samples in each group.
+< 
+< ---
+---
+> Only in `r sum(res[,2]<0.05&res[,1]<0)` out of 20000 samples we conclude that the mean cholesterol level of males is significantly lower than for females. For the remaining samples, the cholesterol levels for males were on average significantly lower than for females (`r sum(res[,2]<0.05&res[,1]>0)` samples) or the average difference in cholesterol levels were not statistically significant (`r sum(res[,2]>0.05)` samples). The latter is because the power is rather low to detect the difference with 10 samples in each group.
+513,514c290,291
+< 1. Copy the code chunk with the simulation study
+< 2. Add it here below
+---
+> 1. Copy the code chunk with the simulation study.
+> 2. Add it here below.
+518,520c295
+< ---
+< 
+< # Salk Study
+---
+> # Salk study
+522,525c297,299
+< - In 1916 first large polio epidemy in the US
+< - John Salk developed a vaccine with promising results in the lab in the early fifties
+< - In 1954 the National Foundation
+< for Infantile Paralysis (NFIP) has setup a large study to assess the effectiveness of the Salk vaccine.
+---
+> - In 1916, the US experienced the first large epidemic of polio.
+> - John Salk developed a vaccine with promising results in the lab in the early fifties.
+> - In 1954, the National Foundation for Infantile Paralysis (NFIP) set up a large study to assess the effectiveness of the Salk vaccine.
+528,530c302
+< ---
+< 
+< ##NFIP Study
+---
+> ##NFIP study
+533,534c305,306
+< - Large simultaneous study with cases, vaccinated children, and controls,  non-vaccinated children
+< - All schools in districts with high polio incidence
+---
+> - large simultaneous study with cases, vaccinated children, and controls,  non-vaccinated children
+> - all schools in districts with high polio incidence
+554d325
+< ---
+567c338
+< - We observe a lower polio (P) incidence for children for who no consent was given than for the children in the control group
+---
+> - We observe a lower polio (P) incidence for children for who no consent was given than for the children in the control group.
+569c340
+< - Consent for vaccination (V) was associated with the socio-economic status (S)
+---
+> - Consent for vaccination (V) was associated with the socio-economic status (S).
+574,576c345,347
+<     - Difference in age
+<     - Difference in socio-economic status
+<     - Difference in susceptible for disease
+---
+>     - difference in age
+>     - difference in socio-economic status
+>     - difference in susceptibility for disease
+578d348
+< ---
+585c355
+<   - Children are assigned at random to the control or case treatment arm after consent was given by the parents
+---
+>   - Children are assigned at random to the control or case treatment arm after consent was given by the parents.
+592,593d361
+< ---
+< 
+608d375
+< ---
+610c377
+< # Scientific Method
+---
+> # Scientific method
+630c397
+< - *Deduction*: Deduce logical consequences of  the theory/hypothesis that can be experimentally validated
+---
+> - *Deduction*: deduce logical consequences of  the theory/hypothesis that can be experimentally validated
+640d406
+< ---
+642c408
+< # Role of Statistics in the Life Sciences
+---
+> # Role of Statistics in the life sciences
+646,647c412,413
+<     - the sample size matters
+<     - we should be aware of confounding
+---
+>     - sample size matters.
+>     - we should be aware of confounding.
+664,665d429
+< ---
+< 
