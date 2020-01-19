@@ -69,7 +69,7 @@ There is a strong emphasis in reproducible research by extensively using R/Rmark
 2. [Concepts](pages/02-concepts.html)
 3. [Experimental Design](pages/03-experimentalDesign.html)
 4. [Data Exploration](pages/04-dataExploration.html)
-    - [tutorial](pages/dataExploration.md)
+    - [tutorial](pages/04-dataExploration.md)
 5. Statistical Inference
     - [5.1. Statistical Inference](pages/05-statisticalInference.html)
     - [5.1. two-sample t-test](pages/05-statisticalInference-twosampleT.html)
