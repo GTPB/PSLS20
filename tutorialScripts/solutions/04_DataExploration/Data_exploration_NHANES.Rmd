@@ -34,7 +34,7 @@ Let's try reading in some data. We will begin by
 reading in the `NHANES.csv` dataset. 
 
 ```{r nhanesDatExpl}
-NHANES <- read_csv("NHANES.csv")
+NHANES <- read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/NHANES.csv")
 ```
 
 ```{r}
@@ -486,14 +486,13 @@ data.
 First, we will plot the data for all subjects for which we have all
 the required data and that are between 40 and 65 years old.
 
-** Note: we are currently calculating the standard deviation on the **
-** mean value, but each value is a mean of three measurements. **
-** Will we account for this? **
+Note, that we  calculate the standard deviation on the average blood pressure measurements. If you have the same number of "technical repeats" on the same person you are allowed to average them first. 
+Note, however, that if there are some technical measurements missing, averaging is no longer allowed because then the averaged values will be heteroscedastic: some averages are based on more technical repeats than others so they will have a different standard deviation. 
 
 ```{r}
 ## histogram of BPSysAve for subjects wit age between 40 and 65 years old
 NHANES %>%
-  filter(!is.na(Race1), !is.na(Smoke100n), !is.na(BMI_WHO), !is.na(Age), !is.na(HardDrugs), !is.na(HealthGen), !is.na(Gender), !is.na(AlcoholYear), !is.na(BPSysAve), !is.na(SleepTrouble)) %>% ## retains 4660 subjects with the required data
+  filter(!is.na(Race1), !is.na(Smoke100n), !is.na(BMI_WHO), !is.na(Age), !is.na(HardDrugs), !is.na(HealthGen), !is.na(Gender), !is.na(AlcoholYear), !is.na(BPSys1), !is.na(BPSys2), !is.na(BPSys3), !is.na(SleepTrouble)) %>% ## retains 4660 subjects with the required data
   filter(between(Age,40,65)) %>% ## filter the subjects on age, retains 2522 subjects
   distinct(ID,.keep_all=TRUE) %>% ## removes duplicated IDs, retains 1467 subjects
   ggplot(aes(x=BPSysAve)) +
@@ -516,7 +515,7 @@ general health that is not considered poor and that has a BMI between
 ```{r}
 ## histogram of BPSysAve for HEALTHY male subjects with age between 40 and 65 years old
 NHANES %>%
-  filter(!is.na(Race1), !is.na(Smoke100n), !is.na(BMI_WHO), !is.na(Age), !is.na(HardDrugs), !is.na(HealthGen), !is.na(Gender), !is.na(AlcoholYear), !is.na(BPSysAve), !is.na(SleepTrouble)) %>% ## retains 4660 subjects with the required data
+  filter(!is.na(Race1), !is.na(Smoke100n), !is.na(BMI_WHO), !is.na(Age), !is.na(HardDrugs), !is.na(HealthGen), !is.na(Gender), !is.na(AlcoholYear), !is.na(BPSys1), !is.na(BPSys2), !is.na(BPSys3), !is.na(SleepTrouble)) %>% ## retains 4660 subjects with the required data
   filter(between(Age,40,65)) %>% ## filter the subjects on age, retains 2522 subjects
   distinct(ID,.keep_all=TRUE) %>% ## removes duplicated IDs, retains 1467 subjects
   filter(Smoke100n == "Non-Smoker", Diabetes == "No", HardDrugs == "No", HealthGen != "Poor", SleepTrouble == "No", BMI_WHO%in%c("18.5_to_24.9","25.0_to_29.9")) %>% ## filter to have only healthy subjects, based on multiple health criteria. Retains 275 subjects.
@@ -568,7 +567,7 @@ summary_NHANES <- NHANES %>%
   filter(between(Age,40,65)) %>% ## filter the subjects on age, retains 2522 subjects
   distinct(ID,.keep_all=TRUE) %>% ## removes duplicated IDs, retains 1467 subjects
   filter(Smoke100n == "Non-Smoker", Diabetes == "No", HardDrugs == "No", HealthGen != "Poor", SleepTrouble == "No", BMI_WHO%in%c("18.5_to_24.9","25.0_to_29.9")) %>%
-  summarize_at("rel",
+  summarize_at("BPSysAve",
                list(mean=~mean(.,na.rm=TRUE),
                     sd=~sd(.,na.rm=TRUE),
                     n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
