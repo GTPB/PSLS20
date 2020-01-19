@@ -1,0 +1,141 @@
+---
+title: "Tutorial 1.2: Exploring the armpit dataset"   
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+In this tutorial, we will explore the "smelly armpit" dataset. 
+
+## Smelly armpit dataset
+
+Smelly armpits are not caused by sweat, itself. The smell is caused
+by specific micro-organisms belonging to the group of
+*Corynebacterium spp.* that metabolise sweat.
+Another group of abundant bacteria are the *Staphylococcus spp.*,
+these bacteria do not metabolise sweat in smelly compounds.
+
+The CMET-groep at Ghent University does research to on transplanting the armpit microbiome to save people with smelly armpits.
+
+- Proposed Therapy:
+  	1. Remove armpit-microbiome with antibiotics
+    2. Influence armpit microbiome with microbial transplant
+       (https://youtu.be/9RIFyqLXdVw)
+
+- Experiment:
+
+    - 20 students with smelly armpits are attributed to one of 
+      two treatment groups
+    - placebo (only antibiotics)
+    - transplant (antibiotica followed by microbial transplant).
+    - The microbiome is sampled 6 weeks upon the treatment
+    - The relative abundance of *Staphylococcus spp.* on
+      *Corynebacterium spp.* + *Staphylococcus spp.* in the
+      microbiome is measured via DGGE (*Denaturing Gradient Gel
+      Electrophoresis*).
+
+Load the libraries
+
+```{r, message=FALSE}
+library(tidyverse)
+```
+
+## Import the dataset
+
+```{r}
+ap <- read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit.csv")
+```
+
+```{r}
+glimpse(ap)
+```
+
+## Goal
+
+We find whether or not the relative abundance 
+*Staphylococcus spp.*
+in the microbiome of the armpit is significantly different between
+subjects treated with antibiotics only and subjects treated with
+antibiotics and a microbial transplant.
+
+Tomorrow, we will perform a formal test, which will tell us
+whether or not the average  relative abundance of 
+*Staphylococcus spp.* is equal between for treatment groups.
+
+Here, we will limit ourselves to visualizing the data.
+
+## Data visualization
+
+It is always a good idea to first have a quick look at the raw
+data.
+
+First, try to make a histogram of the data. Fill in the
+missing parts in the chunk of code below to get a good-looking
+visualization:
+
+```{r}
+ap %>%
+  ggplot(aes(x=...,fill=...)) + ## fill in the correct values for x and fill 
+  geom_histogram() +
+  facet_grid(rows = vars(...)) + ## fill in to put the histograms for both treatment conditions in a separate row
+  theme_bw() +
+  xlab("relative abundance (%)")
+```
+
+Based on this plot, it seems that the relative abundace
+is higher for subjects who had the transplants.
+However, given the small sample size the histograms
+are not optimally informative. A better option would be to
+show the data in a boxplot:
+
+```{r}
+ap %>%  ggplot(aes(x=...,y=...,fill=...)) + ## fill in the correct values for x, y and fill 
+  geom_boxplot(outlier.shape=NA) + 
+  geom_point(position="jitter") +
+  ylab("relative abundance (%)") +
+  xlab("treatment group") + 
+  stat_summary(fun.y=mean, geom="point", shape=5, size=3, color="black", fill="black")
+```
+
+We clearly see that, on average, the subjects who had a
+microbial transplant have a higher relative abundance of
+Staphylococcus spp. Tomorrow, we will learn how to formally test
+whether or not this observed difference is statistically
+**significant**.
+
+## Descriptive statistics
+
+Here, we will generate some informative descriptive statistics
+for the dataset.
+
+We first summarize the data and calculate the mean, standard
+deviation, number of observations and standard error and store the
+result in an object apRelSum via 'apRelSum<-`
+
+1. We pipe the `ap` dataframe to the group_by function to group
+the data by treatment trt `group_by(trt)`
+2. We pipe the result to the `summarize_at` function to summarize
+the "rel" variable and calculate the mean, standard deviation and
+the number of observations 
+3. We pipe the result to the `mutate` function to make a new
+variable in the data frame `se` for which we calculate the
+standard error 
+
+```{r}
+## Use the instructions from above to generate the summary statistics
+...
+```
+
+This concludes the data exploration. Tomorrow, we will 
+learn how to formally test whether or not this observed 
+difference is statistically **significant**.
+
+
+
+
+
