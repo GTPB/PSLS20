@@ -1,0 +1,191 @@
+---
+title: "Tutorial 1.2: Exploring the captopril dataset"   
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+In this tutorial, you will learn how to import, tidy, wrangle and 
+visualize data yourself! You will work with one specific dataset;
+
+# The captopril dataset
+
+The captopril dataset stems from a small experiment with
+15 patients with hypertension. 
+For each patient systolic and diasystolic blood pressure measurements where taken before and after administering captopril.
+
+Load the required libraries
+
+```{r, message=FALSE}
+library(tidyverse)
+```
+
+# Import the data
+
+```{r}
+... <- read_csv(...)
+```
+
+Have a first look at the data
+
+```{r}
+head(...) ## or glimpse()
+```
+
+# Data visualization
+
+Let's say we now first want to visualize the data. 
+One possibility to easily visualize the four types
+of blood pressure values is by adopting the `gather`
+function from tidyverse. It will reshape the dataframe,
+such that we have have a single variable `type`, which 
+points at one of the four blood pressure types, and `bp`,
+which points at the actual value for each type 
+for each patient.
+
+```{r}
+captopril %>% 
+  gather(type,bp,-id)
+```
+
+## Barplot
+
+A barplot is a plot that you will commonly find in papers.
+The code for generating such a barplot is provided below:
+
+```{r}
+captopril %>% 
+  gather(type,bp,-id) %>% 
+  group_by(type) %>%
+     summarize_at("bp",
+               list(mean=~mean(.,na.rm=TRUE),
+                    sd=~sd(.,na.rm=TRUE),
+                    n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+  mutate(se=sd/sqrt(n)) %>%
+  ggplot(aes(x=type,y=mean,fill=type)) + 
+  scale_fill_brewer(palette="RdGy") +
+  theme_bw() +
+  geom_bar(stat="identity") + 
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se),width=.2) +
+  ggtitle("Barplot of different blood pressure measures") +
+  ylab("blood pressure (mmHg)")
+```
+
+A barplot, however, is not very informative. The height of the
+bars only provides us with information of the mean blood pressure.
+However, we don't see the actual underlying values, so we for
+instance don't have any information on the spread of the data.
+It is usually more informative to represent to underlying 
+values as _raw_ as possible. Boxplots are ideal for this!
+
+Note that it is possible to add the raw data on
+the barplot, but we still would not see any measures of the
+spread, such as the interquartile range.
+
+Based on this critisism, can you think of a better
+visualization strategy for the captopril data?
+
+Go ahead an try out alternative strategies for generating 
+the most informative plot you can think of. In addition, 
+you may use the plethora of ggplot functionalities
+to make it look good as well!
+
+```{r}
+## Generate an informative plot of the captopril data
+...
+```
+
+After generating the plot, make sure to interpret
+the visualization thoroughly. This may greatly improve
+our understanding of the data, which will aid the following
+data analysis.
+
+## Paired data
+An important feature of this dataset is that it contains
+paired data; for each patient, we have blood pressure values
+(systolic and diastolic) before and after treatment with
+captopril.
+
+It is likely that your previous visualizition does not show
+that the data is paired. Can you think of a plot that shows this
+information? 
+
+**Hint:** Try to use `geom_line(aes(group = id))` for 
+visualizing the paired data in the cunk of code below
+
+```{r}
+
+```
+
+
+As an alternative to looking at the paired data, we may think 
+of the data in terms of the difference between the `after` 
+measurement and the `before` measurement.
+
+Can you visualize the difference between the systolic
+blood pressure levels before and after captopril treatment?
+
+```{r}
+captopril %>% 
+  mutate(bp_diff = ...) %>%
+  ggplot(aes(x="",y=bp_diff)) +
+  ...
+```
+
+In order to assess the effect of captopril, to which
+value should you compare the difference? Why?
+
+## Assumptions: QQ-plot
+
+In the next lecture we will assess if this difference is statistically significant. 
+We will introduce a statistical test that relies on the assumption that the differences are normally distributed. 
+We can check this with a QQ-plot: 
+
+```{r}
+captopril %>% 
+  mutate(bp_diff = ...) %>%
+  select(bp_diff) %>%
+  ggplot(aes(sample=bp_diff)) +
+  # generate qq plot
+```
+
+The plot shows no large deviations of the straight line indicating that the data are approximately normally distributed. 
+
+#Descriptive statistics
+
+Descriptive statistics for all blood pressure measurements are found below. 
+
+```{r}
+captopril %>% 
+  gather(type,bp,-id) %>% 
+  group_by(type) %>%
+     summarize_at("bp",
+               list(mean=~mean(.,na.rm=TRUE),
+                    sd=~sd(.,na.rm=TRUE),
+                    n=function(x) x%>%is.na%>%`!`%>%sum))%>%
+  mutate(se=sd/sqrt(n))
+```
+
+It is also very useful to calculate the descriptive statistics for the systolic bloodpressure difference because we can assess the effect size of administering captopril for every patient. 
+
+```{r}
+captopril %>% 
+  ...
+```
+
+
+# Wrap-up 
+
+Next, time if you explore paired data, you can immediately adopt section 3.3 the line plot and the boxplot of the differences so as to acknowledge the pairing and section 3.4. 
+
+It is not useful to report the barplot. 
+
+
+
+
+
