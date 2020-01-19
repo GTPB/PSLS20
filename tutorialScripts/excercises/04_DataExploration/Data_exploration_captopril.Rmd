@@ -16,11 +16,12 @@ visualize data yourself! You will work with one specific dataset;
 # The captopril dataset
 
 The captopril dataset stems from a small experiment with
-15 patients with hypertension. 
-For each patient systolic and diasystolic blood pressure
-measurements where taken before and after administering captopril.
+15 patients with hypertension. For each patient systolic and
+diasystolic blood pressure measurements where taken before and
+after administering captopril.
 
-Load the required libraries
+Before we can start visualizing the data, we must load the
+required libraries.
 
 ```{r, message=FALSE}
 library(tidyverse)
@@ -29,13 +30,13 @@ library(tidyverse)
 # Import the data
 
 ```{r}
-... <- read_csv(...)
+
 ```
 
 Have a first look at the data
 
 ```{r}
-head(...) ## or glimpse()
+
 ```
 
 # Data visualization
@@ -82,16 +83,14 @@ bars only provides us with information of the mean blood pressure.
 However, we don't see the actual underlying values, so we for
 instance don't have any information on the spread of the data.
 It is usually more informative to represent to underlying 
-values as _raw_ as possible. Boxplots are ideal for this!
-
-Note that it is possible to add the raw data on
-the barplot, but we still would not see any measures of the
-spread, such as the interquartile range.
+values as _raw_ as possible. Note that it is possible to add the
+raw data on the barplot, but we still would not see any measures
+of the spread, such as the interquartile range.
 
 Based on this critisism, can you think of a better
 visualization strategy for the captopril data?
 
-Go ahead an try out alternative strategies for generating 
+Go ahead and try out alternative strategies for generating 
 the most informative plot you can think of. In addition, 
 you may use the plethora of ggplot functionalities
 to make it look good as well!
@@ -134,7 +133,6 @@ blood pressure levels before and after captopril treatment?
 ```{r}
 captopril %>% 
   mutate(bp_diff = ...) %>%
-  ggplot(aes(x="",y=bp_diff)) +
   ...
 ```
 
@@ -150,26 +148,20 @@ We can check this with a QQ-plot:
 ```{r}
 captopril %>% 
   mutate(bp_diff = ...) %>%
-  select(bp_diff) %>%
-  ggplot(aes(sample=bp_diff)) +
-  # generate qq plot
+  ...
 ```
 
 The plot shows no large deviations of the straight line indicating that the data are approximately normally distributed. 
 
 #Descriptive statistics
 
-Descriptive statistics for all blood pressure measurements are found below. 
+Descriptive statistics for all blood pressure measurements are found below. Have a look at the exploration of the armpit data
+to generate useful summary statistics.
 
 ```{r}
 captopril %>% 
   gather(type,bp,-id) %>% 
-  group_by(type) %>%
-     summarize_at("bp",
-               list(mean=~mean(.,na.rm=TRUE),
-                    sd=~sd(.,na.rm=TRUE),
-                    n=function(x) x%>%is.na%>%`!`%>%sum))%>%
-  mutate(se=sd/sqrt(n))
+  ...
 ```
 
 It is also very useful to calculate the descriptive statistics for the systolic bloodpressure difference because we can assess the effect size of administering captopril for every patient. 
