@@ -1,13 +1,3 @@
----
-title: "test"
-author: "Jeroen Gilis"
-date: '2020-01-19'
-output: 
-  html_document:
-    keep_md: true
-    self_contained: true
----
-
 In the first day of the "Practical Statistics for the Life Sciences (2020)" course, we will have three tutorials on data exploration, based on different datasets:
 
 1) The NHANES dataset:
