@@ -225,8 +225,7 @@ We will elaborate on these functions later.
 Note that choosing the most informative summary statistic
 is very important! This can be shown with the following example;
 
-** change location to github location **
-![/Users/jg/Desktop/PhD/Teaching/Lisbon_2020/psls20/data/Figure_partners.png){width=60%}
+![](https://raw.githubusercontent.com/GTPB/PSLS20/master/data/Figure_partners.png)
 
 In this study, men and woman were asked about their 
 "ideal number of partners desired over 30 years".
