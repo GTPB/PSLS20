@@ -1,0 +1,209 @@
+---
+title: 'Tutorial 2.3: Hypothesis testing on the cuckoo dataset'
+output:
+  html_document:
+    code_download: yes
+    highlight: tango
+    number_sections: yes
+    theme: cosmo
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+In this short tutorial, we perform a hypothesis test on the
+"cuckoo" dataset. 
+
+## Cuckoo dataset
+
+The common cuckoo does not build its own nest: it prefers
+to lay its eggs in another birds' nest. It is known, since 1892,
+that the type of cuckoo bird eggs are different between different
+locations. In a study from 1940, it was shown that cuckoos return
+to the same nesting area each year, and that they always pick
+the same bird species to be a "foster parent" for their eggs.
+
+Over the years, this has lead to the development of geographically
+determined subspecies of cuckoos. These subspecies have evolved in
+such a way that their eggs look as similar as possible as those
+of their foster parents.
+
+The cuckoo dataset contains information on 120 Cuckoo eggs,
+obtained from randomly selected "foster" nests.
+For these eggs, researchers have measured the `length` (in mm)
+and established the `type` (species) of foster parent.
+The type column is coded as follows:
+
+- `type=1`: Meadow pipit
+- `type=2`: Tree pipit
+- `type=3`: Dunnock
+- `type=4`: European robin
+- `type=5`: White wagtail
+- `type=6`: Eurasian wren
+
+## Goal
+
+The researchers want totest if the type of foster parent
+has an effect on the average length of the cuckoo eggs.
+
+In theory, they want to study this for all six species.
+However, a t-test can only be used to study mean differences
+between two groups. If we want to analyze multiple groups, there
+are two options.
+
+1. We perform t-tests on all pairwise combinations of types.
+This mean we need to perform n*(n-1)/2 = 15 t-tests.
+
+2. We perform an ANOVA analysis.
+
+The second strategy is much more efficient and has a higher
+statistical power. We will learn all about ANOVA in a later
+stage of this course week.
+
+In this tutorial, we will assess a single pairwise comparison,
+between the European robin and the European wren. In a following
+tutorial, we will come back to this dataset and make a full 
+analysis with ANOVA.
+
+Load the required libraries
+
+```{r, message=FALSE}
+library(tidyverse)
+```
+
+## Import the data
+
+```{r, message=FALSE}
+Cuckoo <- read_tsv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/Cuckoo.txt")
+```
+
+```{r}
+head(Cuckoo)
+```
+
+
+## Data tidying
+
+For this exercise, we only care about the European robin
+and the Eurasian wren. Therefore, we can remove the observations
+of the other types. In addition, it seems that the `tpye` 
+column rather than a factor. Let's fix this:
+
+```{r}
+Cuckoo <- Cuckoo %>%
+  filter(type %in% c("4","6")) %>%
+  mutate(type = as.factor(type))
+```
+
+
+## Data exploration
+
+How many birds do we have for each type?
+
+```{r}
+Cuckoo %>%
+  count(type)
+```
+
+Visualize the data
+
+```{r}
+Cuckoo %>%
+  ggplot(aes(x=type,y=length,fill=type)) +
+  geom_boxplot() +
+  theme_bw() +
+  geom_boxplot(outlier.shape=NA) + 
+  geom_jitter(width = 0.2) +
+  scale_fill_manual(values=c("dimgrey","firebrick")) +
+  ggtitle("Boxplot of the length of eggs per type") +
+  ylab("length (mm)") + 
+  stat_summary(fun.y=mean, geom="point", shape=5, size=3, color="black", fill="black")
+```
+
+We clearly see that, on average, the eggs laid in the 
+nest of the European robin (type=4) are larger than those 
+laid in the nest of the Eurasian wren. But is this difference **significant**?
+
+We can test this with an unpaired, two-sample t-test. 
+Buu before we can start the analysis, we must check if
+all assumptions to perform a t-test are met.
+
+## Check the assumptions
+
+1. The observations are independent of each other (in both groups)
+2. The data (length) must be normally distributed (in both groups)
+
+Additionally, we should check if the variability within both
+groups is similar or not (in the lattter case we should use
+a Welch t-test).
+
+3. The variability within both groups is similar
+
+The first assumption is met, as we may assume that there are no
+specific patterns of correlation randomly selected nests.
+
+To check the normality assumption, we will use QQ plots.
+
+```{r}
+Cuckoo %>% 
+  ggplot(aes(sample=length)) +
+  geom_qq() +
+  geom_qq_line() + 
+  facet_grid(~type)
+```
+
+There seem to be no clear deviations from normality.
+
+The third assumption seems to be met based on our
+visualization with the boxplots. As all assumptions are met, 
+we may proceed with the analysis.
+
+## Two-sample t-test (unpaired)
+
+```{r}
+length_4 <- Cuckoo %>% 
+  filter(type == "4") %>%
+  pull(length)
+
+length_6 <- Cuckoo %>% 
+  filter(type == "6") %>%
+  pull(length)
+
+output <- t.test(length_4,length_6,conf.level = 0.95,var.equal = TRUE)
+output
+```
+
+## Conclusion 
+
+We may conclude that, on the 5% significance level, the mean 
+length of eggs fostered by the European robin in extremely
+significantly higher (p = `r round(output$p.value,8)`) than the mean
+length of eggs fostered by the Eurasian wren. The eggs 
+fostered by the European wren are on average 
+`r round(unname(output$estimate[1])-unname(output$estimate[2]),2)` mm longer
+(95% CI [`r round(output$conf.int[c(1,2)],2)`]).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
