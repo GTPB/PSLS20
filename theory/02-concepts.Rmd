@@ -715,7 +715,7 @@ exp(xBar10 + 2 * sdBar10)
 
 - e.g. for normal distribution
 
-| Populatie | Steekproef|
+| Population | Sample|
 | :---: | :---: |
 | $\mu$ | $\bar X$ or $\hat \mu$ |
 | $\sigma^2$ | $S^2$ or $\hat \sigma$|
