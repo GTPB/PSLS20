@@ -79,7 +79,7 @@ source("https://raw.githubusercontent.com/GTPB/PSLS20/master/install.R")
 
 [![Binder](http://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/GTPB/PSLS20/master?urlpath=rstudio)
 
-- To get familiar with most important concepts in working with R and Rmarkdown, have a look at the respective cheat sheets:
+- To get familiar with most important concepts in working with R and Rmarkdown, you may download the respective cheat sheets:
 https://raw.githubusercontent.com/GTPB/PSLS20/master/background_material/r-cheatsheet.pdf and https://raw.githubusercontent.com/GTPB/PSLS20/master/background_material/rmarkdown-cheatsheet.pdf
 
 #### Learning materials
