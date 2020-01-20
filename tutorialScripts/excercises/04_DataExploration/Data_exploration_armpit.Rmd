@@ -48,7 +48,7 @@ library(tidyverse)
 # Import the dataset
 
 ```{r}
-ap <- read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit.csv")
+ap <- 
 ```
 
 ```{r}
@@ -94,23 +94,14 @@ ap %>%
 Based on this plot, it seems that the relative abundace
 is higher for subjects who had the transplants.
 However, given the small sample size the histograms
-are not optimally informative. A better option would be to
+are not optimally informative. A better option for these data would be to
 show the data in a boxplot:
 
 ```{r}
-ap %>%  ggplot(aes(x=...,y=...,fill=...)) + ## fill in the correct values for x, y and fill 
-  geom_boxplot(outlier.shape=NA) + 
-  geom_point(position="jitter") +
-  ylab("relative abundance (%)") +
-  xlab("treatment group") + 
-  stat_summary(fun.y=mean, geom="point", shape=5, size=3, color="black", fill="black")
+ap %>%  ggplot(aes(x=...,y=...,fill=...)) +
 ```
 
-We clearly see that, on average, the subjects who had a
-microbial transplant have a higher relative abundance of
-Staphylococcus spp. In the tutorial on hypothesis testing we will learn how to formally test
-whether this observed difference is statistically
-**significant**.
+What do you observe?
 
 ## Descriptive statistics
 
