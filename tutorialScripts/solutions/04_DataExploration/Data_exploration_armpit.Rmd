@@ -79,6 +79,21 @@ missing parts in the chunk of code below to get a good-looking
 visualization:
 
 ```{r}
+ap %>%
+  ggplot(aes(x=rel,fill=trt)) + ## fill in the correct values for x and fill 
+  geom_histogram() +
+  facet_grid(rows = vars(trt)) + ## fill in to put the histograms for both treatment conditions in a separate row
+  theme_bw() +
+  xlab("relative abundance (%)")
+```
+
+Based on this plot, it seems that the relative abundace
+is higher for subjects who had the transplants.
+However, given the small sample size the histograms
+are not optimally informative. A better option would be to
+show the data in a boxplot:
+
+```{r}
 ap %>%  ggplot(aes(x=trt,y=rel,fill=trt)) +
   geom_boxplot(outlier.shape=NA) + 
   geom_point(position="jitter") +
