@@ -269,7 +269,7 @@ a summary data frame.
 ```{r}
 NHANES %>% 
   select(c("Race1", "Gender","MaritalStatus","Height","Weight","BMI")) %>%
-  filter(MaritalStatus != "Married", Race1 == "Hispanic", Gender == "male") %>% 
+  filter(MaritalStatus != "Married", Race1 == "Hispanic", Gender == "male") %>%
   mutate(BMI_self = Weight/(Height/100)**2) %>%
   group_by(MaritalStatus) %>% ##  group the subjects by their marital status
   summarize(avg_BMI_self = mean(BMI_self, na.rm = TRUE)) ## calculate the mean BMI_self value of each group
@@ -317,6 +317,7 @@ a histogram and a boxplot.
 
 ```{r}
 NHANES %>%
+  filter(!is.na(BMI)) %>%
   head(NHANES, n=100) %>% ## to make the visualization more clear, we take only the first 100 subjects
   ggplot(aes(x=BMI)) +
   geom_dotplot(method = "histodot") 
@@ -331,6 +332,7 @@ the visualization in an object. This allows us to:
 ```{r}
 ## store the plot from above in the "p" object
 p <- NHANES %>%
+  filter(!is.na(BMI)) %>%
   head(NHANES, n=100) %>%
   ggplot(aes(x=BMI)) +
   geom_dotplot(method = "histodot") 
@@ -362,6 +364,7 @@ of high interest.
 
 ```{r}
 NHANES %>%
+  filter(!is.na(BMI)) %>%
   head(NHANES, n=100) %>%
   ggplot(aes(x=BMI)) +
   geom_histogram()
@@ -379,7 +382,12 @@ its distribution.
 ```{r}
 set.seed(2) ## to make the horizontal position of the jitter non-random
 
+give.n <- function(x){
+  return(c(y = 50, label = length(x))) 
+}
+
 NHANES %>%
+  filter(!is.na(BMI)) %>%
   head(NHANES, n=100) %>%
   ggplot(aes(x="", y=BMI)) +
   geom_boxplot(outlier.shape=NA) + 
@@ -387,7 +395,8 @@ NHANES %>%
   stat_summary(geom="text", fun.y=quantile,
                aes(label=sprintf("%1.1f", ..y..)),
                position=position_nudge(x=0.5), size=4.5) +
-  annotate("text", x = c(1.5,1.5,1.5,1.5,1.5,1.05,1.05), y = c(12.5,19,24.5,28.5,45,18,35), label = c("(minimum)","(25%)","(median)","(75%)","(maximum)","whisker","whisker"),size=3)
+  annotate("text", x = c(1.5,1.5,1.5,1.5,1.5,1.05,1.05), y = c(12.5,19,24.5,28.5,45,18,35), label = c("(minimum)","(25%)","(median)","(75%)","(maximum)","whisker","whisker"),size=3) +
+  stat_summary(fun.data = give.n, geom = "text") 
 ```
 
 Arguably, the boxplot is the most informative default
