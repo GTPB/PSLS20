@@ -35,7 +35,6 @@ captopril <- read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data
 head(captopril)
 ```
 
-** Why is this dataset not tidy? **
 
 # Data visualization
 
