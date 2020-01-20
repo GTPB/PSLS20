@@ -210,13 +210,13 @@ In Genomics often the $log_2$ transformation is used. A difference of 1 correspo
 
 ```{r}
 logSummary <- 
-NHANES %>% filter(Gender=="female") %>% summarize(logMean=mean(DirectChol %>% log2,na.rm=TRUE),sd=sd(DirectChol %>% log2,na.rm=TRUE),mean=mean(DirectChol,na.rm=TRUE),median=median(DirectChol,na.rm=TRUE)) %>% mutate(geoMean=exp(logMean))
+NHANES %>% filter(Gender=="female") %>% summarize(logMean=mean(DirectChol %>% log2,na.rm=TRUE),sd=sd(DirectChol %>% log2,na.rm=TRUE),mean=mean(DirectChol,na.rm=TRUE),median=median(DirectChol,na.rm=TRUE)) %>% mutate(geoMean=2^logMean)
 
 NHANES %>% filter(Gender=="female") %>%
 ggplot(aes(x=DirectChol %>% log2)) + 
 geom_histogram(aes(y=..density.., fill=..count..),bins=30) +
 geom_density(aes(y=..density..)) +
-  stat_function(fun=dnorm,color="red",args=list(mean=logSummary$mean, sd=logSummary$sd))
+  stat_function(fun=dnorm,color="red",args=list(mean=logSummary$logMean, sd=logSummary$sd))
 
 logSummary
 ```
