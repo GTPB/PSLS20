@@ -48,7 +48,8 @@ The goal of this experiment was to find out whether or not smoking has an effect
 In this tutorial, you will learn about the importance of confounders in real-life datasets.
 
 
-- Exercise:
+- Exercise: "https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_FEV.Rmd"
+
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/fev.txt"
 
 
