@@ -1,0 +1,383 @@
+---
+title: "Tutorial 2.2: Hypothesis testing on the captopril dataset"   
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+In this second tutorial, we will see some basics
+in hypothesis testing and more specifically on
+t-tests. As an example, we will work with the
+captopril dataset that we explored yesterday.
+
+We will work around these three research questions;
+
+1) Is the average systolic blood pressure (SBP)
+before captopril treatment higher tahn 147 mmHg?
+
+2) Is the average SBP before captopril treatment 
+significantly different from the average SBP after
+captopril treatment, given that the data is unpaired?
+
+3) Is the average SBP before captopril treatment 
+significanttly different from the average SBP after
+captopril treatment, given that the data is paired?
+
+First, we will load the required R libraries:
+
+```{r, message=FALSE}
+library(tidyverse)
+```
+
+## Import the data
+
+```{r}
+captopril <- read.table("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/captopril.txt", header = TRUE, sep = ",")
+```
+
+## Data exploration
+
+Before we start delving into the data in order to solve 
+our research hypothese, it is always a good idea to first
+have a look at the data. Our dataset looks like this;
+
+```{r}
+head(captopril)
+```
+
+We have 15 patients, for which we have measure the systolic 
+blood pressure and diastolyic blood pressure, before and after
+treatment with the captopril drug.
+
+We can visualize the entire dataframe in an informative way 
+with boxplots;
+
+```{r}
+captopril %>% 
+  gather(type,bp,-id) %>% 
+  ggplot(aes(x=type,y=bp,fill=type)) + 
+  scale_fill_brewer(palette="RdGy") +
+  theme_bw() +
+  geom_boxplot(outlier.shape=NA) + 
+  geom_jitter(width = 0.2) +
+  ggtitle("Boxplot of different blood pressure measures") +
+  ylab("blood pressure (mmHg)") + stat_summary(fun.y=mean, geom="point", shape=5, size=3, color="black", fill="black")
+```
+
+Clearly, it seems that on average the measurements
+after treatment are lower than those before treatment.
+But is this difference **significant**? To answer this
+question, we will need to perform some hypothesis testing.
+Let's start of with question 1.
+
+## Question 1
+
+Is the average systolic blood pressure (SBP)
+before captopril treatment higher tahn 147 mmHg?
+
+Yesterday, we used the NHANES dataset to set up a reference
+interval, i.e. an interval that is expected to hold 95% of
+the SBP values of healthy individuals. We found the interval
+of [91;147] mmHg.
+
+To test the effect of the captopril on diseased individuals
+(patients), we need to find a group of patients that have
+elevated SBP levels, higher than 147 mmHg.Therefore, we want
+to test whether or not the provided patients have an SBP level
+that is greater than 147 mmHg. To test this, we will perform a
+one-sample t-test, which will tell us if the average SBPb of
+our patients is significantly greater thatn 147 mmHg on the 5%
+significance level.
+
+** important **
+
+Before we can perform a t-test, we must check that the required
+assumptions are met!
+
+
+1. The observations are independent of each other
+2. The data (SBPb) must be normally distributed
+
+For the first assumption requires us to think about the data. 
+Are there any underlying correlation structures (that we know of)
+in the data? For instance, if all the 15 subjects are members of
+the same family, we expect that the data will give us a good 
+representation of the underlying population of interest, i.e., 
+all past, present and future patients with elevated SBP levels.
+
+In this dataset, we have no reason to believe that this 
+assumption was violated; we may we have assume 15 unrelated, 
+"random"  patients with elevated SBP levels.
+
+We can assess the second assumption with a quantile-quantile plot.
+
+### Assess the assumption of normality
+
+```{r}
+captopril %>%
+  ggplot(aes(sample=SBPb)) +
+  geom_qq() +
+  geom_qq_line()
+```
+
+We can see that all of the data lies nicely around the quantile-quantile
+line (black line). As such, we may conclude that our data is normally distributed.
+
+As such, we may proceed with our analysis. Here, we will 
+test if mean SBPb is significantly higher than 147 mmHg.
+
+More specifically, we will test the null hypothesis;
+
+H0: the mean SBPb is equal to 147 mmHg
+
+versus the alternative hypothesis;
+
+HA: the mean SBPb is greater than 147 mmHg
+
+```{r}
+SBPb <- captopril %>%
+  pull(SBPb)
+
+output1 <- t.test(SBPb,mu=147,alternative = "greater",conf.level = 0.95)
+output1
+```
+
+When writing a conclusion on your research hypothesis,
+it is very important to be precise and concise, yet complete.
+
+An example of such a conclusion for our research question
+is given below:
+
+The mean SBP of patients before treatment with captopril
+is significantly higher (p=`r round(unname(output1$p.value),5)`) than the 
+upper bound of the reference interval (147 mmHg) on the 5% signifcance level. 
+The mean SBPb equals `r round(unname(output1$estimate),2)` mmHg with 
+a 95% confidence interval of [`r round(output1$conf.int[c(1,2)],2)`]).
+
+As we have seen in the theory class, the 95% confidence 
+interval can be interpreted as;
+
+With 95% confidence we can state that the interval 
+[`r round(output1$conf.int[c(1,2)],2)`]
+contains the true average of SBP of diseased patient before
+treatment with captopril.
+
+
+## Question 2
+
+Is the average SBP before captopril treatment 
+significantly different from the average SBP after
+captopril treatment, given that the data is unpaired?
+
+We know that for this example, we have paired data; each patient's
+SBP and DBP levels are measured twice, before and after captopril
+treatment. But let's assume for now that the data is _unpaired_.
+This corresponds to an experimental design where we would have 30
+patients. We would measure 15 patient's BP levels only before
+treatment and other patients BP levels we would measure only after
+treatment.
+
+### Check the assumptions
+
+1. The observations are independent of each other (in both groups)
+2. The data (SBPb) must be normally distributed (in both groups)
+3. The variability in the within both groups is similar
+
+The first assumption is met, as we may assume that there are no
+specific patterns of correlation in our group of 30 randomly
+select patients.
+
+For the second assumption, we already know from the first question
+that SBPb is normally distributed. We will now check this for SBPa.
+
+### Assess the assumption of normality
+
+```{r}
+captopril %>%
+  ggplot(aes(sample=SBPa)) +
+  geom_qq() +
+  geom_qq_line()
+```
+
+Again, we can see that all of the data lies nicely around the quantile-quantile
+line. As such, we may conclude that our data is normally distributed.
+
+For the third assumption, we must compare the within-group
+variability of both groups. We can do this in two ways;
+visually and mathematically
+
+### Check variance
+
+```{r}
+captopril %>% 
+  select(SBPb,SBPa) %>%
+  gather(type,bp) %>% 
+  ggplot(aes(x=type,y=bp,fill=type)) + 
+  scale_fill_brewer(palette="RdGy") +
+  theme_bw() +
+  geom_boxplot(outlier.shape=NA) + 
+  geom_jitter(width = 0.2) +
+  ggtitle("Boxplot of different blood pressure measures") +
+  ylab("blood pressure (mmHg)") + stat_summary(fun.y=mean, geom="point", shape=5, size=3, color="black", fill="black")
+```
+
+As a measure of variability, we may take the height
+of each boxplot's box. This is the interval between
+the 25% and 75% quantile. Here we can see that this
+interval, as well as the length of the whiskers, is
+approximately equal for groups. We speak about deviation
+from equality if one height is more than 2 or 3 times
+larger/smaller than that of the other group. 
+
+As all three assumptions are met we may continue with
+performing the unpaired two-sample t-test.
+
+### Two-sample t-test (unpaired)
+
+```{r}
+SBPb <- captopril %>%
+  pull(SBPb)
+SBPa <- captopril %>%
+  pull(SBPa)
+
+output2 <- t.test(SBPb,SBPa, var.equal = TRUE, conf.level = 0.95)
+output2
+```
+
+Let's interpret the output.
+
+The alternative hypothesis HA of the test is that
+the "true difference in means is not equal to 0". The
+null hypothesis is that the true difference in means is
+equal to 0. We have found a p-value of `r round(unname(output2$p.value),5)`, 
+which is smaller than 0.05. As such, we will reject the null
+hypothesis at the 5% significanc level in favor of the
+alternative.
+
+The p-value was calculated from the t-test statistic value 
+`r round(unname(output2$statistic),2)` on a t-distribution with 28 
+(15+15-2) degrees of freedom.
+
+The mean SBPb value is `r round(unname(output2$estimate[1]),2)` mmHg, 
+while the mean SBPa value is `r round(unname(output2$estimate[2]),2)` mmHg. 
+With 95% probability, the interval [`r round(output2$conf.int[c(1,2)],2)`]
+holds the true difference in population means of SBP levels
+between patients treated and not treated with captopril.
+
+** Conclusion **
+
+We may conclude that, on the 5% significance level, the mean 
+SBP levels of patients before captopril treatment is 
+significantly (p = `r round(unname(output2$p.value),5)`) higher than the mean 
+SBP levels of  patients after captopril treatment. The SBP levels are on average 
+`r round(unname(output2$estimate[1])-unname(output2$estimate[2]),2)` mmHg 
+higher before treatment than after treatment (95% CI [`r round(output2$conf.int[c(1,2)],2)`]).
+
+
+## Question 3
+
+Is the average SBP before captopril treatment 
+significantly different from the average SBP after
+captopril treatment, given that the data is paired?
+
+While for question two we assumed that the data was unpaired,
+we know that we actually have paored data, for which we 
+measured each patients BP values twice. Therefore, there
+will be a strong correlation between the BP values before and
+after treatment of each individual patient. We can show this
+with a scatterplot.
+
+```{r}
+captopril %>% 
+  ggplot(aes(x=SBPb,y=SBPa)) +
+  geom_point() +
+  ggtitle("correlation between SBPb and SBPa") +
+  ylab("SBPa (mmHg)") +
+  xlab("SBPb (mmHg)")
+```
+
+We clearly see that if a patient's SBPb value is high, its
+SBPa value will be comparatively high as well. We can also
+test the significance of the correlation.
+
+```{r}
+cor.test(SBPb,SBPa)
+```
+
+This test reject the null hypothesis that the true 
+correlation between the SBPb and SBPa values are equal
+to 0 wtih extreme significance.
+
+As such, we will now perform a paired t-test.
+
+```{r}
+output3 <- t.test(SBPb,SBPa, paired = TRUE)
+output3
+```
+
+Clearly, by correctly stating that the data is paired,
+we have gained a lot of statistical power for rejecting
+the null hypothesis that the true mdifferenc in means is
+equal to 0. The p-value (p = `r round(unname(output3$p.value),5)`) has now become
+extremely significant. Note that the 95% CI has become 
+narrower!
+
+** Conclusion **
+
+We may conclude that, on the 5% significance level, the mean 
+SBP levels of patients before captopril treatment is 
+extremely significantly (p = `r round(unname(output3$p.value),5)`) higher than the mean 
+SBP levels of patients after captopril treatment. The SBP levels 
+are on average `r round(unname(output3$estimate),2)` mmHg
+higher before treatment than after treatment (95% CI [`r round(output3$conf.int[c(1,2)],2)`]).
+
+### One-sample t-test on the difference
+
+On final thing; performing a paired two-sample t-test is
+analogous to performing a one-sample t-test on the difference
+between both groups.
+
+This can be easily seen from the output of the paired two-sample
+t-test. The alternative hypothesis HA there states that 
+the "true difference in means is not equal to 0". So internally,
+R will actually perform a one-sample t-test on the difference, and
+check whether or not the true mean difference is equal to 0.
+We can also set this up manually.
+
+```{r}
+bp_diff <- captopril %>%
+  mutate(bp_diff = SBPb-SBPa) %>%
+  select(bp_diff)
+
+t.test(bp_diff,mu=0)
+```
+
+Indeed, the output is completely analogous to that
+of the paired two-sample t-test.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
