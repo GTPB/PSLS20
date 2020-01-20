@@ -132,12 +132,12 @@ captopril %>%
 
 We see that for all patients, the systolic blood
 pressure is lower after captopril treatment than before.
+Note that we could not see this from the boxplot, directly.
 
-Note that we could not see this from the boxplot, directly;
-
-
-Another good way to visualise the paired data is by using a line plot that is grouped by subject.
-Note, that we make a factor of the type and that we choose order of the levels so that the level "b" before becomes before the level "a". Otherwise the after measurements will appear first in the plot. 
+Another good way to visualise the paired data is by using a line plot that is grouped 
+by subject. Note, that we make a factor of the type and that we choose order of 
+the levels so that the level "b" before becomes before the level "a". Otherwise 
+the after measurements will appear first in the plot. 
 
 ```{r}
 captopril %>% 
@@ -223,7 +223,8 @@ It is not useful to report the barplot.
 
 # Advantage of paired design
 
-Every patient acts as their own control: we can estimate the effect of the treatment for each patient 
+Every patient acts as their own control: we can estimate the effect of the treatment 
+for each patient 
 
 ```{r}
 captopril %>% 
@@ -244,5 +245,8 @@ Calculate variance based on fact that data are paired
 captopril %>% summarise(sd_diff=sqrt(sd(SBPb)^2 + sd(SBPa)^2-2*sd(SBPa)*sd(SBPb)*cor(SBPa,SBPb)))
 ```
 
-Note, that the standard deviation of the blood pressure measurements are more then twice the blood pressure measurements on the difference. 
-This is because each patient acts as their own control so we can correct for their baseline blood pressure when estimating the effect of the treatment.
+Note, that the standard deviations on the blood pressure measurements are more than
+twice as large as the tandard deviations on the difference. 
+This is because each patient acts as their own control. As such, we can correct for
+their baseline blood pressure when estimating the effect of the treatment.
+
