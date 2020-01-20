@@ -862,8 +862,8 @@ OR
 
 ## Continuous Predictor
 
-- Toxicolocal effect of carbon disulfite (CS$_2$) on beatles.
-- Research hypothesis is there an effect of the  CS$_2$ concentration on the mortality of beatles?
+- Toxicolocal effect of carbon disulfite (CS$_2$) on beetles.
+- Research hypothesis is there an effect of the  CS$_2$ concentration on the mortality of beetles?
 
 ##Design##
 - 32 independent experiments
@@ -871,9 +871,9 @@ OR
 - The outcome: mortality ($y=1$) or survival ($y=0$).
 
 ```{r}
-beatles<-read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/beatles.csv")
-head(beatles)
-table(beatles$dose,beatles$status)
+beetles<-read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/beetles.csv")
+head(beetles)
+table(beetles$dose,beetles$status)
 ```
 
 ---
@@ -882,7 +882,7 @@ We build a model for the log odds in function of the dose $x_i$:
 $$\log \frac{\pi_i}{1-\pi_i}=\beta_0+\beta_1 \times x_i.$$
 
 ```{r}
-beatleModel<-glm(status~dose,data=beatles,family=binomial)
+beatleModel<-glm(status~dose,data=beetles,family=binomial)
 summary(beatleModel)
 ```
 
@@ -890,7 +890,7 @@ summary(beatleModel)
 
 - Intercept has an interpretation of a log odds on mortality when no $\text{CS}_2$ gas is applied.
 - Very small odds on mortality ($\pi/(1-\pi)=\exp(-53.2)$) so the probability is almost 0.
-- Note that this is a very large extrapolation: minimum dose in dataset is `r min(beatles$dose)` mg/l.
+- Note that this is a very large extrapolation: minimum dose in dataset is `r min(beetles$dose)` mg/l.
 
 
 - Estimated odds ratio for the effect of dose on the mortality probability is $\exp(0.3013)=1.35$.
@@ -904,9 +904,9 @@ summary(beatleModel)
 
 ```{r}
 
-beatlesTab<-table(beatles) %>% data.frame
+beetlesTab<-table(beetles) %>% data.frame
 
-data.frame(grid=seq(min(beatles$dose),max(beatles$dose),.1)) %>% 
+data.frame(grid=seq(min(beetles$dose),max(beetles$dose),.1)) %>% 
   mutate(piHat=predict(beatleModel,
 	      newdata=data.frame(dose=grid),
 	      type="response")) %>% 
@@ -914,6 +914,6 @@ data.frame(grid=seq(min(beatles$dose),max(beatles$dose),.1)) %>%
   geom_line() +
   xlab("dose") +
   ylab("probability (dead)") +
-  geom_text(aes(x=dose%>%as.character%>%as.double,y=status%>%as.character%>%as.double,label=Freq),beatlesTab%>%filter(status==0)) +
-geom_text(aes(x=dose%>%as.character%>%as.double,y=status%>%as.character%>%as.double,label=Freq),beatlesTab%>%filter(status==1))
+  geom_text(aes(x=dose%>%as.character%>%as.double,y=status%>%as.character%>%as.double,label=Freq),beetlesTab%>%filter(status==0)) +
+geom_text(aes(x=dose%>%as.character%>%as.double,y=status%>%as.character%>%as.double,label=Freq),beetlesTab%>%filter(status==1))
 ```
