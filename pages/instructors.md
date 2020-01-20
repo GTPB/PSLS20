@@ -19,7 +19,7 @@ He also serves as a member of the core team that established a new Master of Sci
 **Affiliation**: Department of Applied Mathematics, Computer Science and Statistics, Ghent University, Ghent, BE
 Jeroen Gilis is a PhD student in the statOmics Group at Ghent University, headed by prof. Lieven Clement. After completing a bachelor's and master's degree in biochemistry and biotechnology at KU Leuven, he obtained an additional master's degree in bioinformatics at Ghent University. During his master thesis at the statistical omics group, he has worked on developing novel, scalable tools for studying differential expression in single-cell transcriptomics applications. Jeroen is currently continuing his research as a PhD student in the group.
 
-<img src="../assets/Jeroen_Gilis.png" height="220px" width="170px" align="left" style="margin-right: 3%; margin-bottom: 0.3em;">
+<img src="../assets/Jeroen_Gilis.png" height="170px" width="170px" align="left" style="margin-right: 3%; margin-bottom: 0.3em;">
 
 <br/>
 
