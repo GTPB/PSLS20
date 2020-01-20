@@ -600,8 +600,9 @@ summary_NHANES <- NHANES %>%
   filter(!is.na(Race1), !is.na(Smoke100n), !is.na(BMI_WHO), !is.na(Age), !is.na(HardDrugs), !is.na(HealthGen), !is.na(Gender), !is.na(AlcoholYear), !is.na(BPSys1), !is.na(BPSys2), !is.na(BPSys3), !is.na(SleepTrouble)) %>% ## retains 4660 subjects with the required data
   filter(between(Age,40,65)) %>% ## filter the subjects on age, retains 2522 subjects
   distinct(ID,.keep_all=TRUE) %>% ## removes duplicated IDs, retains 1467 subjects
-  filter(Smoke100n == "Non-Smoker", Diabetes == "No", HardDrugs == "No", HealthGen != "Poor", SleepTrouble == "No", BMI_WHO%in%c("18.5_to_24.9","25.0_to_29.9")) %>%
-  summarize_at("BPSysAve",
+  filter(Smoke100n == "Non-Smoker", Diabetes == "No", HardDrugs == "No", HealthGen != "Poor", SleepTrouble == "No", BMI_WHO%in%c("18.5_to_24.9","25.0_to_29.9")) %>% 
+  mutate(BPSysAveLog=BPSysAve %>% log2) %>%
+  summarize_at("BPSysAveLog",
                list(mean=~mean(.,na.rm=TRUE),
                     sd=~sd(.,na.rm=TRUE),
                     n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
