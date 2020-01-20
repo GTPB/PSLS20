@@ -99,22 +99,15 @@ our findings to this group.
 To check the normality assumption, we will use QQ plots.
 
 ```{r}
-placebo_rel <- ap %>%
-  filter(trt == "placebo") %>%
-  pull(rel)
-
-transplant_rel <- ap %>%
-  filter(trt == "transplant") %>%
-  pull(rel)
-
-car::qqPlot(placebo_rel, main="QQ-plot of placebo")
-car::qqPlot(transplant_rel, main="QQ-plot of transplants")
+ap %>%
+  ggplot(aes(sample=rel)) +
+  geom_qq() +
+  geom_qq_line() +
+  facet_grid(cols = vars(trt))
 ```
 
-We can see that all of the data falls nicely within
-the 95% confidence interval around the quantile-quantile
-line (blue dashed line). As such, we may conclude that 
-our data is normally distributed.
+We can see that all of the data lies nicely around the quantile-quantile
+line (black line). As such, we may conclude that our data is normally distributed.
 
 For the third assumption, we must compare the within-group
 variability of both groups. We can do this visually:
@@ -142,6 +135,14 @@ performing the unpaired two-sample t-test.
 ## Two-sample t-test (unpaired)
 
 ```{r}
+placebo_rel <- ap %>%
+  filter(trt=="placebo") %>%
+  pull(rel)
+
+transplant_rel <- ap %>%
+  filter(trt=="transplant") %>%
+  pull(rel)
+
 output <- t.test(placebo_rel,transplant_rel,conf.level = 0.95,var.equal = TRUE)
 output
 ```
