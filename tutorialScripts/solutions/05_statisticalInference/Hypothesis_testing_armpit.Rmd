@@ -1,0 +1,183 @@
+---
+title: 'Tutorial 2.1: hypothesis testing on the armpit dataset'
+output:
+  html_document:
+    code_download: yes
+    highlight: tango
+    number_sections: yes
+    theme: cosmo
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+In this tutorial, we perform a hypothesis test on the
+"smelly armpit" dataset. 
+
+## Smelly armpit dataset
+
+Smelly armpits are not caused by sweat, itself. The smell is caused by specific micro-organisms belonging to the group of *Corynebacterium spp.* that metabolise sweat.
+Another group of abundant bacteria are the *Staphylococcus spp.*, these bacteria do not metabolise sweat in smelly compounds.
+
+The CMET-groep at Ghent University does research to on transplanting the armpit microbiome to save people with smelly armpits.
+
+- Proposed Therapy:
+  	1. Remove armpit-microbiome with antibiotics
+    2. Influence armpit microbiome with microbial transplant (https://youtu.be/9RIFyqLXdVw)
+
+- Experiment:
+
+    - 20 students with smelly armpits are attributed to one of two treatment groups
+    - placebo (only antibiotics)
+    - transplant (antibiotica followed by microbial transplant).
+    - The microbiome is sampled 6 weeks upon the treatment
+    - The relative abundance of *Staphylococcus spp.* on *Corynebacterium spp.* +
+      *Staphylococcus spp.* in the microbiome is measured via DGGE (*Denaturing Gradient
+      Gel Electrophoresis*).
+    
+## Goal
+
+We find whether or not the relative abundance *Staphylococcus spp.* 
+in the microbiome of the armpit is significantly different between
+subjects treated with antibiotics only and subjects treated with
+antibiotics and a microbial transplant.
+
+More formally, we want to test the hypothesis that the average 
+relative abundance of *Staphylococcus spp.* is equal (or not)
+between both treatment groups.
+
+Load the libraries
+
+```{r, message=FALSE}
+library(tidyverse)
+```
+
+## Import the dataset
+
+```{r}
+ap <- read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit.csv")
+```
+
+```{r}
+glimpse(ap)
+```
+
+## Data visualization
+
+It is always a good idea to first have a quick look at the raw data;
+
+```{r}
+ap %>% ggplot(aes(x=trt,y=rel,fill=trt)) + 
+  geom_boxplot(outlier.shape=NA) + 
+  geom_point(position="jitter") +
+  ylab("relative abundance (%)") +
+  xlab("treatment group") + 
+  stat_summary(fun.y=mean, geom="point", shape=5, size=3, color="black", fill="black")
+```
+
+We clearly see that, on average, the subjects who had a
+microbial transplant have a higher relative abundance of
+Staphylococcus spp. But is this difference **significant**?
+
+We can test this with an unpaired, two-sample t-test. 
+Btu before we can start the analysis, we must check if
+all assumptions to perform a t-test are met.
+
+## Check the assumptions
+
+1. The observations are independent of each other (in both groups)
+2. The data (rel) must be normally distributed (in both groups)
+3. The variability within both groups is similar
+
+The first assumption is met, as we may assume that there are no
+specific patterns of correlation in our group of 20 randomly
+select subjects. Note, however, that as we sample only in the
+population of 'students', we will only be able to extrapolate
+our findings to this group.
+
+To check the normality assumption, we will use QQ plots.
+
+```{r}
+placebo_rel <- ap %>%
+  filter(trt == "placebo") %>%
+  pull(rel)
+
+transplant_rel <- ap %>%
+  filter(trt == "transplant") %>%
+  pull(rel)
+
+car::qqPlot(placebo_rel, main="QQ-plot of placebo")
+car::qqPlot(transplant_rel, main="QQ-plot of transplants")
+```
+
+We can see that all of the data falls nicely within
+the 95% confidence interval around the quantile-quantile
+line (blue dashed line). As such, we may conclude that 
+our data is normally distributed.
+
+For the third assumption, we must compare the within-group
+variability of both groups. We can do this visually:
+
+```{r}
+ap %>%  ggplot(aes(x=trt,y=rel)) + 
+  geom_boxplot(outlier.shape=NA) + 
+  geom_point(position="jitter") +
+  ylab("relative abundance (%)") +
+  xlab("treatment group") + 
+  stat_summary(fun.y=mean, geom="point", shape=5, size=3, color="black", fill="black")
+```
+
+As a measure of variability, we may take the height
+of each boxplot's box. This is the interval between
+the 25% and 75% quantile. Here we can see that this
+interval, as well as the length of the whiskers, is
+approximately equal for groups. We speak about deviation
+from equality if one height is more than 2 or 3 times
+larger/smaller than that of the other group.
+
+As all three assumptions are met we may continue with
+performing the unpaired two-sample t-test.
+
+## Two-sample t-test (unpaired)
+
+```{r}
+output <- t.test(placebo_rel,transplant_rel,conf.level = 0.95,var.equal = TRUE)
+output
+```
+
+Let's interpret the output.
+
+The alternative hypothesis HA of the test is that
+the "true difference in means is not equal to 0". The
+null hypothesis is that the true difference in means is
+equal to 0. We have found a p-value of 8.638e-05, which
+is smaller than 0.05. As such, we will reject the null
+hypothesis at the 5% significanc level in favor of HA.
+
+The p-value was calculated from the t-test statistic value 
+-5.0334 on a t-distribution with 18 (10+10-2) degrees of
+freedom.
+
+The mean relative abundance in the placebo group is 44%, 
+while the mean relative abundance in the transplant group
+is 66%. With 95% probability, the interval [-31.4; -13.0]
+percentage holds the true difference in population means of 
+relative abundances between subjects treated with placebo 
+and subjects treated with a microbial transplant.
+
+** Conclusion **
+
+We may conclude that, on the 5% significance level, the mean 
+relative abundance in subjects that had a placebo treatment is 
+significantly (p = `r round(output$p.value,5)`) lower than the mean relative 
+abundance in subjects that had a microbial transplant. The 
+relative abundances are on average 
+`r round( unname(output$estimate[2]) - unname(output$estimate[1]),2)` percent
+(95% CI: [ `r round(output$conf.int[c(1,2)],2)` ]) lower with placebo 
+treatment than with the transplant.
+
+
+
+
+
