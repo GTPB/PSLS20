@@ -659,22 +659,22 @@ quantile(fem10$DirectChol,prob=c(0.025,0.975))
 
 - We also know that a 95% reference interval is located rougly in two standard deviations around the mean. 
 
-- We will have to use the function `exp()` to transform the result back to the direct cholesterol domain. 
+- We will have to use the function `2^` to transform the result back to the direct cholesterol domain. 
 
 - Large sample
 ```{r}
-qnorm(0.025,mean=xBar,sd=sdBar) %>% exp
-qnorm(0.975,mean=xBar,sd=sdBar) %>% exp
-exp(xBar - 2 * sdBar)
-exp(xBar + 2 * sdBar)
+qnorm(0.025,mean=xBar,sd=sdBar) %>% .^2
+qnorm(0.975,mean=xBar,sd=sdBar) %>% .^2
+2^(xBar - 2 * sdBar)
+2^(xBar + 2 * sdBar)
 ```
         
 - Small sample
 ```{r}
-qnorm(0.025,mean=xBar10,sd=sdBar10) %>% exp
-qnorm(0.975,mean=xBar10,sd=sdBar10) %>% exp
-exp(xBar10 - 2 * sdBar10)
-exp(xBar10 + 2 * sdBar10)
+qnorm(0.025,mean=xBar10,sd=sdBar10) %>% .^2
+qnorm(0.975,mean=xBar10,sd=sdBar10) %>% .^2
+2^(xBar10 - 2 * sdBar10)
+2^(xBar10 + 2 * sdBar10)
 ```
 
 ---
