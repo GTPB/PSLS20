@@ -593,20 +593,20 @@ stat_ecdf()
 - In the introduction we have seen that the log transformed direct cholesterol levels had a nice bell shape. 
 
 ```{r}
-  fem %>% ggplot(aes(x=DirectChol%>%log))+
+  fem %>% ggplot(aes(x=DirectChol%>%log2))+
   geom_histogram(aes(y=..density.., fill=..count..)) +
-  xlab("Direct Cholesterol (log)") +
-  stat_function(fun=dnorm,color="red",args=list(mean=mean(fem$DirectChol%>%log), sd=sd(fem$DirectChol%>%log)))
+  xlab("Direct Cholesterol (log2)") +
+  stat_function(fun=dnorm,color="red",args=list(mean=mean(fem$DirectChol%>%log2), sd=sd(fem$DirectChol%>%log2)))
 ```
 
-- We can now approximate the distribution of log transformed direct cholesterol levels using a normal distribution. 
+- We can now approximate the distribution of log2 transformed direct cholesterol levels using a normal distribution. 
 
 - We only have to estimate two parameters: the mean and the variance. We can do this based on the sample mean ($\bar x$) and sample variance ($s^2$) or sample standard deviation ($s$). 
 
 
 ```{r}
-xBar<-mean(fem$DirectChol%>%log)
-sdBar<-sd(fem$DirectChol%>%log)
+xBar<-mean(fem$DirectChol%>%log2)
+sdBar<-sd(fem$DirectChol%>%log2)
 xBar
 sdBar
 ```
@@ -615,17 +615,17 @@ sdBar
 - We can do the same thing for the small sample with 10 women.
 
 ```{r}
-  fem10 %>% ggplot(aes(x=DirectChol%>%log))+
+  fem10 %>% ggplot(aes(x=DirectChol%>%log2))+
   geom_histogram(aes(y=..density.., fill=..count..),bins=10) +
-  xlab("Direct Cholesterol (log)") +
-  stat_function(fun=dnorm,color="red",args=list(mean=mean(fem10$DirectChol%>%log), sd=sd(fem10$DirectChol%>%log))) +
+  xlab("Direct Cholesterol (log2)") +
+  stat_function(fun=dnorm,color="red",args=list(mean=mean(fem10$DirectChol%>%log2), sd=sd(fem10$DirectChol%>%log2))) +
   xlim(-2,2)
 ```
 
 
 ```{r}
-xBar10<-mean(fem10$DirectChol%>%log)
-sdBar10<-sd(fem10$DirectChol%>%log)
+xBar10<-mean(fem10$DirectChol%>%log2)
+sdBar10<-sd(fem10$DirectChol%>%log2)
 xBar10
 sdBar10
 ```

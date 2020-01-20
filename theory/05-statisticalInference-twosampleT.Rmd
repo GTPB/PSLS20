@@ -37,6 +37,8 @@ Another group of abundant bacteria are the *Staphylococcus spp.*, these bacteria
     - The microbiome is sampled 6 weeks upon the treatment
     - The relative abundance of *Staphylococcus spp.* on *Corynebacterium spp.* + *Staphylococcus spp.* in the microbiome is measured via DGGE (*Denaturing Gradient Gel Electrophoresis*).
 
+---
+
 ## Import the data
 
 ```{r}
@@ -57,6 +59,8 @@ ap %>% ggplot(aes(sample=rel)) +
   facet_wrap(~trt)
 ```
 
+---
+
 # Two sample T-test
 ## Notation
 
@@ -74,6 +78,8 @@ Note, that we assume equal variances **homoscedastic**
 
 (Unequal variances are referred to as  **heteroscedastic**)
 
+---
+
 ## Hypotheses
 
 Test $$ H_0: \mu_1 = \mu_2 $$
@@ -88,6 +94,8 @@ $$H_1: \mu_1-\mu_2 \neq 0.$$
 
 We can estimate the effect size using the difference in sample means:
 $$\hat \mu_1-\hat \mu_2=\bar Y_1 -\bar Y_2.$$
+
+---
 
 ## Variance estimator 
 
@@ -116,6 +124,8 @@ $$ S_p^2= \sum\limits_{j=1}^2\sum\limits_{i=1}^{n_j} \frac{(Y_{ij}-\bar{Y}_{.j})
 
 The pooled variance estimator uses the squared deviations of the observations from their group mean and has $n_1+n_2-2$ degrees of freedom. 
 
+---
+
 ## Test statistic 
 Two-sample $t$-teststatistiek:
 
@@ -123,6 +133,8 @@ $$T = \frac{\bar{Y}_1-\bar{Y}_2}{\sqrt{\frac{S_p^2}{n_1}+\frac{S_p^2}{n_2}}} =
   \frac{\bar{Y}_1 - \bar{Y}_2}{S_p\sqrt{\frac{1}{n_1}+\frac{1}{n_2}}}.$$
 
 The statistic T follows a t-distribution with $n_1+n_2-2$ under $H_0$ is all data are independent, normally distributed and have equal variances.
+
+---
 
 ## Armpit example
 
@@ -146,7 +158,7 @@ If $H_1$ is correct, we expect that the test statistic is larger in absolute val
 
 On average the relative abundance of *Staphylococcus spp.* in the microbiome of the armpit in the transplant group is extremely significantly different from that in the placebo group ($p<<0.001$). The relative abundance of *Staphylococcus spp.* is on average `r round(diff(t.test(rel~trt,data=ap,var.equal=TRUE)$estimate),1)`% larger in the transplant group than in the placebo group (95\% CI [`r paste(format(-t.test(rel~trt,data=ap,var.equal=TRUE)$conf.int[2:1],digits=2,nsmall=1),collapse=",")`]%).
 
-
+---
 
 # Assumptions
 
@@ -164,6 +176,8 @@ To construct confidence intervals we also rely on these assumptions.
 - We used quantiles from the t-distribution to calculate the lower and upper limit. 
 
 - The correct coverage of the CI depends on thes assumptions 
+
+---
 
 ## Evaluate normality 
  
@@ -188,7 +202,8 @@ Recommendation
 - In large samples you can resort to the central limit theorem. 
 
 - You might resort to transformations of the response. 
- 
+
+--- 
 
 ## Homoscedasticity
 
@@ -200,6 +215,7 @@ Recommendation
 
 - Formal F-test can be used to compare the variances, but again under the null you assume equal variances, so the same critism as for normality tests applies here. 
 
+---
 
 ## Welch modified t-test
 
@@ -217,6 +233,8 @@ t.test(rel~trt,data=ap,var.equal=FALSE)
 ```
 
 Note that you can see that the Welch T-test is adopted in the title. The adjusted degrees of freedom are $df = 17.876$ $\pm$ to that of the conventional T-test,because the variances are approximately equal. 
+
+---
 
 # How to report? 
 

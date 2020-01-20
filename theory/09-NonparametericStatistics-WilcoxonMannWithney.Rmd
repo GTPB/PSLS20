@@ -42,14 +42,15 @@ Inference was only correct if distributional assumptions were satisfied
 	- more efficient: larger power with same sample size + smaller CI.  
 	- more flexible: easier to analyse data with complex designs  
 	
+---
 
-## Cholestorol voorbeeld
+## Cholesterol voorbeeld
 
-- Cholestorol concentration in blood measured for 
+- Cholesterol concentration in blood measured for 
   - 5 patients (groep=1) two days upon a stroke
   - 5 healty subject (groep=2). 
 
-- Is cholestorol concentration of hartpatients and healthy subjects on average different? 
+- Is cholesterol concentration of hartpatients and healthy subjects on average different? 
 
 ```{r}
 chol <- read_tsv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/chol.txt")
@@ -75,7 +76,7 @@ chol %>% ggplot(aes(sample=cholest)) +
 - Difficult to assess distributional assumptions when only 5 observations are available. 
 
 
-#Rank Tests
+# Rank Tests
 
 - Important group of non-parametric test
   - Non-parametric, 
@@ -83,7 +84,9 @@ chol %>% ggplot(aes(sample=cholest)) +
   - No need for separate permutation distribution for each new dataset.  
   - Permutation null distribution of rank tests only depends on sample size 
   - Robust to outliers 
-  
+
+---
+
 #Ranks
 
 Rank tests start from rank-transformed data. 
@@ -97,6 +100,8 @@ Rank tests start from rank-transformed data.
 chol$cholest
 rank(chol$cholest)
 ```
+
+---
 
 ## ties 
 
@@ -115,6 +120,8 @@ rank(withTies)
    R_i &=& \frac{ \#\{Y_j: Y_j\leq Y_i\} + ( \#\{Y_j: Y_j < Y_i\} +1)}{2}.
    \end{eqnarray*}
 
+---
+
 ## Ranks of pooled sample
 
 - Let $Y_{ij}$, $i=1,\ldots, n_j$ be observations from two treatment groups $j=1,2$.
@@ -126,6 +133,7 @@ z=chol$cholest
 z
 rank(z)
 ```
+---
 
 # Wilcoxon-Mann-Whitney Test
 
@@ -177,6 +185,8 @@ Ranks based on the poolde sample (upon joining the observations from the two gro
 - For given $n_1$ en $n_2$ the permutation distribution is always the same! 
 - With current computing power this is not so important any more. 
 
+---
+
 ## Standardized statistic 
 
 Often the standardized test statistic is used
@@ -198,9 +208,11 @@ Often the standardized test statistic is used
 
 Asymptotically the standardised statistic follows a standard normal distribution! 
 
-## Cholestorol example 
+---
 
-We illustrate the result for the cholestorol example using the R function `wilcox.test`. 
+## Cholesterol example 
+
+We illustrate the result for the cholesterol example using the R function `wilcox.test`. 
 ```{r}
 wilcox.test(cholest~group,data=chol)
 ```
@@ -218,6 +230,8 @@ S2
 ```
 
 - Where does $W=$ `r wilcox.test(cholest~group,data=chol)$statistic` comes from? 
+
+---
 
 ## Mann and Whitney test
 
@@ -252,6 +266,8 @@ S1-nGroups[1]*(nGroups[1]+1)/2
 2. $U_1$ is also a rankstatistiek, and 
 3. Exact testen based on $U_1$ and $S_1$ are equivalent. 
 
+---
+
 ## Probabilistic index
 
 - $U_1$ has a better interpretation feature
@@ -282,10 +298,10 @@ probInd=wTest$statistic/prod(nGroups)
 probInd
 ```
 
-Because $p=$ `r format(wTest$p.value,digits=3)` $<0.05$ we conclude at the $5\%$ significance level that the mean cholestorol level of hartpatients is larger then that of healthy subjects. 
+Because $p=$ `r format(wTest$p.value,digits=3)` $<0.05$ we conclude at the $5\%$ significance level that the mean cholesterol level of hartpatients is larger then that of healthy subjects. 
 
   - Note that we have assumed that the location-shift model is valid in this conclusion. 
-  - We also know that higher cholestorol level are more likely for hartpatients then for healthy subjects and this probability is 
+  - We also know that higher cholesterol level are more likely for hartpatients then for healthy subjects and this probability is 
 $U1/(n_1\times n_2)=$ `r probInd*100`%. 
   - We should assess the location shift assumption. But this is not possible with only 5 observations. 
 
@@ -296,9 +312,8 @@ Without the location-shift assumption the conclusion in terms of the probabilist
 \[H_0: F_1=F_2 \text{ vs } H_1: P[Y_1 \geq Y_2] \neq 0.5.\]
 
 
-
 ## Conclusion
 
-There is a significant difference in the distribution of the cholestorol concentration of hartpatients two days upon a stroke and that of healthy subject (($p=$ `r format(wTest$p.value,digits=3)`). It is more likely to observe higher cholestorol levels for hartpatients then for healthy subjects. The point estimator for this probability is `r probInd*100`%.
+There is a significant difference in the distribution of the cholesterol concentration of hartpatients two days upon a stroke and that of healthy subject (($p=$ `r format(wTest$p.value,digits=3)`). It is more likely to observe higher cholesterol levels for hartpatients then for healthy subjects. The point estimator for this probability is `r probInd*100`%.
 
 

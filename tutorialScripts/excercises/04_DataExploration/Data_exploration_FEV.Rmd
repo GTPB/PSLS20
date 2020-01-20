@@ -79,13 +79,8 @@ informative representation of the data.
 
 Did you expect these results?
 
-If your visualization is informative, it should appear that
-children that smoke have a higher median FEV than children 
-that do not smoke. Should we change legistlations worldwide and
-make smoking obligatory for children?
-
-Maybe there is something else going on in the data. By taking
-more of the information in the dataset into account, can
+Maybe there is something else going on in the data. 
+By taking more of the information in the dataset into account, can
 you provided a more detailed/accurate visualizition of the
 variables that effect the FEV?
 
