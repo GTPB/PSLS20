@@ -226,7 +226,7 @@ $P(X_j,X_k)= P(X_j)P(X_j)$
 
 - The probability mass function for a random variable $X$ describes the probability of each possible value of the sample space.
 
-- Example: Gender is a binary variable (0:male, 1:female) and binary variables are Bernouilli distributed. 50.8% of the subjects of the American population are female and 49.2% are male. Let $\pi$ be the probability on a female $\pi=0.508$. 
+- Example: Gender is a binary variable (0:male, 1:female) and binary variables are Bernoulli distributed. 50.8% of the subjects of the American population are female and 49.2% are male. Let $\pi$ be the probability on a female $\pi=0.508$. 
     so 
     $$ X\sim \left \{ 
     \begin{array}{lcl}
@@ -241,7 +241,7 @@ $P(X_j,X_k)= P(X_j)P(X_j)$
       ylab("Probability")
     ```
     
-Random variable $X$ follows an Bernouilli distribution $B(\pi)$ with parameter $\pi=0.508$, 
+Random variable $X$ follows an Bernoulli distribution $B(\pi)$ with parameter $\pi=0.508$, 
     $$B(\pi)= \pi^x(1-\pi)^{(x-1)}$$
 
 ---
@@ -524,8 +524,8 @@ NHANES %>% ggplot(aes(x=Gender)) + geom_bar()
 ```
 
 - Gender is a binary variable. 
-- It thus follows a Bernouilli distibution. 
-- The parameter of a Bernouilli distribution is the mean $\pi$. 
+- It thus follows a Bernoulli distibution. 
+- The parameter of a Bernoulli distribution is the mean $\pi$. 
 - We can estimate $\pi$ based on the sample using the sample mean $\bar x = \sum\limits_{i=1}^n x_i$ 
 - Note, that the sample mean is also a random variable! It also varies from sample to sample!
 
