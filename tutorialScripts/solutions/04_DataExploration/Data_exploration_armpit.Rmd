@@ -79,12 +79,17 @@ missing parts in the chunk of code below to get a good-looking
 visualization:
 
 ```{r}
-ap %>%
-  ggplot(aes(x=rel,fill=trt)) + 
-  geom_histogram() +
-  facet_grid(rows = vars(trt)) + ## fill in to put the histograms for both treatment conditions in a separate row
-  theme_bw() +
-  xlab("relative abundance (%)")
+give.n <- function(x){
+  return(c(y = 85, label = length(x))) 
+}
+
+ap %>%  ggplot(aes(x=trt,y=rel,fill=trt)) +
+  geom_boxplot(outlier.shape=NA) + 
+  geom_point(position="jitter") +
+  ylab("relative abundance (%)") +
+  xlab("treatment group") + 
+  stat_summary(fun.y=mean, geom="point", shape=5, size=3, color="black", fill="black") +
+  stat_summary(fun.data = give.n, geom = "text") 
 ```
 
 Based on this plot, it seems that the relative abundace
