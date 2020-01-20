@@ -140,7 +140,7 @@ the "true difference in means is not equal to 0". The
 null hypothesis is that the true difference in means is
 equal to 0. We have found a p-value of `r round(output$p.value,5)`, which
 is much smaller than 0.05. So, the probability of at most `r round(output$p.value,5)` of 100000 to observe a larger absolute difference in means than what we observed in the data in a random sample that was generated under the null hypothesis. So it is extremely unlikely that our data would originate from a population where the average relative abundance of *Staphylococcus* in the microbiome upon placebo treatment would be equal that upon transplant treatment.  As such, we can reject the null
-hypothesis extremely significant in favor of the alternative that there is an effect of the treatment in .
+hypothesis extremely significant in favor of the alternative that there is an effect of the transplant.
 
 The mean relative abundance in the placebo group is `r round( unname(output$estimate[1]))`, 
 while the mean relative abundance in the transplant group
@@ -149,7 +149,7 @@ holds the true difference in population means of
 relative abundances between subjects treated with placebo 
 and subjects treated with a microbial transplant and we know that the construction of the confidence intervals are as such that their conclusion on the location of the average difference is correct with a probability of 95%.
 
-* Conclusion *
+# Conclusion
 
 We conclude that the mean 
 relative abundance of *Staphylococcus* sp in the armpit microbiome of subjects that had a placebo treatment is extremely
@@ -162,12 +162,14 @@ treatment than with the transplant.
 
 # Train yourself in checking the assumptions
 
-
-## Get insight in how plots look for sample sizes similar to our dataset if all assumptions hold. 
-
 In order for the learners to get more proficient in evaluating the assumptions we will simulate 9 dataset with sample sizes similar to our data for which the assumptions of normality and equal variance do hold. For the QQ-plots we will only plot the one from one of the groups. 
 
+## Simulate data 
+
+We simulate 9 datasets with the same sample sizes, means and pooled variance as in the sample. 
+
 ```{r}
+nSamp <- 9
 ## descriptive statistics
 apRelSum<-ap%>%
   group_by(trt)%>%
@@ -182,13 +184,43 @@ sigma <- sqrt(sum(apRelSum$sd^2*(apRelSum$n-1))/(sum(apRelSum$n)-2))
 normSim <- matrix(rnorm(sum(apRelSum$n)*nSamp,
               mean=c(rep(apRelSum$mean[1],apRelSum$n[1]),
                      rep(apRelSum$mean[2],apRelSum$n[2])),
-                     sd=sigma),nrow=sum(apRelSum$n)) %>% as.data.frame
+                     sd=sigma),nrow=sum(apRelSum$n)) %>%
+  as.data.frame %>% 
+  mutate(trt=ap$trt)
+```
 
-normSim %>% gather(samp,data) %>% 
-ggplot(aes(x=data)) +
-geom_histogram(aes(y=..density.., fill=..count..),bins=30) +
-geom_density(aes(y=..density..)) +
+## Comparisons of variances
+
+```{r}
+normSim %>% gather(samp,data,-trt) %>%
+  ggplot(aes(x=trt,y=data)) +
+  geom_boxplot() +
   facet_wrap(~samp)
 ```
 
+## Evaluation of normality
 
+### Placebo group
+
+```{r}
+normSim %>% 
+  gather(samp,data,-trt) %>%
+  filter(trt=="placebo") %>%
+  ggplot(aes(sample=data)) +
+  geom_qq() +
+  geom_qq_line() +
+  facet_wrap(~samp)
+```
+
+### Transplant group
+
+
+```{r}
+normSim %>% 
+  gather(samp,data,-trt) %>%
+  filter(trt=="transplant") %>%
+  ggplot(aes(sample=data)) +
+  geom_qq() +
+  geom_qq_line() +
+  facet_wrap(~samp)
+```
