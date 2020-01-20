@@ -65,6 +65,24 @@ There is a strong emphasis in reproducible research by extensively using R/Rmark
 
 ### Practical Statistics for the Life Sciences
 
+#### Software
+
+- The learning materials are developed for [R](https://www.r-project.org/) version 3.6.0 or later. We also recommend to also install the latest version of [RStudio](https://www.rstudio.com/products/rstudio/download/).
+
+- To install all requirements, please copy and paste this line of code in your R console.
+
+```
+source("https://raw.githubusercontent.com/GTPB/PSLS20/master/install.R")
+```
+
+- Alternatively, learners can launch an R studio interface in the cloud.
+
+[![Binder](http://mybinder.org/badge.svg)](http://mybinder.org/v2/gh/GTPB/PSLS20/master?urlpath=rstudio)
+
+
+
+#### Learning materials
+
 1. [Introduction](pages/01-intro.html)
 2. [Concepts](pages/02-concepts.html)
 3. [Experimental Design](pages/03-experimentalDesign.html)
