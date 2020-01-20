@@ -83,7 +83,8 @@ source("https://raw.githubusercontent.com/GTPB/PSLS20/master/install.R")
 https://raw.githubusercontent.com/GTPB/PSLS20/master/background_material/r-cheatsheet.pdf 
 and https://raw.githubusercontent.com/GTPB/PSLS20/master/background_material/rmarkdown-cheatsheet.pdf
 
-- All data can be downloaded locally through [](assets/data.zip)
+- All data can be downloaded locally through 
+[data](assets/data.zip)
 
 
 
