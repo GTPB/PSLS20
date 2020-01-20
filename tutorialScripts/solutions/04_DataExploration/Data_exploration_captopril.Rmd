@@ -221,7 +221,28 @@ Next, time if you explore paired data, you can immediately adopt section 3.3 the
 
 It is not useful to report the barplot. 
 
+# Advantage of paired design
 
+Every patient acts as their own control: we can estimate the effect of the treatment for each patient 
 
+```{r}
+captopril %>% 
+  ggplot(aes(SBPb,SBPa)) +
+  geom_point() + 
+  ggtitle(paste("correlation = ",round(cor(captopril$SBPb,captopril$SBPa),3)))
+```
 
+```{r}
+captopril %>% 
+  mutate(bp_diff = SBPa-SBPb) %>%
+  select(SBPb,SBPa,bp_diff) %>%
+  summarize_all(sd)
+```
 
+Calculate variance based on fact that data are paired
+```{r}
+captopril %>% summarise(sd_diff=sqrt(sd(SBPb)^2 + sd(SBPa)^2-2*sd(SBPa)*sd(SBPb)*cor(SBPa,SBPb)))
+```
+
+Note, that the standard deviation of the blood pressure measurements are more then twice the blood pressure measurements on the difference. 
+This is because each patient acts as their own control so we can correct for their baseline blood pressure when estimating the effect of the treatment.
