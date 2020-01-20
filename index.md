@@ -77,7 +77,7 @@ source("https://raw.githubusercontent.com/GTPB/PSLS20/master/install.R")
 
 - Alternatively, learners can launch an R studio interface in the cloud.
 
-[![Binder](http://mybinder.org/badge.svg)](http://mybinder.org/v2/gh/GTPB/PSLS20/master?urlpath=rstudio)
+[![Binder](http://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/GTPB/PSLS20/master?urlpath=rstudio)
 
 
 
