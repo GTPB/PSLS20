@@ -1,0 +1,186 @@
+---
+title: 'Tutorial 2.1: hypothesis testing on the armpit dataset'
+output:
+  html_document:
+    code_download: yes
+    highlight: tango
+    number_sections: yes
+    theme: cosmo
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+In this tutorial, we perform a hypothesis test on the
+"smelly armpit" dataset. 
+
+# Smelly armpit dataset
+
+Smelly armpits are not caused by sweat, itself. The smell is caused by specific micro-organisms belonging to the group of *Corynebacterium spp.* that metabolise sweat.
+Another group of abundant bacteria are the *Staphylococcus spp.*, these bacteria do not metabolise sweat in smelly compounds.
+
+The CMET-groep at Ghent University does research to on transplanting the armpit microbiome to save people with smelly armpits.
+
+- Proposed Therapy:
+  	1. Remove armpit-microbiome with antibiotics
+    2. Influence armpit microbiome with microbial transplant (https://youtu.be/9RIFyqLXdVw)
+
+- Experiment:
+
+    - 20 subjects with smelly armpits are attributed to one of two treatment groups
+    - placebo (only antibiotics)
+    - transplant (antibiotica followed by microbial transplant).
+    - The microbiome is sampled 6 weeks upon the treatment
+    - The relative abundance of *Staphylococcus spp.* on *Corynebacterium spp.* +
+      *Staphylococcus spp.* in the microbiome is measured via DGGE (*Denaturing Gradient
+      Gel Electrophoresis*).
+    
+# Goal
+
+The overarching goal of this research was to assess if the relative abundance 
+*Staphylococcus spp.*
+in the microbiome of the armpit is affected by transplanting the microbiome. 
+To this end the researchers randomized patients to two treatment:
+A treatment with antibiotics only and a treatment with
+antibiotics and a microbial transplant.
+
+In the tutorial on hypotheses testing we will use a formal statistical test to generalize the results from the sample to that of the population.
+
+
+# Import the dataset
+
+
+```{r, message=FALSE}
+#Load the libraries
+library(tidyverse)
+```
+
+Import the data
+
+```{r}
+ap <- read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit.csv")
+```
+
+```{r}
+glimpse(ap)
+```
+
+# Data Exploration
+
+A crucial first step in a data analysis is to visualize and to explore the raw data.
+
+
+```{r}
+ap %>% ggplot(aes(x=trt,y=rel,fill=trt)) + 
+  geom_boxplot(outlier.shape=NA) + 
+  geom_point(position="jitter") +
+  ylab("relative abundance (%)") +
+  xlab("treatment group") + 
+  stat_summary(fun.y=mean, geom="point", shape=5, size=3, color="black", fill="black")
+```
+
+We clearly see that, on average, the subjects who had a
+microbial transplant have a higher relative abundance of
+Staphylococcus spp. But is this difference statistically  *significant* so that we can generalized what we observe in the sample to the population?
+
+We can test this with an unpaired, two-sample t-test, which falsifies the null hypothesis that there is on average no difference in relative abundance of *Staphylococcus* in the armpit microbiome between the transplant and the placebo group against the alternative hypothesis that there is a difference in average abundance of *Staphyloccocus* in the armpit microbiome between the transplant and placebo treatment. 
+
+But, before we can start the analysis, we must check if
+all assumptions to perform a t-test are met.
+
+## Check the assumptions
+
+1. The observations are independent both within and between groups.  This has to be garanteed by the design.
+2. The data (rel) are normally distributed in each of the groups
+3. The variability within both groups is similar.
+
+To check the normality assumption, we will use QQ plots.
+
+```{r}
+ap %>%
+  ggplot(aes(sample=rel)) +
+  geom_qq() +
+  geom_qq_line() +
+  facet_grid(cols = vars(trt))
+```
+
+We can see that the data is nicely scattered around the quantile-quantile
+line (black line). As such, we may conclude that the our data are approximately normally distributed.
+
+For the third assumption, we must compare the within-group
+variability of both groups. We can do this visually based on the boxplots. The size of the box in the boxplot is the interquartile range, an nonparametric estimator of the variability of the data. 
+In the plot we observe that the boxes are fairly equal in size indicating that  the box size is
+approximately equal for groups. 
+
+For small sample sizes the variability estimation is not very precise and the differences in box sizes have to be more than 2 or 3 times larger in one of the groups before there is an indication for the deviation of equality of means. If the variability would not have been equal, we might have resorted the Welch modified T-test. 
+
+As all three assumptions are met we may continue with
+performing the unpaired two-sample t-test with equal variances.
+
+# Assess the research question with the  two-sample t-test
+
+# Train yourself in checking the assumptions
+
+In order for the learners to get more proficient in evaluating the assumptions we will simulate 9 dataset with sample sizes similar to our data for which the assumptions of normality and equal variance do hold. For the QQ-plots we will only plot the one from one of the groups. 
+
+## Simulate data 
+
+We simulate 9 datasets with the same sample sizes, means and pooled variance as in the sample. 
+
+```{r}
+nSamp <- 9
+## descriptive statistics
+apRelSum<-ap%>%
+  group_by(trt)%>%
+  summarize_at("rel",
+               list(mean=~mean(.,na.rm=TRUE),
+                    sd=~sd(.,na.rm=TRUE),
+                    n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+  mutate(se=sd/sqrt(n))
+
+sigma <- sqrt(sum(apRelSum$sd^2*(apRelSum$n-1))/(sum(apRelSum$n)-2)) 
+
+normSim <- matrix(rnorm(sum(apRelSum$n)*nSamp,
+              mean=c(rep(apRelSum$mean[1],apRelSum$n[1]),
+                     rep(apRelSum$mean[2],apRelSum$n[2])),
+                     sd=sigma),nrow=sum(apRelSum$n)) %>%
+  as.data.frame %>% 
+  mutate(trt=ap$trt)
+```
+
+## Comparisons of variances
+
+```{r}
+normSim %>% gather(samp,data,-trt) %>%
+  ggplot(aes(x=trt,y=data)) +
+  geom_boxplot() +
+  facet_wrap(~samp)
+```
+
+## Evaluation of normality
+
+### Placebo group
+
+```{r}
+normSim %>% 
+  gather(samp,data,-trt) %>%
+  filter(trt=="placebo") %>%
+  ggplot(aes(sample=data)) +
+  geom_qq() +
+  geom_qq_line() +
+  facet_wrap(~samp)
+```
+
+### Transplant group
+
+
+```{r}
+normSim %>% 
+  gather(samp,data,-trt) %>%
+  filter(trt=="transplant") %>%
+  ggplot(aes(sample=data)) +
+  geom_qq() +
+  geom_qq_line() +
+  facet_wrap(~samp)
+```
