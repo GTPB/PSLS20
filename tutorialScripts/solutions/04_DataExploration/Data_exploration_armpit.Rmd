@@ -79,26 +79,6 @@ missing parts in the chunk of code below to get a good-looking
 visualization:
 
 ```{r}
-give.n <- function(x){
-  return(c(y = 85, label = length(x))) 
-}
-
-ap %>%  ggplot(aes(x=trt,y=rel,fill=trt)) +
-  geom_boxplot(outlier.shape=NA) + 
-  geom_point(position="jitter") +
-  ylab("relative abundance (%)") +
-  xlab("treatment group") + 
-  stat_summary(fun.y=mean, geom="point", shape=5, size=3, color="black", fill="black") +
-  stat_summary(fun.data = give.n, geom = "text") 
-```
-
-Based on this plot, it seems that the relative abundace
-is higher for subjects who had the transplants.
-However, given the small sample size the histograms
-are not optimally informative. A better option would be to
-show the data in a boxplot:
-
-```{r}
 ap %>%  ggplot(aes(x=trt,y=rel,fill=trt)) +
   geom_boxplot(outlier.shape=NA) + 
   geom_point(position="jitter") +
