@@ -10,8 +10,7 @@ output:
       number_sections: true
 ---
 
-In this tutorial, you will learn how to import, tidy, wrangle and 
-visualize data yourself! You will work with one specific dataset;
+In this tutorial, you will learn how to explore and summarize data that are paired.
 
 # The captopril dataset
 
@@ -116,7 +115,7 @@ that the data is paired. Can you think of a plot that shows this
 information? 
 
 **Hint:** Try to use `geom_line(aes(group = id))` for 
-visualizing the paired data in the cunk of code below
+visualizing the paired data in the chunk of code below
 
 ```{r}
 
@@ -139,10 +138,10 @@ captopril %>%
 In order to assess the effect of captopril, to which
 value should you compare the difference? Why?
 
-## Assumptions: QQ-plot
+## Assumption: Normal distribution of the blood pressure differences
 
-In the next lecture we will assess if this difference is statistically significant. 
-We will introduce a statistical test that relies on the assumption that the differences are normally distributed. 
+In the tutorial on statistical inference we will assess if the systolic blood pressure before and after administering captopril is on average different. 
+The statistical test for paired data relies on the assumption that the systolic blood pressure differences are normally distributed. 
 We can check this with a QQ-plot: 
 
 ```{r}
@@ -155,7 +154,8 @@ The plot shows no large deviations of the straight line indicating that the data
 
 #Descriptive statistics
 
-Descriptive statistics for all blood pressure measurements are found below. Have a look at the exploration of the armpit data
+Descriptive statistics for all blood pressure measurements are found below. 
+Have a look at the exploration of the armpit data
 to generate useful summary statistics.
 
 ```{r}
