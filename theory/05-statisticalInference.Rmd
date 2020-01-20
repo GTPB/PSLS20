@@ -16,6 +16,11 @@ output:
 knitr::opts_chunk$set(include = TRUE, comment = NA, echo = TRUE,
                       message = FALSE, warning = FALSE)
 library(tidyverse)
+```
+
+
+```{r include=FALSE}
+#Do not run during the lecture when we work interactively
 set.seed(1314)
 ```
 
@@ -33,20 +38,24 @@ set.seed(1314)
 - e.g. the population mean
    $$E(X)=\mu$$
 
-- Does the bloodpressure decreases on average after administering captopril to patients with hypertension?   
+- Does the blood pressure decreases on average after administering captopril to patients with hypertension?   
+
+---
 
 ## Overview 
 
-- Experimental Design \& Data Exploration
+- Experimental Design & Data Exploration
 - Point estimators (Estimation)
 - Interval estimators (Statistical inference)
 - Hypothesis tests (Statistical inference)
 
+---
+
 # Experimental Design
 
 - 15 patients were drawn at random from the population of patients with hypertension
-- pre-test/post-test design: the systolic and diasystolic bloodpressure are measured before and after administering captopril
-- Advantage: we can assess the effect of administering captopril on the bloodpressure for each individual patient.  pati??nt.
+- pre-test/post-test design: the systolic and diasystolic blood pressure are measured before and after administering captopril
+- Advantage: we can assess the effect of administering captopril on the blood pressure for each individual patient.
 - Disadvantage? 
 
 ```{r pop2Samp2Pop,fig.asp=.8, fig.align='center',echo=FALSE}
@@ -96,6 +105,8 @@ text(8.5,5,"ESTIMATION &\nINFERENCE (3)",col="black",cex=1.2)
 text(7.5,.5,"DATA EXPLORATION &\nDESCRIPTIVE STATISTICS (2)",col="black",cex=1.2)
 ```
 
+---
+
 # Data exploration and Descriptive Statistics 
 
 ```{r}
@@ -107,73 +118,76 @@ summary(captopril)
 ```{r}
 captoprilTidy <- captopril %>% gather(type,bp,-id) 
 captoprilTidy %>% 
- group_by(type) %>%
-    summarize_at("bp",list(mean=mean,
-              sd=sd,
-              n=length)) %>%
+  group_by(type) %>%
+  summarize_at("bp",list(mean=~mean(.,na.rm=TRUE),
+                    sd=~sd(.,na.rm=TRUE),
+                    n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
   mutate(se=sd/sqrt(n)) 
 
 captoprilTidy %>% 
   group_by(type) %>%
-    summarize_at("bp",list(mean=mean,
-              sd=sd,
-              n=length)) %>%
+  summarize_at("bp",list(mean=~mean(.,na.rm=TRUE),
+                    sd=~sd(.,na.rm=TRUE),
+                    n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
   mutate(se=sd/sqrt(n)) %>%
   ggplot(aes(x=type,y=mean)) + 
-geom_bar(stat="identity") + 
-geom_errorbar(aes(ymin=mean-se, ymax=mean+se),width=.2) +
-ylim(0,210) +
-  ylab("Bloodpressure (mmHg)")
+  geom_bar(stat="identity") +
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se),width=.2) +
+  ylim(0,210) +
+  ylab("blood pressure (mmHg)")
 ```
 
 - This figure is not informative! It does not show the raw data. 
 
 ```{r}
-captoprilTidy %>% ggplot(aes(x=type,y=bp)) +
-geom_boxplot(outlier.shape=NA) + 
-geom_point(position="jitter") + 
-ylim(0,210)
+captoprilTidy %>% 
+  ggplot(aes(x=type,y=bp)) +
+  geom_boxplot(outlier.shape=NA) +
+  geom_point(position="jitter") + 
+  ylim(0,210)
 ```
 
 We see that a lot of the space that was taken by the barplot does not contain data!
 
 ```{r}
-captoprilTidy %>% ggplot(aes(x=type,y=bp)) +
-geom_boxplot(outlier.shape=NA) + 
-geom_point(position="jitter") 
+captoprilTidy %>% 
+  ggplot(aes(x=type,y=bp)) +
+  geom_boxplot(outlier.shape=NA) +
+  geom_point(position="jitter") 
 ```
 
 - This plot would have been informative if the data was gathered on different individuals. 
 
 - However, the blood pressures are measured op the same subject!
 
-- We will make a plot by filtering the systolic bloodpressures
+- We will make a plot by filtering the systolic blood pressures
 
 ```{r}
 captoprilTidy %>%
   filter(type%in%c("SBPa","SBPb")) %>%
   mutate(type=factor(type,levels=c("SBPb","SBPa"))) %>%
   ggplot(aes(x=type,y=bp)) +
-geom_line(aes(group = id)) +
-geom_point()
+  geom_line(aes(group = id)) +
+  geom_point()
 ```
 
-- We have paired data. So we might estimate the effect of the treatment directly by comparing the bloodpresure after treatment to the bloodpressure before the treatment. 
+- We have paired data. So we might estimate the effect of the treatment directly by comparing the blood pressure after treatment to the blood pressure before the treatment. 
 
 ```{r}
 captopril$deltaSBP<-captopril$SBPa-captopril$SBPb
-captopril%>%ggplot(aes(x="Systolic bloodpressure",y=deltaSBP)) +
-geom_boxplot(outlier.shape=NA) + 
-geom_point(position="jitter")+
-ylab("Difference (mm mercury)") +
-xlab("")
+captopril%>%
+  ggplot(aes(x="Systolic blood pressure",y=deltaSBP)) +
+  geom_boxplot(outlier.shape=NA) + 
+  geom_point(position="jitter")+
+  ylab("Difference (mm mercury)") +
+  xlab("")
 ```
 
 ```{r}
 captopril %>%
-    summarize_at("deltaSBP",list(mean=mean,
-              sd=sd,
-              n=length)) %>%
+  summarize_at("deltaSBP",list(mean=~mean(.,na.rm=TRUE),
+              sd=~sd(.,na.rm=TRUE),
+              n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
   mutate(se=sd/sqrt(n))
 ```
 
@@ -183,27 +197,30 @@ captopril %>%
 - How will we model $X=\Delta_\text{after-na}$ and estimate the effect of captopril? 
 
 ```{r}
-captopril%>%ggplot(aes(sample=deltaSBP)) +
-stat_qq() +
-stat_qq_line()
+captopril%>%
+  ggplot(aes(sample=deltaSBP)) +
+  stat_qq() +
+  stat_qq_line()
 ```
 
-The systolic bloodpressure differences are approximately normally distributed. 
+The systolic blood pressure differences are approximately normally distributed. 
+
+---
 
 # Estimation
 
 
-- No substatial deviations from normality
+- No substantial deviations from normality
 
 - We can assume that the differences  $X \sim N(\mu, \sigma^2)$.
 
-- Effect of captopril in the population is captured by the average bloodpressure difference $\mu$.
+- Effect of captopril in the population is captured by the average blood pressure difference $\mu$.
 
-- The average bloodpressure $\mu$ in the population can be estimated using the sample mean $\bar x$=`r round(mean(captopril$deltaSBP),2)`
+- The average blood pressure $\mu$ in the population can be estimated using the sample mean $\bar x$=`r round(mean(captopril$deltaSBP),2)`
 
 - The standard deviation $\sigma$ with the sample standard deviation $\text{S}$=`r round(sd(captopril$deltaSBP),2)`.
 
-- Is the effect that we observe in the sample large enough to conclude that there is an effect of the captopril treatment on the bloodpressure at population level? 
+- Is the effect that we observe in the sample large enough to conclude that there is an effect of the captopril treatment on the blood pressure at population level? 
 
 - Our estimates will change from sample to sample!
 
@@ -224,11 +241,15 @@ The systolic bloodpressure differences are approximately normally distributed.
     1. in how the sample mean can vary in a new similar study
     2. how far $\bar X$ can be from the population mean $\mu$
 
+---
+
 ### Overview
 
 1. The sample mean is unbiased 
 2. Precision of sample mean 
 3. Distribution of sample mean
+
+---
 
 ### The sample mean is unbiased 
 
@@ -242,7 +263,7 @@ The systolic bloodpressure differences are approximately normally distributed.
 
 - Randomisation!
 
-- Draw the subjecten at random from population so every subject has the same probability to end up in the sample.  
+- Draw the subjects at random from population so every subject has the same probability to end up in the sample.  
 
 - Subjects with hypertension are sampled at random from the population
 
@@ -261,6 +282,7 @@ E(\bar X) &=& E \left(\frac{X_1+ X_2+ ... + X_n}{n}\right) \\
 
 - $\bar X$ is an *unbiased estimator* for $\mu$ 
 
+---
 
 ### Imprecision/standard error
 
@@ -270,14 +292,16 @@ E(\bar X) &=& E \left(\frac{X_1+ X_2+ ... + X_n}{n}\right) \\
 
 - We illustrated this by using the NHANES 
 
-    - We will draw 15 females at random from the NHANES study and we will register their log direct cholestorol values
+    - We will draw 15 females at random from the NHANES study and we will register their log2 direct cholesterol values
     - We repeat this 50 times to assess the variation from sample to sample
     - We will plot the boxplot for each sample and will indicate the mean 
 
 ```{r}
 library(NHANES)
 
-fem <- NHANES %>% filter(Gender=="female" & !is.na(DirectChol)) %>% select("DirectChol")
+fem <- NHANES %>% 
+  filter(Gender=="female" & !is.na(DirectChol)) %>%
+  select("DirectChol")
 
 n<-15 # number of subjects per sample
 nSim=50 # number of simulations
@@ -287,30 +311,35 @@ for (j in 1:nSim)
 {
   femSamp[,j]<-sample(fem$DirectChol,15)
   if (j<4) {
-    p <- femSamp %>% log %>%
-    data.frame %>% 
-    gather("sample","logCholestorol") %>%
-    ggplot(aes(x=sample,y=logCholestorol)) +
-    geom_boxplot() + 
-    stat_summary(fun.y=mean, geom="point", shape=19, size=3, color="red", fill="red") +
-    geom_hline(yintercept = mean(fem$DirectChol %>% log)) +
-    ylab("cholestorol (log)") 
+    p <- femSamp %>% 
+      log2 %>%
+      data.frame %>% 
+      gather("sample","log2cholesterol") %>%
+      ggplot(aes(x=sample,y=log2cholesterol)) +
+      geom_boxplot() + 
+      stat_summary(fun.y=mean, geom="point", shape=19, size=3, color="red", fill="red") +
+      geom_hline(yintercept = mean(fem$DirectChol %>% log2)) +
+      ylab("cholesterol (log2)") 
     print(p)
   }
 }
-femSamp %>% log %>%
+
+femSamp %>% 
+  log2 %>% 
   data.frame %>% 
-  gather("sample","logCholestorol") %>%
-  ggplot(aes(x=sample,y=logCholestorol)) +
+  gather("sample","log2cholesterol") %>%
+  ggplot(aes(x=sample,y=log2cholesterol)) +
   geom_boxplot() + 
   stat_summary(fun.y=mean, geom="point", shape=19, size=3, color="red", fill="red") +
-  geom_hline(yintercept = mean(fem$DirectChol %>% log)) +
-  ylab("cholestorol (log)")
+  geom_hline(yintercept = mean(fem$DirectChol %>% log2)) +
+  ylab("cholesterol (log2)")
 ```
 
 We observe that the mean nicely fluctuates around the population mean. 
 
 Copy the code, increase the sample size to 100 subjects and observe what happens!
+
+---
 
 ### How to do this based on a single sample?
 
@@ -331,6 +360,8 @@ Copy the code, increase the sample size to 100 subjects and observe what happens
     - blood pressure measurements before ($Y_{i,before}$) and  after ($Y_{i,after}$) administering captopril for the same subject $i=1,\ldots,n$.
     - We turned them into n independent measurements by taking the difference $Y_{i,after}-Y_{i,before}$
 
+---
+
 ### Variance estimator for $\bar X$
 \begin{eqnarray*}
 \text{Var}(\bar X)&=&\text{Var} \left(\frac{X_1+ X_2+ ... + X_n}{n}\right) \\
@@ -345,7 +376,7 @@ $$\text{Var}[X_1 + X_2] = \text{Var}[X_1] + \text{Var}[X_2] + 2 \text{Covar}[X_1
 
     - With $Covar[X_1,X_2]=0$ when $X_1$ and $X_2$ are independent. 
     
-- the standard deviation of $\bar X$ around $\mu$ is $\sqrt{n}$ times smaller that the deviatie around the original observations $X$.
+- the standard deviation of $\bar X$ around $\mu$ is $\sqrt{n}$ times smaller that the deviation around the original observations $X$.
 
 - The more observations we have the more precise $\bar X$.
 
@@ -354,6 +385,8 @@ $$\text{Var}[X_1 + X_2] = \text{Var}[X_1] + \text{Var}[X_2] + 2 \text{Covar}[X_1
 
 The standard deviation of $\bar{X}$ is $\sigma/\sqrt{n}$ and is also referred to as the **standard error** of the mean. 
 Generally one refers to the standard deviation of an estimator for a particular parameter $\theta$ with the term **standard error** of the estimator, which is denoted as $SE$.
+
+---
 
 ### Captopril example 
 
@@ -381,9 +414,11 @@ se=sd(captopril$deltaSBP)/sqrt(n)
 se
 ```
 
-### Standaarddeviation vs standard error
+---
 
-#### Illustrate in simulation study
+### standard deviation vs standard error
+
+#### Illustrate via repeated sampling
 
 - Different sample sizes: 10, 50, 100
 - Draw 1000 samples per sample size from the NHANES study, for each sample we calculate
@@ -392,7 +427,7 @@ se
     - The standard error
 - We make a boxplot of the sample standard deviations and the standard errors for the different sample sizes
 
-- Instead of using a for loop we will use the sapply function which is more efficient. It takes a vector or a list as imput and applies a function on each element of the vector or on each list element. 
+- Instead of using a for loop we will use the sapply function which is more efficient. It takes a vector or a list as input and applies a function on each element of the vector or on each list element. 
 
 ```{r}
 femSamp10<-sapply(1:1000,function(j,x,size) sample(x,size),size=10,x=fem$DirectChol) 
@@ -402,34 +437,57 @@ femSamp50<-sapply(1:1000,function(j,x,size) sample(x,size),size=50,x=fem$DirectC
 femSamp100<-sapply(1:1000,function(j,x,size) sample(x,size),size=100,x=fem$DirectChol) 
 
 res<-rbind(
-femSamp10 %>% log%>%as.data.frame %>% gather(sample,logChol) %>% 
-group_by(sample)%>%
-summarize_at("logChol",list(mean=mean,
-              sd=sd,
-              n=length)) %>%
-mutate(se=sd/sqrt(n)) ,
-femSamp50 %>% log %>%  as.data.frame %>%
-gather(sample,logChol) %>%
-group_by(sample)%>%
-summarize_at("logChol",list(mean=mean,
-              sd=sd,
-              n=length)) %>%
-mutate(se=sd/sqrt(n)),
-femSamp100 %>% log %>% as.data.frame %>% gather(sample,logChol) %>% group_by(sample)%>%
-summarize_at("logChol",list(mean=mean,
-              sd=sd,
-              n=length)) %>%
-mutate(se=sd/sqrt(n))
-)
+femSamp10 %>% 
+  log2%>%
+  as.data.frame %>% 
+  gather(sample,log2Chol) %>% 
+  group_by(sample)%>%
+  summarize_at("log2Chol",list(mean=~mean(.,na.rm=TRUE),
+              sd=~sd(.,na.rm=TRUE),
+              n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+  mutate(se=sd/sqrt(n)) ,
 
+femSamp50 %>% 
+  log2 %>%  
+  as.data.frame %>%
+  gather(sample,log2Chol) %>%
+  group_by(sample)%>%
+  summarize_at("log2Chol",list(mean=~mean(.,na.rm=TRUE),
+              sd=~sd(.,na.rm=TRUE),
+              n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+  mutate(se=sd/sqrt(n)),
+
+femSamp100 %>% 
+  log2 %>% 
+  as.data.frame %>% 
+  gather(sample,log2Chol) %>% 
+  group_by(sample)%>%
+  summarize_at("log2Chol",list(mean=~mean(.,na.rm=TRUE),
+              sd=~sd(.,na.rm=TRUE),
+              n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+  mutate(se=sd/sqrt(n))
+)
+```
+
+##### Means
+
+We first illustrate the impact of sample size on the distribution of the means of the different samples
+
+```{r}
 res %>% 
 ggplot(aes(x=n%>%as.factor,y=mean)) +
 geom_boxplot() +
-ylab("Direct cholestorol (log)") + 
+ylab("Direct cholesterol (log2)") + 
 xlab("sample size")
 ```
 
-- Note that the variation of the sample means indeed reduces as the sample size increases. So the estimation gets more precise with increasing sample size. 
+- Note, that the variation of the sample means indeed reduces as the sample size increases. So the estimation gets more precise with increasing sample size. 
+
+---
+
+##### Standard deviation 
+
+We now illustrate the impact of sample size on the distribution of the standard deviation of the different samples
 
 ```{r}
 res %>% 
@@ -440,11 +498,16 @@ xlab("sample size")
 ```
 
 
-
 - The standard deviation remains similar across sample size.
-It is centered around the same value: the standard deviation in the population. Indeed increasing the sample size does affect the variability in the population!
+It is centred around the same value: the standard deviation in the population. Indeed increasing the sample size does affect the variability in the population!
 
 - Again we see that the variability of the standard deviation reduces with increasing sample size. So the standard deviation can also be estimated more precise with increasing sample size. 
+
+---
+
+##### Standard error on the mean 
+
+Finally, we illustrate the impact of sample size on the distribution of the standard deviation on the mean of the different samples
 
 ```{r}
 res %>% 
@@ -454,7 +517,9 @@ ylab("standard error") +
 xlab("sample size")
 ```
 
-- The standard error, the estimator for the precision of the sample mean, however, reduces conciderably with increasing sample size again confirming that the estimation of the sample mean gets more precise. 
+- The standard error, the estimator for the precision of the sample mean, however, reduces considerably with increasing sample size again confirming that the estimation of the sample mean gets more precise. 
+
+---
 
 ### Normally distributed data
 
@@ -464,24 +529,28 @@ xlab("sample size")
 
 -  $\bar{X}$ deviates less from the mean $\mu$ than the median
 
+- We illustrate this for repeated sampling with sample size 10
 ```{r}
-meanMed10<- apply(femSamp10%>%log, 2, function(x) c(mean(x),median(x))) %>% t %>% data.frame
+meanMed10<- apply(femSamp10%>%log2, 2, function(x) c(mean(x),median(x))) %>% t %>% data.frame
 names(meanMed10)<-c("mean","median")
 
 meanMed10 %>% gather(type,estimate) %>% 
 ggplot(aes(x=type,y=estimate)) +
 geom_boxplot()+
-geom_hline(yintercept=fem$DirectChol%>%log%>%mean) +
+geom_hline(yintercept=fem$DirectChol%>%log2%>%mean) +
 ggtitle("10 subjects")
+```
 
+Next, we compare the distribution of mean and median in repeated samples of sample size 50.
 
-meanMed50<- apply(femSamp50%>%log, 2, function(x) c(mean(x),median(x))) %>% t %>% data.frame
+```{r}
+meanMed50<- apply(femSamp50%>%log2, 2, function(x) c(mean(x),median(x))) %>% t %>% data.frame
 names(meanMed50)<-c("mean","median")
 
 meanMed50 %>% gather(type,estimate) %>% 
 ggplot(aes(x=type,y=estimate)) +
 geom_boxplot()+
-geom_hline(yintercept=fem$DirectChol%>%log%>%mean) +
+geom_hline(yintercept=fem$DirectChol%>%log2%>%mean) +
 ggtitle("50 subjects")
 ```
 
@@ -490,79 +559,93 @@ ggtitle("50 subjects")
 
 - How varies $\bar X$ from sample to sample? 
 - Distribution of $\bar X$?
-- If $\bar X$ is normally distributed the standard error has a good interpretation: the s.e. is the standaarddeviatie van steekproefgemiddelde.
+- If $\bar X$ is normally distributed the standard error has a good interpretation: the s.e. is the standard deviatie of the sample mean.
 - If the data $X_i$ are normally distributed, the sample mean is also normally distributed. 
 
 $$X_i \sim N(\mu,\sigma^2) \rightarrow  \bar X \sim N(\mu,  \sigma^2/n)$$
 
-#### NHANES: cholestorol
+---
+
+#### NHANES: cholesterol
 
 We illustrate this again with simulation using the NHANES study. 
-The log cholestorol levels were normally distributed. 
+The log2 cholesterol levels were normally distributed. 
 
 ```{r}
- fem %>% ggplot(aes(x=DirectChol%>%log))+
+ fem %>% ggplot(aes(x=DirectChol%>%log2))+
   geom_histogram(aes(y=..density.., fill=..count..)) +
-  xlab("Direct Cholestorol (log)") +
-  stat_function(fun=dnorm,color="red",args=list(mean=mean(fem$DirectChol%>%log), sd=sd(fem$DirectChol%>%log))) +
+  xlab("Direct cholesterol (log2)") +
+  stat_function(fun=dnorm,color="red",args=list(mean=mean(fem$DirectChol%>%log2), sd=sd(fem$DirectChol%>%log2))) +
   ggtitle("All females in Nhanes study")
   
-fem %>% ggplot(aes(sample=DirectChol%>%log)) +
+fem %>% ggplot(aes(sample=DirectChol%>%log2)) +
 stat_qq() +
 stat_qq_line() +
 ggtitle("All females in Nhanes study")
 ```
 
-- We do this first for experiments with 5 subject. 
+---
+
+- We do this look at the distribution for experiments with 5 subjects. 
 
 ```{r}
 femSamp5<-sapply(1:1000,function(j,x,size) sample(x,size),size=5,x=fem$DirectChol)
 
-femSamp5[,1] %>% log %>% as.data.frame %>%
+femSamp5[,1] %>% log2 %>% as.data.frame %>%
 ggplot(aes(x=.))+
   geom_histogram(aes(y=..density.., fill=..count..),bins=10) +
-  xlab("Direct Cholestorol (log)") +
-  stat_function(fun=dnorm,color="red",args=list(mean=femSamp5[,1]%>%log%>%mean, sd=femSamp5[,1]%>%log%>%sd)) +
+  xlab("Direct cholesterol (log2)") +
+  stat_function(fun=dnorm,color="red",args=list(mean=femSamp5[,1]%>%log2%>%mean, sd=femSamp5[,1]%>%log2%>%sd)) +
 ggtitle("5 random females") + 
-xlim(fem$DirectChol %>% log %>% range)
+xlim(fem$DirectChol %>% log2 %>% range)
 
   
-femSamp5 %>% log %>% colMeans %>% as.data.frame %>% ggplot(aes(x=.)) +
+femSamp5 %>% log2 %>% colMeans %>% as.data.frame %>% ggplot(aes(x=.)) +
   geom_histogram(aes(y=..density.., fill=..count..),bins=15) +
-  xlab("Mean Cholestorol (log)") +
-  stat_function(fun=dnorm,color="red",args=list(mean=femSamp5%>%log%>% colMeans %>% mean, sd=femSamp5%>%log%>% colMeans %>% sd)) +
+  xlab("Mean cholesterol (log2)") +
+  stat_function(fun=dnorm,color="red",args=list(mean=femSamp5%>%log2%>% colMeans %>% mean, sd=femSamp5%>%log2%>% colMeans %>% sd)) +
 ggtitle("Means on 5 females") 
 
-femSamp5 %>% log %>% colMeans %>% as.data.frame %>%  ggplot(aes(sample=.)) +
+femSamp5 %>% log2 %>% colMeans %>% as.data.frame %>%  ggplot(aes(sample=.)) +
 stat_qq() +
 stat_qq_line() +
 ggtitle("Means on 5 females")
 ```
 
-Now we increase the sample size to 10. 
+---
+
+Now we explore the results for the sample size of 10.
+
+We first illustrate the plot for the first sample. 
 
 ```{r}
-femSamp10[,1] %>% log %>% as.data.frame %>%
+femSamp10[,1] %>% log2 %>% as.data.frame %>%
 ggplot(aes(x=.))+
   geom_histogram(aes(y=..density.., fill=..count..),bins=10) +
-  xlab("Direct Cholestorol (log)") +
-  stat_function(fun=dnorm,color="red",args=list(mean=femSamp10[,1]%>%log%>%mean, sd=femSamp10[,1]%>%log%>%sd)) +
+  xlab("Direct cholesterol (log2)") +
+  stat_function(fun=dnorm,color="red",args=list(mean=femSamp10[,1]%>%log2%>%mean, sd=femSamp10[,1]%>%log2%>%sd)) +
 ggtitle("10 random females") + 
-xlim(fem$DirectChol %>% log %>% range)
+xlim(fem$DirectChol %>% log2 %>% range)
+```
 
-femSamp10 %>% log %>% colMeans %>% as.data.frame %>% ggplot(aes(x=.)) +
+Next we look at the distribution of the sample mean over 1000 samples of sample size 10. 
+
+```{r}
+femSamp10 %>% log2 %>% colMeans %>% as.data.frame %>% ggplot(aes(x=.)) +
   geom_histogram(aes(y=..density.., fill=..count..),bins=15) +
-  xlab("Mean Cholestorol (log)") +
-  stat_function(fun=dnorm,color="red",args=list(mean=femSamp10%>%log%>% colMeans %>% mean, sd=femSamp10%>%log%>% colMeans %>% sd)) +
+  xlab("Mean cholesterol (log2)") +
+  stat_function(fun=dnorm,color="red",args=list(mean=femSamp10%>%log2%>% colMeans %>% mean, sd=femSamp10%>%log2%>% colMeans %>% sd)) +
 ggtitle("Means on 10 females") 
 
-femSamp10 %>% log%>% colMeans %>% as.data.frame %>%  ggplot(aes(sample=.)) +
+femSamp10 %>% log2%>% colMeans %>% as.data.frame %>%  ggplot(aes(sample=.)) +
 stat_qq() +
 stat_qq_line() +
 ggtitle("Means on 10 females")
 ```
 
 **So we confirmed that the mean is normally distributed for studies with 5 and 10 females when the original data are normally distributed.** 
+
+---
 
 #### Captopril study
 
@@ -571,6 +654,8 @@ ggtitle("Means on 10 females")
 - s.e.= 2.32 mm Hg
 
 - In 95 out of 100 studies with n = 15 subjects we expect the sample mean of the systolic blood pressure differences ($\bar X$) on less then $2 \times 2.32 = 4.64$mm Hg of the real population mean of the blood pressure differences ($\mu$).
+
+---
 
 ### Non-normally distributed data
 
@@ -581,25 +666,32 @@ when the number observations are large enough.
 
 - This depends on the skewness of the distribution!
 
-#### NHANES: Cholestorol
+---
 
-- When can evaluated this in the NHanes study if we do not log transform the data.
+#### NHANES: cholesterol
+
+- When can evaluated this in the NHanes study if we do not log2 transform the data.
 
 ```{r}
-fem %>% ggplot(aes(x=DirectChol%>%log))+
+fem %>% ggplot(aes(x=DirectChol))+
    geom_histogram(aes(y=..density.., fill=..count..)) +
-   xlab("Direct Cholestorol (log)") +
-   stat_function(fun=dnorm,color="red",args=list(mean=mean(fem$DirectChol%>%log), sd=sd(fem$DirectChol%>%log))) +
+   xlab("Direct cholesterol") +
+   stat_function(fun=dnorm,color="red",args=list(mean=mean(fem$DirectChol), sd=sd(fem$DirectChol))) +
    ggtitle("All females in Nhanes study")
 
  fem %>% ggplot(aes(sample=DirectChol)) +
  stat_qq() +
  stat_qq_line() +
  ggtitle("All females in Nhanes study")
+```
 
+The cholesterol data is clearly non-Normally distributed. 
+##### Distribution of the sample mean for different sample sizes 
+
+```{r}
 femSamp5 %>% colMeans %>% as.data.frame %>% ggplot(aes(x=.)) +
   geom_histogram(aes(y=..density.., fill=..count..),bins=15) +
-  xlab("Mean Cholestorol") +
+  xlab("Mean cholesterol") +
   stat_function(fun=dnorm,color="red",args=list(mean=femSamp5%>% colMeans %>% mean, sd=femSamp5%>% colMeans %>% sd)) +
 ggtitle("Means on 5 females") 
 
@@ -611,7 +703,7 @@ ggtitle("Means on 5 females")
 
 femSamp10 %>% colMeans %>% as.data.frame %>% ggplot(aes(x=.)) +
   geom_histogram(aes(y=..density.., fill=..count..),bins=15) +
-  xlab("Mean Cholestorol") +
+  xlab("Mean cholesterol") +
   stat_function(fun=dnorm,color="red",args=list(mean=femSamp10%>% colMeans %>% mean, sd=femSamp10%>% colMeans %>% sd)) +
 ggtitle("Means on 10 females") 
 
@@ -635,12 +727,16 @@ ggtitle("Means on 100 females")
 
 - **For large samples, however, the sample mean of non normal data is still approximately normally distributed.**
 
+---
+
 ### Centrale Limit Theorem
 
-Let $X_1, \ldots, X_n$ are sequence of random variables that are drawn indepently from the same distribution (population).
+Let $X_1, \ldots, X_n$ are sequence of random variables that are drawn independently from the same distribution (population).
 As long as the sample size n is sufficiently large, the sample mean $\bar X$ is approximately normally distributed, irrespective of the distribution of the observations $X_i$.
 
 ![](https://www.nature.com/articles/nmeth.2613.pdf){width=100%}
+
+---
 
 #Interval estimators
 
@@ -650,6 +746,7 @@ As long as the sample size n is sufficiently large, the sample mean $\bar X$ is 
 
 - We first assume $\sigma^2$ to be known and we will later relax this assumption. 
 
+---
 
 ## Normally distributed data with known variance
 
@@ -682,6 +779,7 @@ So that we can write
 &=&P( \bar{X} - 1.96 \ \sigma/\sqrt{n} < \mu < \bar{X} + 1.96 \ \sigma/\sqrt{n} )
 \end{eqnarray*}
 
+---
 
 **Definition of 95% confidence interval on mean**
 For a random sample, the interval
@@ -690,13 +788,15 @@ For a random sample, the interval
 \end{equation}
 contains the population mean $\mu$ with a probability of 95%.
 
+---
+
 - The probability that the CI for a random sample contains the population parameter $\mu$, i.e. 95%, is also referred to as the **confidence level**.
 
 - Note, that the lower and upper limit of the interval are also random variables that vary from sample to sample. Different samples indeed result in different confidence intervals because they are based on different observation. 
 
 - So they are *stochastic intervals*
 
-- 95% of the samples will produce a 95% confidence interval that wil contain the population mean $\mu$. The remaining 5% will produce intervals that do not contain the population mean. 
+- 95% of the samples will produce a 95% confidence interval that will contain the population mean $\mu$. The remaining 5% will produce intervals that do not contain the population mean. 
 
 - Based on one interval you cannot conclude that it contains the real population parameter, because its value is unknown. 
 
@@ -704,7 +804,9 @@ Generally the standard deviation is unknown and has to be estimated e.g. by $S$
 
 - For large $n$ $[\bar{X} - 1.96 \ s/\sqrt{n} , \bar{X} + 1.96 \ s/\sqrt{n} ]$ will contain the population mean with a probability of approximately 95%. 
 
-### NHANES log cholestorol example
+---
+
+### NHANES log2 cholesterol example
 
 #### One sample
 ```{r}
@@ -721,50 +823,68 @@ c(ll=ll,ul=ul,popMean=popMean)
 ```{r}
 res$ll<-res$mean-1.96*res$se
 res$ul<-res$mean+1.96*res$se
-mu<-fem$DirectChol%>%log%>%mean
+mu<-fem$DirectChol%>%log2%>%mean
 res$inside<-res$ll<=mu & mu<=res$ul
 res$n <- as.factor(res$n)
-res %>% group_by(n) %>% summarize(coverage=mean(inside)) %>% spread(n,coverage) 
+res %>% 
+  group_by(n) %>% 
+  summarize(coverage=mean(inside)) %>% 
+  spread(n,coverage) 
 ```
 
 - Note, that the coverage in the samples with 10 observations is too low because we do not account for the uncertainty in the estimation of the standard deviation. 
 
-- If we look to the first 20 intervals, 3 out of 20 do not contain the population mean.
+- If we look to the first 20 intervals, `r sum((!res[res$n==10,"inside"])[1:20])`  out of 20 do not contain the population mean.
 
 ```{r}
-res %>% filter(n==10) %>% slice(1:20) %>% ggplot(aes(x=sample,y=mean,color=inside)) + 
+res %>% 
+  filter(n==10) %>% 
+  slice(1:20) %>%
+  ggplot(aes(x=sample,y=mean,color=inside)) + 
   geom_point() +
   geom_errorbar(aes(ymin=mean-1.96*se,ymax=mean+1.96*se))+
-  geom_hline(yintercept = fem$DirectChol%>% log %>% mean) + 
+  geom_hline(yintercept = fem$DirectChol%>% log2 %>% mean) + 
   ggtitle("20 CI for N=10") + 
-  ylim(range(fem$DirectChol %>% log))
+  ylim(range(fem$DirectChol %>% log2))
 ```
 
-- For large sample sizes (50 and 100) the coverage is fine because we can estimate the standard deviation with a relative high precision.  
+---
+
+- For large sample sizes (100) the coverage is fine because we can estimate the standard deviation with a relative high precision.  
 
 ```{r}
-res %>% filter(n==50) %>% slice(1:20) %>% ggplot(aes(x=sample,y=mean,color=inside)) + 
+res %>% 
+  filter(n==50) %>% 
+  slice(1:20) %>%
+  ggplot(aes(x=sample,y=mean,color=inside)) + 
   geom_point() +
   geom_errorbar(aes(ymin=mean-1.96*se,ymax=mean+1.96*se))+
-  geom_hline(yintercept = fem$DirectChol%>% log %>% mean) +
+  geom_hline(yintercept = fem$DirectChol%>% log2 %>% mean) +
   ggtitle("20 CI for N=50") +
-  ylim(range(fem$DirectChol %>% log))
+  ylim(range(fem$DirectChol %>% log2))
 
-res %>% filter(n==100) %>% slice(1:20) %>% ggplot(aes(x=sample,y=mean,color=inside)) + 
+res %>% 
+  filter(n==100) %>% 
+  slice(1:20) %>%
+  ggplot(aes(x=sample,y=mean,color=inside)) + 
   geom_point() +
   geom_errorbar(aes(ymin=mean-1.96*se,ymax=mean+1.96*se))+
-  geom_hline(yintercept = fem$DirectChol%>% log %>% mean) +
+  geom_hline(yintercept = fem$DirectChol%>% log2 %>% mean) +
   ggtitle("20 CI for N=100") +
-  ylim(range(fem$DirectChol %>% log))
+  ylim(range(fem$DirectChol %>% log2))
 ```
 
 - What have you observed for the interval width? 
+
+---
 
 ### Other confidence levels 
 
 - We can replace the $z_{2.5\%}=1.96$ by another quantile of the normal distribution $z_{\alpha/2} to obtain an interval with another confidence level $1-\alpha$. 
 
 - Confidence intervals are not only used for the mean but also for other population parameters. 
+
+---
 
 ## Unknown variance
 
@@ -791,6 +911,8 @@ The estimation of $S$ introduces additional uncertainty in the standardized valu
 
 - is a (Student) $t$-distribution with $n-1$ *degrees of freedom*.
 
+---
+
 ### T-distribution
 
 More formally: Let $X_1, X_2, ..., X_n$ be an independent random sample from a Normal distribution $N(\mu, \sigma^2)$, then $(\bar{X} - \mu)/(S/\sqrt{n})$ follows a $t$-distribution with $n-1$ degrees of freedom.
@@ -816,7 +938,7 @@ t-distributions have heavier tails then the normal distribution $\rightarrow$ la
 - If $n \rightarrow \infty$ then $t(df) \rightarrow N(0,1)$
 
 
-- quantiles of the $t$-verdeling can be calculated in R using `qt`. e.g. 95%, 97.5%, 99.5% quantile for a t-distribution with 14 degrees of freedom: 
+- quantiles of the $t$-distribution can be calculated in R using `qt`. e.g. 95%, 97.5%, 99.5% quantile for a t-distribution with 14 degrees of freedom: 
 ```{r}
 qt(.975,df=14)
 qt(c(.95,.975,.995),df=14)
@@ -825,6 +947,8 @@ qt(c(.95,.975,.995),df=14)
 - These quantiles can be used to calculate 90%, 95% and 99% CI. 
 
 - 97.5% quantile`r round(qt(.975,df=14),2)` of a t-distribution with $n-1=14$ degrees of freedom is indeed larger than that of a standard Normal distribution `r round(qnorm(.975),2)`.
+
+---
 
 ### Confidence interval based on the t-distribution
 
@@ -836,7 +960,7 @@ Normal distributed random variable $X$ with unknown variance is
 \alpha/2} \frac{s}{\sqrt{n}}\right]
 \end{equation*}
 
-- We simply replace the $(1-\alpha/2)100\%$ quantile of the Normale distribution by that of the t-distribution with $n-1$ degrees of freedom.
+- We simply replace the $(1-\alpha/2)100\%$ quantile of the Normal distribution by that of the t-distribution with $n-1$ degrees of freedom.
 
 #### Captopril example
 
@@ -856,15 +980,17 @@ mean(captopril$deltaSBP) + qt(.995,df=14)*sd(captopril$deltaSBP)/sqrt(15)
 
 Note, that zero is outside the interval and that the entire interval is negative indicating that there is on average a large effect by administrating captopril on the blood pressure of patients with hypertension. 
 
+---
+
 ### Interpretation of the confidence interval 
 
-- We will revisit the results for sampling log cholestorol levels from the large NHANES study. We first focus on the repeated experiments with sample size 10. 
+- We will revisit the results for sampling log2 cholesterol levels from the large NHANES study. We first focus on the repeated experiments with sample size 10. 
 
 ```{r}
 res$n<-as.character(res$n) %>% as.double(res$n)
 res$ll<-res$mean-qt(0.975,df=res$n-1)*res$se
 res$ul<-res$mean+qt(0.975,df=res$n-1)*res$se
-mu<-fem$DirectChol%>%log%>%mean
+mu<-fem$DirectChol%>%log2%>%mean
 res$inside<-res$ll<=mu & mu<=res$ul
 res$n <- as.factor(res$n)
 res %>% group_by(n) %>% summarize(coverage=mean(inside)) %>% spread(n,coverage) 
@@ -873,15 +999,20 @@ res %>% group_by(n) %>% summarize(coverage=mean(inside)) %>% spread(n,coverage)
 We observe that all the coverages of the intervals are now controlled at their nominal 95% confidence level.
 
 ```{r}
-res %>% filter(n==10) %>% slice(1:20) %>% ggplot(aes(x=sample,y=mean,color=inside)) + 
+res %>% 
+  filter(n==10) %>% 
+  slice(1:20) %>%
+  ggplot(aes(x=sample,y=mean,color=inside)) + 
   geom_point() +
   geom_errorbar(aes(ymin=mean-qt(0.975,df=9)*se,ymax=mean+qt(0.975,df=9)*se))+
-  geom_hline(yintercept = fem$DirectChol%>% log %>% mean) + 
+  geom_hline(yintercept = fem$DirectChol%>% log2 %>% mean) + 
   ggtitle("20 CI for N=10") + 
-  ylim(range(fem$DirectChol %>% log))
+  ylim(range(fem$DirectChol %>% log2))
 ```
 
 ![](https://www.nature.com/articles/nmeth.2659.pdf){width=100%}
+
+---
 
 ## Reporting?
 
@@ -918,18 +1049,21 @@ Researchers want to assess if the drug captopril decreases the blood pressure fo
 - Is the apparent beneficial effect systematic or random? 
 
 ```{r}
-captoprilTidy %>% filter(type%in%c("SBPa","SBPb")) %>% ggplot(aes(x=type,y=bp)) +
-geom_line(aes(group = id)) +
-geom_point()
+captoprilTidy %>% 
+  filter(type%in%c("SBPa","SBPb")) %>%
+  ggplot(aes(x=type,y=bp)) +
+  geom_line(aes(group = id)) +
+  geom_point()
 ```
 
 ```{r}
 captopril$deltaSBP<-captopril$SBPa-captopril$SBPb
-captopril%>%ggplot(aes(x="Systolic bloodpressure",y=deltaSBP)) +
-geom_boxplot(outlier.shape=NA) + 
-geom_point(position="jitter")+
-ylab("Difference (mm mercury)") +
-xlab("")
+captopril%>%
+  ggplot(aes(x="Systolic blood pressure",y=deltaSBP)) +
+  geom_boxplot(outlier.shape=NA) +
+  geom_point(position="jitter")+
+  ylab("Difference (mm mercury)") +
+  xlab("")
 ```
 
 
@@ -942,6 +1076,8 @@ $$\bar x\text{=`r round(mean(captopril$deltaSBP),2)` (s=`r round(sd(captopril$de
 - To generalize the effect we observe in the sample to the population it has to be sufficiently large.
 
 - But, how large? 
+
+---
 
 ### Hypothesis tests 
 
@@ -956,15 +1092,18 @@ $$\bar x\text{=`r round(mean(captopril$deltaSBP),2)` (s=`r round(sd(captopril$de
    
 #### Captopril 
 
-- Based on the sample we cannot prove that there is an effect of administering captopril ($H_1$ , alternative hypthesis).
+- Based on the sample we cannot prove that there is an effect of administering captopril ($H_1$ , alternative hypothesis).
 
 - We therefore suppose that there is no effect of captopril.
 
-    - We refer to this as the null hypothese $H_0$.
+    - We refer to this as the null hypothesis $H_0$.
 
     - Falsify ("try to reject") the $H_0$. 
     
     - How likely is it to observe an effect that is at least as large as what we have seen in the sample in a random sample when  $H_0$ is true?   
+    
+---
+
     
 #### Permutation test 
 
@@ -980,20 +1119,24 @@ perm<-sample(c(FALSE,TRUE),15,replace=TRUE)
 captoprilSamp$SBPa[perm]<-captopril$SBPb[perm]
 captoprilSamp$SBPb[perm]<-captopril$SBPa[perm]
 captoprilSamp$deltaSBP <- captoprilSamp$SBPa-captoprilSamp$SBPb
-captoprilSamp %>% gather(type,bp,-id) %>% filter(type%in%c("SBPa","SBPb")) %>% ggplot(aes(x=type,y=bp)) +
-geom_line(aes(group = id)) +
-geom_point()
+captoprilSamp %>% 
+  gather(type,bp,-id) %>%
+  filter(type%in%c("SBPa","SBPb")) %>%
+  ggplot(aes(x=type,y=bp)) +
+  geom_line(aes(group = id)) +
+  geom_point()
 ```
 
 
 
 
 ```{r}
-data.frame(deltaSBP=c(captopril$deltaSBP,captoprilSamp$deltaSBP),shuffled=rep(c(FALSE,TRUE),each=15)) %>% ggplot(aes(x=shuffled,y=deltaSBP)) +
-geom_boxplot(outlier.shape=NA) + 
-geom_point(position="jitter")+
-stat_summary(fun.y=mean, geom="point", shape=19, size=3, color="red", fill="red") +
-ylab("Difference (mm mercury)") 
+data.frame(deltaSBP=c(captopril$deltaSBP,captoprilSamp$deltaSBP),shuffled=rep(c(FALSE,TRUE),each=15)) %>%
+  ggplot(aes(x=shuffled,y=deltaSBP)) +
+  geom_boxplot(outlier.shape=NA) +
+  geom_point(position="jitter")+
+  stat_summary(fun.y=mean, geom="point", shape=19, size=3, color="red", fill="red") +
+  ylab("Difference (mm mercury)") 
 ```
 
 And we permute again
@@ -1005,15 +1148,20 @@ perm<-sample(c(FALSE,TRUE),15,replace=TRUE)
 captoprilSamp$SBPa[perm]<-captopril$SBPb[perm]
 captoprilSamp$SBPb[perm]<-captopril$SBPa[perm]
 captoprilSamp$deltaSBP <- captoprilSamp$SBPa-captoprilSamp$SBPb
-captoprilSamp %>% gather(type,bp,-id) %>% filter(type%in%c("SBPa","SBPb")) %>% ggplot(aes(x=type,y=bp)) +
-geom_line(aes(group = id)) +
-geom_point()
 
-data.frame(deltaSBP=c(captopril$deltaSBP,captoprilSamp$deltaSBP),shuffled=rep(c(FALSE,TRUE),each=15)) %>% ggplot(aes(x=shuffled,y=deltaSBP)) +
-geom_boxplot(outlier.shape=NA) + 
-geom_point(position="jitter")+
-stat_summary(fun.y=mean, geom="point", shape=19, size=3, color="red", fill="red") +
-ylab("Difference (mm mercury)") 
+captoprilSamp %>% 
+  gather(type,bp,-id) %>%
+  filter(type%in%c("SBPa","SBPb")) %>%
+  ggplot(aes(x=type,y=bp)) +
+  geom_line(aes(group = id)) +
+  geom_point()
+
+data.frame(deltaSBP=c(captopril$deltaSBP,captoprilSamp$deltaSBP),shuffled=rep(c(FALSE,TRUE),each=15)) %>%
+  ggplot(aes(x=shuffled,y=deltaSBP)) +
+  geom_boxplot(outlier.shape=NA) +
+  geom_point(position="jitter")+
+  stat_summary(fun.y=mean, geom="point", shape=19, size=3, color="red", fill="red") +
+  ylab("Difference (mm mercury)") 
 ```
 
 
@@ -1027,9 +1175,11 @@ dim(permH)<-c(15,10000)
 
 #calculate the means for the permuted data
 muPerm<-colMeans(permH*captopril$deltaSBP)
-muPerm %>% as.data.frame %>% ggplot(aes(x=.)) +
-  geom_histogram() + 
-geom_vline(xintercept=mean(captopril$deltaSBP),col="blue")
+muPerm %>% 
+  as.data.frame %>% 
+  ggplot(aes(x=.)) +
+  geom_histogram() +
+  geom_vline(xintercept=mean(captopril$deltaSBP),col="blue")
 ```
 
 - We observe that not one of the means that were obtained under $H_0$ (by permutation) were as extreme as the sample mean we observed in the captopril study. 
@@ -1037,6 +1187,8 @@ geom_vline(xintercept=mean(captopril$deltaSBP),col="blue")
 - So the probability to observe a blood pressure drop that is larger then the one in the captopril study in a random sample generated under the null hypothesis is  smaller then 1 out of 10000. 
 
 So we have strong evidence that $H_0$ is incorrect and we thus we reject it and conclude $H_1$: There is an effect of administering captopril on the blood pressure of patients with hypertension.
+
+---
 
 ### Pivot
 
@@ -1057,9 +1209,10 @@ deltaPerms<-permH*captopril$deltaSBP
 tPerm<-colMeans(deltaPerms)/(apply(deltaPerms,2,sd)/sqrt(15))
 tOrig<-mean(captopril$deltaSBP)/sd(captopril$deltaSBP)*sqrt(15)
 
-tPermPlot<- tPerm %>% as.data.frame %>% ggplot(aes(x=.)) +
+tPermPlot<- tPerm %>% 
+  as.data.frame %>% ggplot(aes(x=.)) +
   geom_histogram(aes(y=..density.., fill=..count..)) + 
-geom_vline(xintercept=tOrig,col="blue")
+  geom_vline(xintercept=tOrig,col="blue")
 tPermPlot
 ```
 
@@ -1075,6 +1228,7 @@ When there is no effect of captopril it is nearly impossible to obtain a test st
 
 - The distribution has a nice bell shape.
 
+---
 
 ### How do we decide?
 
@@ -1083,6 +1237,8 @@ When is the p-value sufficiently small to conclude that there is strong evidence
 - We typically work at a significance level of $\alpha=0.05$
 
 - We state that we conducted the test at the 5% significance level
+
+---
 
 ### Permutation tests are computationally demanding 
 
@@ -1109,6 +1265,8 @@ tPermPlot +
 - We need to make assumptions for this, which we verify in the data exploration phase. 
 
 - We will now develop the statistical test using statistical modelling.
+
+---
 
 ## Hypotheses
 
@@ -1142,6 +1300,8 @@ The **null hypothesis** generally expresses a null condition, i.e. when notting 
 - Here:
 $$H_0 : \mu=0$$ i.e. on average the systolic blood pressure remains unchanged upon administering captopril. 
 
+---
+
 ## Test-statistic
 
 Once the population, the parameters, and, $H_0$ and $H_1$ are determined the concept of hypothesis testing is as follows: 
@@ -1149,7 +1309,7 @@ Once the population, the parameters, and, $H_0$ and $H_1$ are determined the con
 
 Construct a test statistic so that it
 
-1. measure evidence in the sample,
+1. measures evidence in the sample,
 \vspace{10pt}
 2. against the null hypothesis, and
 \vspace{10pt}
@@ -1172,7 +1332,9 @@ Again
 
 - Is $t = -8.12$ large enough in absolute value to conclude that  $\mu < 0$ and with which confidence can we make this conclusion? 
 
-- We known that t follows a t-verdeling with 14 d.f. under $H_0$  
+- We known that t follows a t-distribution with 14 d.f. under $H_0$  
+
+---
 
 ## p-value
 
@@ -1186,8 +1348,8 @@ The way how we calculate it is context dependent
   $$
 with the index "0" in $\text{P}_0\left[.\right]$ indicates that the probability is calculated under $H_0$. 
 
-It gives the probability to observe a teststatistic $T$ lower or equal to the value observed in the current sample in a random sample under $H_0$
-    - i.e. a test statistic $T$ in the random sample under $H_0$ with a value that is more extreme, morein the direction of $H_1$ then the one observed in the current sample. 
+It gives the probability to observe a test statistic $T$ lower or equal to the value observed in the current sample in a random sample under $H_0$
+    - i.e. a test statistic $T$ in the random sample under $H_0$ with a value that is more extreme, more in the direction of $H_1$ then the one observed in the current sample. 
 
 ### Captopril example
 
@@ -1225,13 +1387,15 @@ Note, that we need to specify the argument `alternative="less"` so that the p-va
 
 The function also gives a one-sided interval because we test in one direction.
 
+---
+
 ### Definition of the p-value
 
 The **p-value** (also referred to as the **observed significance level**) is the probability to observe a test statistic in a random sample under the null hypothesis that is as or more extreme then the test statistic observed in the current sample. 
 
 - The smaller the probability the more evidence against $H_0$. 
 
-- Note, that the p-value is **not** the probability that null hypothese is true!
+- Note, that the p-value is **not** the probability that null hypothesis is true!
 
 - The word "extreme" indicates on the direction in which the test statistic is more likely under the alternative hypothesis. 
 
@@ -1249,12 +1413,13 @@ A test result is *statistically significant* if $p<\alpha$
 
 - $\alpha$ is commonly set at 5\%.
 
-- The smaller the p-value the more `significant' the testresult deviates from what can be expected under $H_0$. 
+- The smaller the p-value the more `significant' the test result deviates from what can be expected under $H_0$. 
 
-- It summarizes the evidence agaist the null.  
+- It summarizes the evidence against the null.  
 
 $$\begin{array}{cl}>0.10 & \text{ non significant (no evidence)}\\0.05-0.10 & \text{ marginaal significant, weak evidence (do not use this yourself)}\\0.01-0.05 & \text{ significant}\\0.001-0.01 & \text{strongly significant}\\<0.001 & \text{ extremely significant}\end{array}$$
 
+---
 
 ## Critical value
 
@@ -1277,6 +1442,8 @@ polygon(c(reject,tcrit,-10),c(dt(reject,n-1),0,0),col=2,border=2)
 text(-3.5,.05,label=expression(paste(alpha,"=0.05")),col=2)
 arrows(-2,0.02,-3.5,.04,col=2,lwd=2,angle=20,length=.1)
 ```
+
+---
 
 ## Decision Errors
 
@@ -1305,6 +1472,8 @@ knitr::kable(DecisionErrors,,align="c")%>%
 - **Type I error**: there is on average no blood pressure drop upon administering captopril, but we conclude that there is an effect of captopril. 
 - **Type II error**: there is on average a blood pressure drop upon administering captopril, but it is not picked up by the statistical test. 
 
+---
+
 ### Type I error is controlled
 
 The type I error is controlled by the construction of the statistical test. 
@@ -1314,7 +1483,7 @@ $$\text{P}\left[\text{type I error}\right]=\text{P}\left[\text{reject }H_0 \mid 
 
 - The significance-level $\alpha$ is the probability to make a type I error.
 
-- The statistical test ensures that the probability on a type I error is controled at the significance level $\alpha$.
+- The statistical test ensures that the probability on a type I error is controlled at the significance level $\alpha$.
 
 - The probability to correctly accept $H_0$ is $1-\alpha$.
 
@@ -1342,20 +1511,23 @@ deltaSim <- matrix(rnorm(n*nsim,mu,sigma),nrow=n,ncol=nsim)
 pSim <- apply(deltaSim,2,function(x,mu,alternative) t.test(x,mu=mu,alternative=alternative)$p.value,mu=mu0,alternative="less")
 
 mean(pSim<alpha)
-pSim %>% as.data.frame %>% ggplot(aes(x=.)) +
-  geom_histogram() + xlim(0,1)
+pSim %>% 
+  as.data.frame %>% 
+  ggplot(aes(x=.)) +
+  geom_histogram() + 
+  xlim(0,1)
 ```
 
 - The type I error is indeed about 0.05 
 - The p-values are uniform
 
-
+---
 
 ### Type II error
 
 - Determine the type II error is less evident. 
 - We have to reason under $H_1$
-- In het captopril voorbeeld is $H_1: \mu<0$
+- In the captopril voorbeeld is $H_1: \mu<0$
 - Many alternatives are possible
 - The distribution under $H_1$ is not fully specified
 
@@ -1363,7 +1535,7 @@ pSim %>% as.data.frame %>% ggplot(aes(x=.)) +
 
  $$H_1(\delta): \mu=0-\delta \text{ for }\delta>0.$$
  
-- e.g. a bloodpressure difference of 2 mmHg
+- e.g. a blood pressure difference of 2 mmHg
 
 - 1-type II is also referred to as the power. It is the probability to pick up the alternative. 
 
@@ -1385,10 +1557,15 @@ deltaSim <- matrix(rnorm(n*nsim,mu,sigma),nrow=n,ncol=nsim)
 pSim <- apply(deltaSim,2,function(x,mu,alternative) t.test(x,mu=mu,alternative=alternative)$p.value,mu=mu0,alternative="less")
 
 mean(pSim<alpha)
-pSim %>% as.data.frame %>% ggplot(aes(x=.)) +
-  geom_histogram() + xlim(0,1)
+pSim %>% 
+  as.data.frame %>% 
+  ggplot(aes(x=.)) +
+  geom_histogram() + 
+  xlim(0,1)
 ```
 - We observe that a power of `r mean(pSim<alpha)` or a type II error of `r 1-mean(pSim<alpha)`.
+
+---
 
 - When we increase the sample size
 
@@ -1405,8 +1582,11 @@ deltaSim <- matrix(rnorm(n*nsim,mu,sigma),nrow=n,ncol=nsim)
 pSim <- apply(deltaSim,2,function(x,mu,alternative) t.test(x,mu=mu,alternative=alternative)$p.value,mu=mu0,alternative="less")
 
 mean(pSim<alpha)
-pSim %>% as.data.frame %>% ggplot(aes(x=.)) +
-  geom_histogram() + xlim(0,1)
+pSim %>% 
+  as.data.frame %>% 
+  ggplot(aes(x=.)) +
+  geom_histogram() + 
+  xlim(0,1)
 ```
 
 - Increasing the sample size leads to a higher power. 
@@ -1414,6 +1594,8 @@ pSim %>% as.data.frame %>% ggplot(aes(x=.)) +
 - A drop of 2 mmHg is also not relevant for drug companies. 
 
 ![](https://www.nature.com/articles/nmeth.2738.pdf){width=100%}
+
+---
 
 ### Interpretation
 
@@ -1447,10 +1629,12 @@ Hence,
 	  
 - $p \geq \alpha$ accept $H_0$  
 
-	  - Does not imply that we accept $H_0$ juist is.
+	  - Does not imply that we accept $H_0$ correctly.
   	- We can only conclude that the data do not have enough evidence against the $H_0$ in favour of $H_1$.
     - We refer to this as a weak conclusion.
     - We typically conclude that the effect of the treatment is not significant.
+
+---
     
 ## Conclusions captopril example
 
@@ -1472,6 +1656,8 @@ t.test(captopril$deltaSBP,alternative="less")
 t.test(captopril$SBPa,captopril$SBPb,paired=TRUE,alternative="less")
 ```
 
+---
+
 ### Conclusion
 
 There is on average an extremely significant blood pressure drop upon administering captopril to patients with hypertension. The systolic blood pressure decreases on average with 18.9 mmHg upon the treatment with captopril (95% CI [$-\infty,-14.82$] mmHg).
@@ -1482,6 +1668,8 @@ Note that
 
 2. Because of the pre-test/post-test design we cannot distinguish between the effect of the treatment and a placebo effect. There was no good control! The lack of a good control typically occurs in  pre-test/post-test designs. How could we have improved the design? 
 
+---
+
 ## One-sided or two-side testing? 
 
 De test in the captopril example was a one-sided test. We only aim to detect if the captopril treatment on average reduces the blood pressure. 
@@ -1490,7 +1678,7 @@ Suppose that we defined the blood pressure difference as  $X_{i}^\prime=Y_{i}^\t
 
 - Now, a positive value indicates a blood pressure drop 
 
-- The average change in bloodpressure is now denote as $\mu^\prime=\text{E}[X^\prime]$.
+- The average change in blood pressure is now denote as $\mu^\prime=\text{E}[X^\prime]$.
 
 - So now we should use a one-sided test to assess $H_0: \mu^\prime=0$ against $H_1: \mu^\prime>0$.
 
@@ -1506,11 +1694,13 @@ t.test(captopril$SBPb-captopril$SBPa,alternative="greater")
 
 Of course we obtain the same results. Only the sign is swapped. 
 
+---
+
 ### Two-sided test
 
 Suppose that researchers wanted to assess the mode of action of the new drug captopril in the design phase and suppose that healthy subjects were used in an early phase of the drug development. 
 
-In this case it would have been interesting to observe bloodpressure drops as well as gains.
+In this case it would have been interesting to observe blood pressure drops as well as gains.
 
 Then we would require a two-sided test strategy
 
@@ -1555,6 +1745,7 @@ arrows(-3,0.02,-3.5,.04,col=2,lwd=2,angle=20,length=.1)
 arrows(3,0.02,3.5,.04,col=2,lwd=2,angle=20,length=.1)
 ```
 
+---
 
 The argument `alternative` of the `t.test` function is by default `alternative="two.sided"`.
 
@@ -1563,13 +1754,15 @@ t.test(captopril$deltaSBP)
 ```
 
 - We still obtain an extremely significant result.
-- The p-value is dubble as large because we test two-sided. 
+- The p-value is double as large because we test two-sided. 
 
 Indeed 
 
 $$p=P_0[T \leq -\vert t \vert] + P_0[T \geq \vert t \vert] = P_0[\vert T \vert \geq \vert t \vert] = 2 \times P_0[T \geq \vert t \vert]$$
 
 - We also obtain a  two-sided confidence interval 
+
+---
 
 ### One-sided or two-sided test?
 
@@ -1591,6 +1784,8 @@ A two-sided test can always be defended and allows you to detect any deviation o
 
 
 It is **never allowed** to change a two-sided test into a one-sided test based on what has been observed in the sample! Otherwise the type I error of the test strategy is not correctly controlled. 
+
+---
 
 We illustrate this in the simulation study below: 
 
@@ -1618,11 +1813,11 @@ mean(pvalsCor<0.05)
 mean(pvalsInCor<0.05)
 ```
 
-- Type I error correctly controlled at $\alpha$ for two-sided test
+- Type I error correctly controlled at $\alpha$ for two-sided test.
 - Type I error not correctly controlled when we test one-sided based on what we observed in the sample. 
 
 # Nature column on testing
 
-![](https://www.nature.com/articles/nmeth.2698){width=100%}
+![](https://www.nature.com/articles/nmeth.2698.pdf){width=100%}
 
 
