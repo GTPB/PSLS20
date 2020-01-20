@@ -1,0 +1,255 @@
+---
+title: "Tutorial 3.1: Non-parametric analysis on the shrimps dataset"   
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+To experiment with the concepts of non-paramteric,
+data analysis, we will work with the shrimps dataset.
+
+## The shrimps dataset
+
+A dataset on PCBs (Polychlorinated biphenyls) accumulation
+in the adipose tissue of shrimps.
+
+PCBs are often present in coolants, and are know to accumulate
+easily in the adipose tissue of shrimps. In this experiment, two
+groups of 18 samples (each 100 grams) of shrimps each were cultivated 
+in different conditions, one control condition and one condition 
+where the medium was poluted with PCBs.
+
+Load the required R libraries
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(car)
+```
+
+## Import the data
+
+```{r}
+shrimps <- read.table("shrimps.txt")
+```
+
+## Initial exploration of the data
+
+```{r}
+glimpse(shrimps)
+```
+
+```{r}
+shrimps$group <- factor(shrimps$group)
+table(shrimps$group) ## 18 samples in each group
+```
+
+## Goal
+
+The research question is; is there an effect of the 
+growth condition on the PCB concentration in the adipose 
+tissue of shrimps. Note that the PCB concentrations were 
+measured  in pg/g adipose tissue.
+
+## Data visualization
+
+It is always a good idea to first have a quick look at the raw data;
+
+```{r}
+shrimps %>% 
+  ggplot(aes(x=group,y=PCB.conc,fill=group)) + 
+  scale_fill_brewer(palette="RdGy") +
+  theme_bw() +
+  geom_boxplot(outlier.shape=NA) + 
+  geom_jitter(width = 0.2) +
+  ggtitle("Boxplot of the PCB concentrations in two groups of shrimps") +
+  ylab("PCB concentration (pg/g)") + 
+  stat_summary(fun.y=mean, geom="point", shape=5, size=3, color="black", fill="black")
+```
+
+We can see that for group 1 we have 4 very clear outliers
+in the data. These values were double-checked (i.e for
+typing errors), but there was no reason found to believe
+that these values are incorrect.
+
+As we have seen in the second tutorial, a good way for
+testing the research hypothesis is to perform an unpaired
+two-sample t-test to find out whether there is a significant
+difference in the mean PCB concentrations between both groups
+of samples. Before we can do this, we must check if all the 
+required assumptions are met.
+
+1. The observations are independent of each other (in both groups)
+2. The data (PCB.conc) must be normally distributed (in both groups)
+
+The first assumption is met, as we randomly selected shrimps and
+submitted them to one of two growth conditions. No underlying
+correlation patterns are expected.
+
+We can check the second assumption with a QQ-plot.
+
+```{r}
+PCB_1 <- shrimps %>%
+  filter(group==1) %>%
+  pull(PCB.conc)
+
+PCB_2 <- shrimps %>%
+  filter(group==2) %>%
+  pull(PCB.conc)
+
+par(mfrow=c(1,2)) ## to get both QQ plot next to each other
+car::qqPlot(PCB_1, main="QQ-plot of PCB_1")
+car::qqPlot(PCB_2, main="QQ-plot of PCB_2")
+```
+
+We clearly see that we have strong deviations from
+normality. Many datapoints do not falls nicel within
+the 95% confidence interval around the quantile-quantile
+line (blue dashed line). As such, we may conclude that 
+our data is not normally distributed.
+
+We also need to check if the variances are comparable between
+the two groups. To do so, we may use the var.test function 
+that we saw in the second tutorial.
+
+```{r}
+var.test(PCB_1,PCB_2)
+```
+
+The null hypothesis that the true ratio of variances 
+equals 1 (i.e. that the variances are equal) is rejected.
+
+As such, we are not allowed to continue performing the
+t-test. As an alternative, we may perform a non-parametric
+test, such as the Wilcoxon rank-sum test.
+
+## Wilcoxon rank-sum test
+
+The Wilcoxon rank-sum test (or the Mann-Whitney U test,
+which is equivalent) is an important non-parametric data
+analysis method.In rank-based tests, the data $Y_i$ is
+first transformed to its ranked equivalent
+\[ R_i=R(Y_i) = \#\{Y_j: Y_j\leq Y_i; j=1,\ldots, n\}. \]
+
+Ranks are very robust to outliers. For instance, it doesn't
+matter if the highest value in an hypothetical dataset has a 
+value of 10 or 100; it will keep the same rank (highest rank).
+
+Note that there might be tied values in the data, e.g., if
+two samples of shrimps have an equal concentration of PCBs.
+In this case, the Wilcoxon rank-sum test will compute
+mid-ranks, which are calculated as follows;
+\[R(Y_i) = \frac{\sum\limits_{\forall j : Y_j=Y_i}R(Y_j)}{\#{\forall j:Y_j=Y_i}}  \]
+i.e., the midrank is equal to the mean of the ranks of equal
+observations.
+
+After compting the ranks and midranks, the Wilcoxon test will
+compare the mean rank between both treatment groups:
+
+```{r}
+PCB_1 <- shrimps %>%
+  filter(group == "1") %>%
+  pull(PCB.conc)
+
+PCB_2 <- shrimps %>%
+  filter(group == "2") %>%
+  pull(PCB.conc)
+
+wilcox.test(PCB_1,PCB_2)
+```
+
+or, equivalently;
+
+```{r}
+wilcox.test(PCB.conc~group, data = shrimps)
+```
+ 
+We find that the test is significant on the 5%
+significance level (p = 0.01871). The value W=88
+could be calculated manually as the sum of the ranks
+of the PCB concentration values that belong to 
+shrimps of group 1.
+
+The interpretation of the Wilcoxon rank-sum test is
+slightly more challenging than that of a t-test.
+Since we are not using average values in this test,
+we cannot interpret the results in terms of means
+(as with the t-test). In contrast, we work with ranks,
+and we will interpret the results in terms of the
+*probabilistic index*.
+
+The null hypothesis of the Wilcoxon test states that
+the distributions of the probability density functions
+are equal for both groups:
+
+\[ H_0: f_1 = f_2 \]
+
+In words: the distribution of PCB concentrations in 
+shrimps are equal for both treatment conditions.
+
+or, equivalently,
+
+The probability that a random observation of a PCB
+concentration derived from a sample of shrimps that
+was grown in the control condition *is larger than or equal to*
+than a random observation of a PCB concentration 
+derived from a sample of shrimps that was grown in 
+the other condition *is equal to 50%*.
+
+The alternative hypothesis can be formulated as
+
+\[ H_1: P(Y_{i1} \geq Y_{i2}) \ne 1/2 \]
+
+In words: The probability that a random observation of a 
+PCB concentration derived from a sample of shrimps that
+was grown in the control condition *is larger than or equal to*
+than a random observation of a PCB concentration 
+derived from a sample of shrimps that was grown in 
+the other condition *is not equal to 50%*.
+
+We can manually calculate this probability, that is 50% 
+under the null hypothesis, based on the observed test statistic.
+
+```{r}
+n1 <- n2 <- 18 #18 observations in each group
+WObs <- wilcox.test(PCB.conc~group, data=shrimps)$statistic # get the observed test statistic
+WObs/(n1*n2)
+```
+
+We can see taht the point estimation of this probability 
+is `r round(WObs/(n1*n2),3)*100`%.
+
+We can interpret this as follows;
+
+The probability that the PCB concentration in a random
+shrimp that was grown in the control condition is 
+greater than or equal to the PCB concentration in a random
+shrimp that was grown in the treatment condition is
+equal to 27.2%.
+
+This chance is significantly different from 50% on the
+5% significance level (p = 0.01871).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
