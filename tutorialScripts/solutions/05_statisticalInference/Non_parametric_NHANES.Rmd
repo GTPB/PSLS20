@@ -34,7 +34,7 @@ library(car)
 ## Data import  
 
 ```{r, message=FALSE}
-NHANES <- read_csv("NHANES.csv")
+NHANES <- read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/NHANES.csv")
 glimpse(NHANES[,1:10])
 ```
 
@@ -76,7 +76,7 @@ If the assumptions are not met, perform a Wilcoxon rank-sum test.
 ## Steps 1-4
 
 ```{r}
-set.seed(1)
+set.seed(2)
 NHANES_subset <- NHANES %>%
   filter(!is.na(BMI)) %>%
   group_by(Gender) %>% 
