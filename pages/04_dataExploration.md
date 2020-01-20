@@ -9,7 +9,7 @@ The dataset contains a large number of physical, demographic, nutritional and li
 Getting familiar with the dataset will always be the first step in a data analysis pipeline.
 In this tutorial, you will learn the key principles of data exploration in R, including data import, tidying, wrangling and visualisation. 
 
-- Exercise: https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_NHANES.Rmd
+- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_NHANES.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_NHANES.Rmd)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/NHANES.csv"
 
 2) The armpit dataset:
@@ -26,7 +26,7 @@ and subjects treated with a microbial transplant.
 
 In this tutorial, you will use your acquired skills from exercise 1 to explore the armpit dataset all by yourself!
 
-- Exercise: https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_armpit.Rmd
+- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_armpit.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_armpit.Rmd)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit.csv"
 
 
@@ -38,7 +38,7 @@ both before and after treating the patient with a drug named captopril.
 
 In this tutorial on data exploration, you will learn how to deal with data from paired experimental designs.
 
-- Exercise: "https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_captopril.Rmd"
+- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_captopril.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_captopril.Rmd)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/captopril.txt"
 
 4) The FEV dataset:
@@ -51,7 +51,7 @@ The goal of this experiment was to find out whether or not smoking has an effect
 In this tutorial, you will learn about the importance of confounders in real-life datasets.
 
 
-- Exercise: "https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_FEV.Rmd"
+- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_FEV.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_FEV.Rmd)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/fev.txt"
 
 
