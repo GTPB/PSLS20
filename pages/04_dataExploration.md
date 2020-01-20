@@ -26,6 +26,9 @@ and subjects treated with a microbial transplant.
 
 In this tutorial, you will use your acquired skills from exercise 1 to explore the armpit dataset all by yourself!
 
+- Exercise: https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_armpit.Rmd
+- Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit.csv"
+
 
 3) The captopril dataset:
 
