@@ -1075,6 +1075,7 @@ Researchers want to assess if the drug captopril decreases the blood pressure fo
 ```{r}
 captoprilTidy %>% 
   filter(type%in%c("SBPa","SBPb")) %>%
+  mutate(type=factor(type,levels=c("SBPb","SBPa")))%>%
   ggplot(aes(x=type,y=bp)) +
   geom_line(aes(group = id)) +
   geom_point()
