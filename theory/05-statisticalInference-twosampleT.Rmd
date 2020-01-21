@@ -23,7 +23,7 @@ library(tidyverse)
 - Smelly armpits are not caused by sweat, itself. The smell is caused by specific micro-organisms belonging to the group of *Corynebacterium spp.* that metabolise sweat.
 Another group of abundant bacteria are the *Staphylococcus spp.*, these bacteria do not metabolise sweat in smelly compounds.
 
-- The CMET-groep at Ghent University does research to on transplanting the armpit microbiome to save people with smelly armpits.
+- The CMET-group at Ghent University does research to on transplanting the armpit microbiome to save people with smelly armpits.
 
 - Proposed Therapy:
   	1. Remove armpit-microbiome with antibiotics
@@ -144,7 +144,7 @@ We can implement the test in R:
 t.test(rel~trt,data=ap,var.equal=TRUE)
 ```
 
-On the $5\%$ significance level we reject the null hypothesis in favor of the alternative hypothesis and conclude that the relative abundance of  *Staphylococcus spp.* is on average extreem significant larger is in transplantatie group than in the placebo group.   
+On the $5\%$ significance level we reject the null hypothesis in favor of the alternative hypothesis and conclude that the relative abundance of  *Staphylococcus spp.* is on average extreme significant larger is in transplantation group than in the placebo group.   
 
 If there is no effect of the transplant we have a probability of less then 9 in $100000$ to observe a test statistic in a random sample that is at least as extreme as what we observed in the armpit experiment. 
 
@@ -152,7 +152,7 @@ This is extremely rare under $H_0$.
 
 If $H_1$ is correct, we expect that the test statistic is larger in absolute value and expect small p-values. Hence we decide that there is a lot of evidence against $H_0$ in favour of $H_1$.  
 
-**Good statistical practice** is to report the $p$-waarde, but also  effect size along with its confidence interval. So that we can judge the statistical significance and the biological relevance.
+**Good statistical practice** is to report the $p$-value, but also  effect size along with its confidence interval. So that we can judge the statistical significance and the biological relevance.
 
 ### Conclusion
 
@@ -167,7 +167,7 @@ Validity of t-test depends on distributional assumptions:
 - Independence (design)
 - One-sample t-test: normality of the observations 
 - Paired t-test: normality of the difference  
-- Two-sample t-test: normaliteit van the observations in both groups, and equal variances.
+- Two-sample t-test: Normality of the observations in both groups, and equal variances.
 
 If the assumptions are not met, the null distribution does not follow a t-distribution, and, the p-values and critical values are incorrect.  
 
@@ -175,17 +175,17 @@ To construct confidence intervals we also rely on these assumptions.
 
 - We used quantiles from the t-distribution to calculate the lower and upper limit. 
 
-- The correct coverage of the CI depends on thes assumptions 
+- The correct coverage of the CI depends on these assumptions 
 
 ---
 
 ## Evaluate normality 
  
- - Boxplots and histogrammen: shape of distribution and outliers
+ - Boxplots and histograms: shape of distribution and outliers
  
  - QQ-plots
 
-There also exist hypothese testen (goodness-of-fit test), but their null hypothesis is that the data are normally distributed so we make a weak conclusion!  
+There also exist hypothesis tests (goodness-of-fit test), but their null hypothesis is that the data are normally distributed so we make a weak conclusion!  
 
   - Kolmogorov-Smirnov, Shapiro-Wilk en Anderson-Darling.
   - In small samples they have a low power
@@ -213,7 +213,7 @@ Recommendation
 
 - Again you can use simulation to get insight in the differences you can expect. 
 
-- Formal F-test can be used to compare the variances, but again under the null you assume equal variances, so the same critism as for normality tests applies here. 
+- Formal F-test can be used to compare the variances, but again under the null you assume equal variances, so the same criticism as for normality tests applies here. 
 
 ---
 
@@ -232,7 +232,7 @@ In R the degrees of freedom are estimated using the Welch- Satterthwaite approxi
 t.test(rel~trt,data=ap,var.equal=FALSE)
 ```
 
-Note that you can see that the Welch T-test is adopted in the title. The adjusted degrees of freedom are $df = 17.876$ $\pm$ to that of the conventional T-test,because the variances are approximately equal. 
+Note that you can see that the Welch T-test is adopted in the title. The adjusted degrees of freedom are $df = 17.876$ $\pm$ to that of the conventional T-test, because the variances are approximately equal. 
 
 ---
 

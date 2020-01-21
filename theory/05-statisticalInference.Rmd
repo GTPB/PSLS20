@@ -565,7 +565,7 @@ res %>%
 
 - How varies $\bar X$ from sample to sample? 
 - Distribution of $\bar X$?
-- If $\bar X$ is normally distributed the standard error has a good interpretation: the s.e. is the standard deviatie of the sample mean.
+- If $\bar X$ is normally distributed the standard error has a good interpretation: the s.e. is the standard deviation of the sample mean.
 - If the data $X_i$ are normally distributed, the sample mean is also normally distributed. 
 
 $$X_i \sim N(\mu,\sigma^2) \rightarrow  \bar X \sim N(\mu,  \sigma^2/n)$$
@@ -633,7 +633,7 @@ femSamp5 %>%
 
 ---
 
-##### Explore the distribution of the mean for smaples of size 10
+##### Explore the distribution of the mean for samples of size 10
 
 Now we explore the results for the sample size of 10.
 
@@ -1394,7 +1394,7 @@ and $f_t(.;14)$ the density function of the t-distribution.
     - the value of the observed test statistic `x` en
     - the number of degrees of freedom of the t-distribution `df`.
 
-- `pt(x,df)` calculates the probability to observe a value smaller or equal to x when we would draw a random sample from a t-distributiion with df degrees of freedom. 
+- `pt(x,df)` calculates the probability to observe a value smaller or equal to x when we would draw a random sample from a t-distribution with df degrees of freedom. 
 
 ```{r}
 n <- length(captopril$deltaSBP)
@@ -1443,7 +1443,7 @@ A test result is *statistically significant* if $p<\alpha$
 
 - It summarizes the evidence against the null.  
 
-$$\begin{array}{cl}>0.10 & \text{ non significant (no evidence)}\\0.05-0.10 & \text{ marginaal significant, weak evidence (do not use this yourself)}\\0.01-0.05 & \text{ significant}\\0.001-0.01 & \text{strongly significant}\\<0.001 & \text{ extremely significant}\end{array}$$
+$$\begin{array}{cl}>0.10 & \text{ non significant (no evidence)}\\0.05-0.10 & \text{ marginal significant, weak evidence (do not use this yourself)}\\0.01-0.05 & \text{ significant}\\0.001-0.01 & \text{strongly significant}\\<0.001 & \text{ extremely significant}\end{array}$$
 
 ---
 
