@@ -1,5 +1,5 @@
 ---
-title: "Tutorial 2.2: Hypothesis testing on the captopril dataset"   
+title: "Tutorial 2.1: Hypothesis testing on the captopril dataset"   
 output:
     html_document:
       code_download: true    
