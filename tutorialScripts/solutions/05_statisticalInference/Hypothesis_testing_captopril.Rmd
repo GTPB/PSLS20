@@ -1,5 +1,5 @@
 ---
-title: "Tutorial 2.2: Hypothesis testing on the captopril dataset"   
+title: "Tutorial 2.1: Hypothesis testing on the captopril dataset"   
 output:
     html_document:
       code_download: true    
@@ -34,13 +34,13 @@ First, we will load the required R libraries:
 library(tidyverse)
 ```
 
-## Import the data
+# Import the data
 
 ```{r}
 captopril <- read.table("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/captopril.txt", header = TRUE, sep = ",")
 ```
 
-## Data exploration
+# Data exploration
 
 Before we start delving into the data in order to solve 
 our research hypothese, it is always a good idea to first
@@ -75,7 +75,7 @@ But is this difference **significant**? To answer this
 question, we will need to perform some hypothesis testing.
 Let's start of with question 1.
 
-## Question 1
+# Question 1
 
 Is the average systolic blood pressure (SBP)
 before captopril treatment higher tahn 147 mmHg?
@@ -93,6 +93,8 @@ that is greater than 147 mmHg. To test this, we will perform a
 one-sample t-test, which will tell us if the average SBPb of
 our patients is significantly greater thatn 147 mmHg on the 5%
 significance level.
+
+# Assess the assumptions
 
 ** important **
 
@@ -116,8 +118,6 @@ assumption was violated; we may we have assume 15 unrelated,
 
 We can assess the second assumption with a quantile-quantile plot.
 
-### Assess the assumption of normality
-
 ```{r}
 captopril %>%
   ggplot(aes(sample=SBPb)) +
@@ -140,10 +140,10 @@ versus the alternative hypothesis;
 HA: the mean SBPb is greater than 147 mmHg
 
 ```{r}
-SBPb <- captopril %>%
-  pull(SBPb)
+#SBPb <- captopril %>%
+ # pull(SBPb)
 
-output1 <- t.test(SBPb,mu=147,alternative = "greater",conf.level = 0.95)
+output1 <- t.test(captopril$SBPb,mu=147,alternative = "greater",conf.level = 0.95)
 output1
 ```
 
@@ -350,11 +350,17 @@ check whether or not the true mean difference is equal to 0.
 We can also set this up manually.
 
 ```{r}
-bp_diff <- captopril %>%
+captopril %>%
   mutate(bp_diff = SBPb-SBPa) %>%
-  select(bp_diff)
+  select(bp_diff) %>%
+  t.test(captopril$bp_diff,mu=0)
 
-t.test(bp_diff,mu=0)
+#t.test(captopril$bp_diff,mu=0)
+
+captopril <- captopril %>%
+  mutate(bp_diff = SBPb-SBPa)
+
+t.test(captopril$bp_diff,mu=0)
 ```
 
 Indeed, the output is completely analogous to that

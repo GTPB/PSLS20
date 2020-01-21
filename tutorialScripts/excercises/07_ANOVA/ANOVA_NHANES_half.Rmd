@@ -1,5 +1,5 @@
 ---
-title: "Tutorial 6.3: ANOVA in the NHANES dataset"   
+title: "Tutorial 7.3: ANOVA in the NHANES dataset"   
 output:
     html_document:
       code_download: true    

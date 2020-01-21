@@ -1,5 +1,5 @@
 ---
-title: "Tutorial 6.1: Linear regression (continuous) on the fish tank dataset"   
+title: "Tutorial 6.2: Linear regression (continuous) on the fish tank dataset"   
 output:
     html_document:
       code_download: true    

@@ -1,5 +1,5 @@
 ---
-title: "Tutorial 4.1: ANOVA in the lettuce dataset"   
+title: "Tutorial 7.1: ANOVA in the lettuce dataset"   
 output:
     html_document:
       code_download: true    
