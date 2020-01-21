@@ -74,15 +74,14 @@ to the FEV?
 
 # Analysis
 
-As stated above, the overarching goal of this experiment was to find 
-out whether or not smoking has an effect on the FEV of children.
+As stated above, the overarching goal of this experiment was to assess the impact of smokking on the FEV of children.
 In principle, we have multipe variables that can affect the FEV. 
 We have, however, not learned yet how to model the response based on multiple
 predictors. To answer this research question properly, we will need some
 more advanced modeling techniques. In the tutorial on `multiple regression`, 
 we will learn those and come back to this dataset!
 
-For now, we can already answer other (less complex) research questions:
+For now, we can already assess other (less complex) research questions:
 
 1. Is there a linear association between the `FEV` and the `height` of `non-smoking`
 `females`? 
