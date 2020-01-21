@@ -98,6 +98,7 @@ and https://raw.githubusercontent.com/GTPB/PSLS20/master/background_material/rma
 5. Statistical Inference
     - [5.1. Statistical Inference](pages/05-statisticalInference.html)
     - [5.1. Two-sample t-test](pages/05-statisticalInference-twosampleT.html)
+    - [Tutorial](pages/05statisticlInference.md)
 6. [Linear Regression](pages/06-linearRegression.html)
 7. [Analysis of Variance](pages/07-Anova.html)
 8. [Multiple Regression](pages/08-MultipleRegression.html)
