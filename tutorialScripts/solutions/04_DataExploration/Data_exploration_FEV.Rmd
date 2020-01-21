@@ -95,7 +95,7 @@ Should we change legislations worldwide and make
 smoking obligatory for children?
 
 Maybe there is something else going on in the data.
-Now, we will a similar plot, but we will
+Now, we will generate a similar plot, but we will
 stratify the data based on age (age as factor).
 
 ```{r}

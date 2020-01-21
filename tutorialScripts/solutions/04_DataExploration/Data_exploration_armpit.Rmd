@@ -12,7 +12,7 @@ output:
 
 In this tutorial, we will explore the "smelly armpit" dataset. 
 
-## Smelly armpit dataset
+# Smelly armpit dataset
 
 Smelly armpits are not caused by sweat, itself. The smell is caused
 by specific micro-organisms belonging to the group of
@@ -29,7 +29,7 @@ The CMET-groep at Ghent University does research to on transplanting the armpit 
 
 - Experiment:
 
-    - 20 students with smelly armpits are attributed to one of 
+    - 20 subjects with smelly armpits are attributed to one of 
       two treatment groups
     - placebo (only antibiotics)
     - transplant (antibiotica followed by microbial transplant).
@@ -45,7 +45,7 @@ Load the libraries
 library(tidyverse)
 ```
 
-## Import the dataset
+# Import the dataset
 
 ```{r}
 ap <- read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit.csv")
@@ -55,21 +55,25 @@ ap <- read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit
 glimpse(ap)
 ```
 
-## Goal
+# Goal
 
-We find whether or not the relative abundance 
+The overarching goal of this research was to assess if the relative abundance 
 *Staphylococcus spp.*
-in the microbiome of the armpit is significantly different between
-subjects treated with antibiotics only and subjects treated with
+in the microbiome of the armpit is affected by transplanting the microbiome. 
+To this end the researchers randomized patients to two treatment:
+A treatment with antibiotics only and a treatment with
 antibiotics and a microbial transplant.
 
-Tomorrow, we will perform a formal test, which will tell us
-whether or not the average  relative abundance of 
-*Staphylococcus spp.* is equal between for treatment groups.
+In the tutorial on hypotheses testing we will use a formal statistical test to generalize the results from the sample to that of the population.
+For this test to be valid we have to assess following assumptions:
 
-Here, we will limit ourselves to visualizing the data.
+1. The data in each treatment group is normally distributed.
+2. The data from the two treatment groups has the same variance.
 
-## Data visualization
+A statistical analysis always starts with a data analysis to get insight in the nature and distribution of the data, and to assess the assumptions of the downstream data analysis.
+Mastering this data exploration step is the purpose of the current tutorial.
+
+# Data visualization
 
 It is always a good idea to first have a quick look at the raw
 data.
@@ -80,9 +84,9 @@ visualization:
 
 ```{r}
 ap %>%
-  ggplot(aes(x=rel,fill=trt)) + ## fill in the correct values for x and fill 
+  ggplot(aes(x=rel,fill=trt)) + # fill in the correct values for x and fill 
   geom_histogram() +
-  facet_grid(rows = vars(trt)) + ## fill in to put the histograms for both treatment conditions in a separate row
+  facet_grid(rows = vars(trt)) + # fill in to put the histograms for both treatment conditions in a separate row
   theme_bw() +
   xlab("relative abundance (%)")
 ```
@@ -104,11 +108,11 @@ ap %>%  ggplot(aes(x=trt,y=rel,fill=trt)) +
 
 We clearly see that, on average, the subjects who had a
 microbial transplant have a higher relative abundance of
-Staphylococcus spp. Tomorrow, we will learn how to formally test
-whether or not this observed difference is statistically
+Staphylococcus spp. In the tutorial on hypothesis testing, we will learn how to formally test
+whether the observed difference is statistically
 **significant**.
 
-## Descriptive statistics
+# Descriptive statistics
 
 Here, we will generate some informative descriptive statistics
 for the dataset.
@@ -138,10 +142,7 @@ apRelSum<-ap%>%
 apRelSum
 ```
 
-This concludes the data exploration. Tomorrow, we will 
-learn how to formally test whether or not this observed 
-difference is statistically **significant**.
-
+This concludes the data exploration. 
 
 
 

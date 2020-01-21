@@ -10,8 +10,7 @@ output:
       number_sections: true
 ---
 
-In this tutorial, you will learn how to import, tidy, wrangle and 
-visualize data yourself! You will work with one specific dataset;
+In this tutorial, you will learn how to explore paired data. 
 
 # The captopril dataset
 
@@ -38,8 +37,7 @@ head(captopril)
 
 # Data visualization
 
-Let's say we now first want to visualize the data. 
-One possibility to easily visualize the four types
+One straightforward possibility to visualize the four types
 of blood pressure values is by adopting the `gather`
 function from tidyverse. It will reshape the dataframe,
 such that we have have a single variable `type`, which 
@@ -118,7 +116,8 @@ paired data; for each patient, we have blood pressure values
 (systolic and diastolic) before and after treatment with
 captopril.
 
-We can visualize this as follows;
+We first plot the systolic blood pressure measurements. 
+We make a plot with the data points for the two systolic blood pressure measurements in the patient id. 
 
 ```{r}
 captopril %>% 
@@ -143,7 +142,6 @@ captopril %>%
   gather(type,bp,-id) %>%
   mutate(type=factor(type,levels=c("SBPb","SBPa","DBPb","DBPa"))) %>%
   filter(type%in%c("SBPa","SBPb")) %>%
-  
   ggplot(aes(x=type,y=bp)) +
   geom_line(aes(group = id)) +
   geom_point()
@@ -171,7 +169,7 @@ the blood pressure by about 20 mmHg.
 
 ## Assumptions: QQ-plot
 
-In the next lecture we will assess if this difference is statistically significant. 
+In the tutorial on hypothesis testing we will assess if this difference is statistically significant. 
 We will introduce a statistical test that relies on the assumption that the differences are normally distributed. 
 We can check this with a QQ-plot: 
 
@@ -201,7 +199,7 @@ captopril %>%
   mutate(se=sd/sqrt(n))
 ```
 
-It is also very useful to calculate the descriptive statistics for the systolic bloodpressure difference because we can assess the effect size of administering captopril for every patient. 
+It is also very useful to calculate the descriptive statistics for the systolic blood pressure difference because we can assess the effect size of administering captopril for every patient. 
 
 ```{r}
 captopril %>% 
@@ -216,7 +214,8 @@ captopril %>%
 
 # Wrap-up 
 
-Next, time if you explore paired data, you can immediately adopt section 3.3 the line plot and the boxplot of the differences so as to acknowledge the pairing and section 3.4. 
+Next, time if you explore paired data, you can immediately adopt the line plot and the boxplot of the differences from Section 3.3. so as to acknowledge the pairing and perform the descriptive statistics in section 3.4. 
+It might also be useful to plot boxplots of the raw blood pressure measurements to get an idea on their varability.
 
 It is not useful to report the barplot. 
 
@@ -239,13 +238,14 @@ captopril %>%
   summarize_all(sd)
 ```
 
-Calculate variance based on fact that data are paired
+Calculate variance based on fact that data are paired.
+
 ```{r}
 captopril %>% summarise(sd_diff=sqrt(sd(SBPb)^2 + sd(SBPa)^2-2*sd(SBPa)*sd(SBPb)*cor(SBPa,SBPb)))
 ```
 
 Note, that the standard deviations on the blood pressure measurements are more than
-twice as large as the tandard deviations on the difference. 
+twice as large as the standard deviations on the difference. 
 This is because each patient acts as their own control. As such, we can correct for
 their baseline blood pressure when estimating the effect of the treatment.
 
