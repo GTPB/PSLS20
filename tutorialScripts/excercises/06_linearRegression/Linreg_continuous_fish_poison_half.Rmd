@@ -13,7 +13,7 @@ output:
 As an exercise on linear regression, we will analyse
 the fish tank dataset.
 
-# Fish tank dataset
+# Fish poison dataset
 
 In this experiments 96 fish (dojofish, goldfish and zebrafish)
 were placed separately in a tank with two liters of water and
