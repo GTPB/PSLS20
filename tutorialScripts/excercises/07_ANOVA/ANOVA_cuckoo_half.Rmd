@@ -12,9 +12,6 @@ output:
     toc: yes
 ---
 
-In this tutorial, we perform a hypothesis test on the
-"cuckoo" dataset. 
-
 # Cuckoo dataset
 
 The common cuckoo does not build its own nest: it prefers
@@ -44,7 +41,7 @@ The type column is coded as follows:
 
 # Goal
 
-The researchers want totest if the type of foster parent
+The researchers want to test if the type of foster parent
 has an effect on the average length of the cuckoo eggs.
 
 Optimally, they want to study this for all six species.
@@ -85,8 +82,7 @@ Set the type column to factor.
 How many birds do we have for each type?
 
 ```{r}
-#Cuckoo %>%
- # count(...)
+#Cuckoo %>%  count(...)
 
 # in base R, you could use the table function
 ```
@@ -107,8 +103,7 @@ Visualize the data
 
 5. Formulate the assumptions of the test and assess the assumptions using diagnostic plots. 
 
-6. If all assumptions to perform the test, complete the analysis and
-formulate a proper conclusion.
+6. If all assumptions to perform the test, complete the entire analysis and formulate a proper conclusion.
 
 
 
