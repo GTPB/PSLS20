@@ -15,7 +15,7 @@ output:
 In this short tutorial, we perform a hypothesis test on the
 "cuckoo" dataset. 
 
-## Cuckoo dataset
+# Cuckoo dataset
 
 The common cuckoo does not build its own nest: it prefers
 to lay its eggs in another birds' nest. It is known, since 1892,
@@ -42,7 +42,7 @@ The type column is coded as follows:
 - `type=5`: White wagtail
 - `type=6`: Eurasian wren
 
-## Goal
+# Goal
 
 The researchers want totest if the type of foster parent
 has an effect on the average length of the cuckoo eggs.
@@ -72,7 +72,7 @@ Load the required libraries
 library(tidyverse)
 ```
 
-## Import the data
+# Import the data
 
 ```{r, message=FALSE}
 Cuckoo <- read_tsv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/Cuckoo.txt")
@@ -83,7 +83,7 @@ head(Cuckoo)
 ```
 
 
-## Data tidying
+# Data tidying
 
 For this exercise, we only care about the European robin
 and the Eurasian wren. Therefore, we can remove the observations
@@ -97,7 +97,7 @@ Cuckoo <- Cuckoo %>%
 ```
 
 
-## Data exploration
+# Data exploration
 
 How many birds do we have for each type?
 
@@ -129,7 +129,7 @@ We can test this with an unpaired, two-sample t-test.
 Buu before we can start the analysis, we must check if
 all assumptions to perform a t-test are met.
 
-## Check the assumptions
+# Check the assumptions
 
 1. The observations are independent of each other (in both groups)
 2. The data (length) must be normally distributed (in both groups)
@@ -159,7 +159,7 @@ The third assumption seems to be met based on our
 visualization with the boxplots. As all assumptions are met, 
 we may proceed with the analysis.
 
-## Two-sample t-test (unpaired)
+# Two-sample t-test (unpaired)
 
 ```{r}
 length_4 <- Cuckoo %>% 
@@ -174,7 +174,7 @@ output <- t.test(length_4,length_6,conf.level = 0.95,var.equal = TRUE)
 output
 ```
 
-## Conclusion 
+# Conclusion 
 
 We may conclude that, on the 5% significance level, the mean 
 length of eggs fostered by the European robin in extremely

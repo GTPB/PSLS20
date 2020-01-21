@@ -1,5 +1,5 @@
 ---
-title: 'Tutorial 2.1: hypothesis testing on the armpit dataset'
+title: 'Tutorial 2.2: hypothesis testing on the armpit dataset'
 output:
   html_document:
     code_download: yes
@@ -28,7 +28,7 @@ The CMET-groep at Ghent University does research to on transplanting the armpit 
 
 - Experiment:
 
-    - 20 subjects with smelly armpits are attributed to one of two treatment groups
+    - 20 students with smelly armpits are attributed to one of two treatment groups
     - placebo (only antibiotics)
     - transplant (antibiotica followed by microbial transplant).
     - The microbiome is sampled 6 weeks upon the treatment
@@ -47,16 +47,13 @@ antibiotics and a microbial transplant.
 
 In the tutorial on hypotheses testing we will use a formal statistical test to generalize the results from the sample to that of the population.
 
-
-# Import the dataset
-
+Load the libraries
 
 ```{r, message=FALSE}
-#Load the libraries
 library(tidyverse)
 ```
 
-Import the data
+# Import the dataset
 
 ```{r}
 ap <- read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit.csv")
@@ -66,10 +63,9 @@ ap <- read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit
 glimpse(ap)
 ```
 
-# Data Exploration
+# Data visualization
 
-A crucial first step in a data analysis is to visualize and to explore the raw data.
-
+It is always a good idea to first have a quick look at the raw data;
 
 ```{r}
 ap %>% ggplot(aes(x=trt,y=rel,fill=trt)) + 
@@ -82,18 +78,27 @@ ap %>% ggplot(aes(x=trt,y=rel,fill=trt)) +
 
 We clearly see that, on average, the subjects who had a
 microbial transplant have a higher relative abundance of
-Staphylococcus spp. But is this difference statistically  *significant* so that we can generalized what we observe in the sample to the population?
+Staphylococcus spp. But is this difference **significant**?
 
-We can test this with an unpaired, two-sample t-test, which falsifies the null hypothesis that there is on average no difference in relative abundance of *Staphylococcus* in the armpit microbiome between the transplant and the placebo group against the alternative hypothesis that there is a difference in average abundance of *Staphyloccocus* in the armpit microbiome between the transplant and placebo treatment. 
-
-But, before we can start the analysis, we must check if
+We can test this with an unpaired, two-sample t-test. 
+But before we can start the analysis, we must check if
 all assumptions to perform a t-test are met.
 
-## Check the assumptions
+# Check the assumptions
 
-1. The observations are independent both within and between groups.  This has to be garanteed by the design.
-2. The data (rel) are normally distributed in each of the groups
-3. The variability within both groups is similar.
+1. The observations are independent of each other (in both groups)
+2. The data (rel) must be normally distributed (in both groups)
+
+Additionally, we must check if the variances are similar for both groups.
+If so, we can use a t-test with a pooled variance (see theory).
+If not, we must rely on the Welch t-test, which can deal with
+unequal variances.
+
+The first assumption is met, as we may assume that there are no
+specific patterns of correlation in our group of 20 randomly
+select subjects. Note, however, that as we sample only in the
+population of 'students', we will only be able to extrapolate
+our findings to this group.
 
 To check the normality assumption, we will use QQ plots.
 
@@ -105,18 +110,26 @@ ap %>%
   facet_grid(cols = vars(trt))
 ```
 
-We can see that the data is nicely scattered around the quantile-quantile
-line (black line). As such, we may conclude that the our data are approximately normally distributed.
+We can see that all of the data lies nicely around the quantile-quantile
+line (black line). As such, we may conclude that our data is normally distributed.
 
 For the third assumption, we must compare the within-group
-variability of both groups. We can do this visually based on the boxplots. The size of the box in the boxplot is the interquartile range, an nonparametric estimator of the variability of the data. 
-In the plot we observe that the boxes are fairly equal in size indicating that  the box size is
-approximately equal for groups. 
+variability of both groups. We can do this visually:
 
-For small sample sizes the variability estimation is not very precise and the differences in box sizes have to be more than 2 or 3 times larger in one of the groups before there is an indication for the deviation of equality of means. If the variability would not have been equal, we might have resorted the Welch modified T-test. 
+```{r}
+ap %>%  ggplot(aes(x=trt,y=rel)) + 
+  geom_boxplot(outlier.shape=NA) + 
+  geom_point(position="jitter") +
+  ylab("relative abundance (%)") +
+  xlab("treatment group") + 
+  stat_summary(fun.y=mean, geom="point", shape=5, size=3, color="black", fill="black")
+```
+
+Here we can see that this interval, as well as the length of the whiskers, 
+is approximately equal for groups.
 
 As all three assumptions are met we may continue with
-performing the unpaired two-sample t-test with equal variances.
+performing the unpaired two-sample t-test.
 
 # Two-sample t-test (unpaired)
 
@@ -133,26 +146,10 @@ output <- t.test(placebo_rel,transplant_rel,conf.level = 0.95,var.equal = TRUE)
 output
 ```
 
-Let's interpret the output.
-
-The alternative hypothesis HA of the test is that
-the "true difference in means is not equal to 0". The
-null hypothesis is that the true difference in means is
-equal to 0. We have found a p-value of `r round(output$p.value,5)`, which
-is much smaller than 0.05. So, the probability of at most `r round(output$p.value,5)` of 100000 to observe a larger absolute difference in means than what we observed in the data in a random sample that was generated under the null hypothesis. So it is extremely unlikely that our data would originate from a population where the average relative abundance of *Staphylococcus* in the microbiome upon placebo treatment would be equal that upon transplant treatment.  As such, we can reject the null
-hypothesis extremely significant in favor of the alternative that there is an effect of the transplant.
-
-The mean relative abundance in the placebo group is `r round( unname(output$estimate[1]))`, 
-while the mean relative abundance in the transplant group
-is `r round( unname(output$estimate[2]))`. We further conclude that 95% confidence interval  [ `r round(output$conf.int[c(1,2)],2)` ]
-holds the true difference in population means of 
-relative abundances between subjects treated with placebo 
-and subjects treated with a microbial transplant and we know that the construction of the confidence intervals are as such that their conclusion on the location of the average difference is correct with a probability of 95%.
-
 # Conclusion
 
-We conclude that the mean 
-relative abundance of *Staphylococcus* sp in the armpit microbiome of subjects that had a placebo treatment is extremely
+We may conclude that, on the 5% significance level, the mean 
+relative abundance in subjects that had a placebo treatment is 
 significantly (p = `r round(output$p.value,5)`) lower than the mean relative 
 abundance in subjects that had a microbial transplant. The 
 relative abundances are on average 
@@ -160,67 +157,7 @@ relative abundances are on average
 (95% CI: [ `r round(output$conf.int[c(1,2)],2)` ]) lower with placebo 
 treatment than with the transplant.
 
-# Train yourself in checking the assumptions
-
-In order for the learners to get more proficient in evaluating the assumptions we will simulate 9 dataset with sample sizes similar to our data for which the assumptions of normality and equal variance do hold. For the QQ-plots we will only plot the one from one of the groups. 
-
-## Simulate data 
-
-We simulate 9 datasets with the same sample sizes, means and pooled variance as in the sample. 
-
-```{r}
-nSamp <- 9
-## descriptive statistics
-apRelSum<-ap%>%
-  group_by(trt)%>%
-  summarize_at("rel",
-               list(mean=~mean(.,na.rm=TRUE),
-                    sd=~sd(.,na.rm=TRUE),
-                    n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
-  mutate(se=sd/sqrt(n))
-
-sigma <- sqrt(sum(apRelSum$sd^2*(apRelSum$n-1))/(sum(apRelSum$n)-2)) 
-
-normSim <- matrix(rnorm(sum(apRelSum$n)*nSamp,
-              mean=c(rep(apRelSum$mean[1],apRelSum$n[1]),
-                     rep(apRelSum$mean[2],apRelSum$n[2])),
-                     sd=sigma),nrow=sum(apRelSum$n)) %>%
-  as.data.frame %>% 
-  mutate(trt=ap$trt)
-```
-
-## Comparisons of variances
-
-```{r}
-normSim %>% gather(samp,data,-trt) %>%
-  ggplot(aes(x=trt,y=data)) +
-  geom_boxplot() +
-  facet_wrap(~samp)
-```
-
-## Evaluation of normality
-
-### Placebo group
-
-```{r}
-normSim %>% 
-  gather(samp,data,-trt) %>%
-  filter(trt=="placebo") %>%
-  ggplot(aes(sample=data)) +
-  geom_qq() +
-  geom_qq_line() +
-  facet_wrap(~samp)
-```
-
-### Transplant group
 
 
-```{r}
-normSim %>% 
-  gather(samp,data,-trt) %>%
-  filter(trt=="transplant") %>%
-  ggplot(aes(sample=data)) +
-  geom_qq() +
-  geom_qq_line() +
-  facet_wrap(~samp)
-```
+
+
