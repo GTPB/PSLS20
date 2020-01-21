@@ -10,6 +10,7 @@ In this tutorial on data exploration, you will learn how to deal with data from 
 
 - Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_captorpil_half.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_captorpil_half.Rmd)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/captopril.txt"
+- Solution: [Solution_01](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/solutions/05_statisticalInference/Hypothesis_testing_captopril.html)
 
 
 2) The armpit dataset:
@@ -27,6 +28,7 @@ has helped in decreasing the (average) relative abundance Staphylococcus spp. in
 
 - Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_armpit_LC.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_armpit_LC.Rmd)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit.csv"
+- Solution: [Solution_02](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/solutions/05_statisticalInference/Hypothesis_testing_armpit.html)
 
 
 3) The Shrimps dataset:
@@ -39,6 +41,7 @@ The research question is; is there an effect of the  growth condition on the PCB
 
 - Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_shrimps_half.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_shrimps_half.Rmd)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/shrimps.txt"
+- Solution: [Solution_03](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/solutions/05_statisticalInference/Non_parametric_shrimps.html)
 
 
 4) The Cuckoo dataset:
@@ -55,6 +58,7 @@ The researchers want to test if the type of foster parent has an effect on the a
 
 - Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_cuckoo_half.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_cuckoo_half.Rmd)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/Cuckoo.txt"
+- Solution: [Solution_04](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/solutions/05_statisticalInference/Hypothesis_testing_cuckoo.html)
 
 
 
