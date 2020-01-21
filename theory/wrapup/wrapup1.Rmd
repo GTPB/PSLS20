@@ -37,12 +37,28 @@ Data exploration
 
 # Questions
 
-## How confident are you in understanding the importance of randomization?
+---
 
 ## How confident are you in recognizing different types of variables in a study
 
+---
+---
+
+## How confident are you in understanding the importance of randomization?
+
+---
+---
+
 ## How confident are you in understanding how data, statistics and conclusions change from sample to sample and what the impact is of sample size on the uncertainty.
 
-# How confident are you in explaining somebody the importance of data exploration and the importance of showing the data as raw as possible
+---
+---
 
-# How confident are you in spotting data that deviates from the normal distribution
+## How confident are you in explaining somebody the importance of data exploration and the importance of showing the data as raw as possible
+
+---
+---
+
+## How confident are you in spotting data that deviates from the normal distribution
+
+---
