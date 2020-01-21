@@ -1639,7 +1639,7 @@ Suppose that given a particular sample $p<\alpha$, i.e. reject $H_0$
 On the other hand, when $p\geq\alpha$ and we do not reject $H_0$ we also have two options:
 
   - Correct decision,
-  - ofwel hebben we een type II error gemaakt.
+  - or we made a type II error.
 
 The probability on a type II error ($\beta$) is not controlled at a specific value. 
 
