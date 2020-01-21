@@ -1,0 +1,106 @@
+---
+title: "Tutorial 6.2: Linear regression on the FEV dataset"   
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+As an exercise on linear regression, we will analyse the FEV dataset.
+
+# The FEV dataset
+
+The FEV, which is an acronym for forced expiratory volume,
+is a measure of how much air a person can exhale (in liters) 
+during  a forced breath. In this dataset, the FEV of 606 children,
+between the ages of 6 and 17, were measured. The dataset
+also provides additional information on these children:
+their `age`, their `height`, their `gender` and, most
+importantly, whether the child is a smoker or a non-smoker.
+
+The overarching goal of this experiment was to find out whether or not
+smoking has an effect on the FEV of children.
+
+# Load the required libraries
+
+```{r, message = FALSE}
+library(tidyverse)
+```
+
+# Import the data
+
+```{r}
+fev <- read_tsv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/fev.txt")
+head(fev)
+```
+
+# Tidy the data
+
+There are a few things in the formatting of the
+data that can be improved upon:
+
+1. Both the `gender` and `smoking` can be transformed to
+factors.
+2. The `height` variable is written in inches. Assuming that
+this audience is mainly Portuguese/Belgian, inches are hard to
+interpret. Let's add a new column, `height_cm`, with the values
+converted to centimeter using the `mutate` function. 
+
+```{r}
+
+```
+
+
+# Data Exploration
+
+Explore the data. Visualize the FEV for smokers versus non-smokers:
+
+```{r}
+
+```
+
+Did you expect these results? Can you explain what we observe (and why)?
+Additionally, can you provide an even better visualization of the data, taking
+into account more useful explanatory variables with respect
+to the FEV?
+
+```{r}
+
+```
+
+# Analysis
+
+As stated above, the overarching goal of this experiment was to find 
+out whether or not smoking has an effect on the FEV of children.
+In principle, we have multipe variables that can affect the FEV. 
+We have, however, not learned yet how to model the response based on multiple
+predictors. To answer this research question properly, we will need some
+more advanced modeling techniques. In the tutorial on `multiple regression`, 
+we will learn those and come back to this dataset!
+
+For now, we can already answer other (less complex) research questions:
+
+1. Is there a linear association between the `FEV` and the `height` of `non-smoking`
+`females`? 
+
+2. Is there a linear association between the `FEV` and the `age` of `non-smoking`
+`females`?
+
+3. Is there a linear association between the `FEV` and the `height` of `non-smoking`
+`males`? 
+
+4. Is there a linear association between the `FEV` and the `age` of `non-smoking`
+`males`?
+
+For each of these short research questions, you should:
+
+1. Check the assumptions of the linear model, and analyze the data accordingly.
+
+2. Interpret the output, focusing on the interpretation of the intercept and the slope parameters of the model.
+
+3. Formulate a conclusion for each research hypothesis.
+
