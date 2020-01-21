@@ -1,5 +1,5 @@
 ---
-title: 'Tutorial 2.3: Hypothesis testing on the cuckoo dataset'
+title: 'Tutorial 5.4: Hypothesis testing on the cuckoo dataset'
 output:
   html_document:
     code_download: yes
