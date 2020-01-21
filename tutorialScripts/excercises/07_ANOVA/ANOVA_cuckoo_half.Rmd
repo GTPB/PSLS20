@@ -85,8 +85,8 @@ Set the type column to factor.
 How many birds do we have for each type?
 
 ```{r}
-Cuckoo %>%
-  count(...)
+#Cuckoo %>%
+ # count(...)
 
 # in base R, you could use the table function
 ```
