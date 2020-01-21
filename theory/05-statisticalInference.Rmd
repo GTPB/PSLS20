@@ -442,9 +442,11 @@ femSamp10 %>%
   as.data.frame %>% 
   gather(sample,log2Chol) %>% 
   group_by(sample)%>%
-  summarize_at("log2Chol",list(mean=~mean(.,na.rm=TRUE),
-              sd=~sd(.,na.rm=TRUE),
-              n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+  summarize_at("log2Chol",
+               list(median=~median(.,na.rm=TRUE),
+                    mean=~mean(.,na.rm=TRUE),
+                    sd=~sd(.,na.rm=TRUE),
+                    n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
   mutate(se=sd/sqrt(n)) ,
 
 femSamp50 %>% 
@@ -452,9 +454,11 @@ femSamp50 %>%
   as.data.frame %>%
   gather(sample,log2Chol) %>%
   group_by(sample)%>%
-  summarize_at("log2Chol",list(mean=~mean(.,na.rm=TRUE),
-              sd=~sd(.,na.rm=TRUE),
-              n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+  summarize_at("log2Chol",
+               list(median=~median(.,na.rm=TRUE),
+                    mean=~mean(.,na.rm=TRUE),
+                    sd=~sd(.,na.rm=TRUE),
+                    n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
   mutate(se=sd/sqrt(n)),
 
 femSamp100 %>% 
@@ -462,9 +466,11 @@ femSamp100 %>%
   as.data.frame %>% 
   gather(sample,log2Chol) %>% 
   group_by(sample)%>%
-  summarize_at("log2Chol",list(mean=~mean(.,na.rm=TRUE),
-              sd=~sd(.,na.rm=TRUE),
-              n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+  summarize_at("log2Chol",
+               list(median=~median(.,na.rm=TRUE),
+                    mean=~mean(.,na.rm=TRUE),
+                    sd=~sd(.,na.rm=TRUE),
+                    n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
   mutate(se=sd/sqrt(n))
 )
 ```
@@ -531,27 +537,27 @@ xlab("sample size")
 
 - We illustrate this for repeated sampling with sample size 10
 ```{r}
-meanMed10<- apply(femSamp10%>%log2, 2, function(x) c(mean(x),median(x))) %>% t %>% data.frame
-names(meanMed10)<-c("mean","median")
-
-meanMed10 %>% gather(type,estimate) %>% 
-ggplot(aes(x=type,y=estimate)) +
-geom_boxplot()+
-geom_hline(yintercept=fem$DirectChol%>%log2%>%mean) +
-ggtitle("10 subjects")
+res %>%
+  filter(n==10) %>%
+  select(mean,median) %>%
+  gather(type,estimate) %>%
+  ggplot(aes(x=type,y=estimate)) +
+  geom_boxplot()+
+  geom_hline(yintercept=fem$DirectChol%>%log2%>%mean) +
+  ggtitle("10 subjects")
 ```
 
 Next, we compare the distribution of mean and median in repeated samples of sample size 50.
 
 ```{r}
-meanMed50<- apply(femSamp50%>%log2, 2, function(x) c(mean(x),median(x))) %>% t %>% data.frame
-names(meanMed50)<-c("mean","median")
-
-meanMed50 %>% gather(type,estimate) %>% 
-ggplot(aes(x=type,y=estimate)) +
-geom_boxplot()+
-geom_hline(yintercept=fem$DirectChol%>%log2%>%mean) +
-ggtitle("50 subjects")
+res %>%
+  filter(n==50) %>%
+  select(mean,median) %>%
+  gather(type,estimate) %>%
+  ggplot(aes(x=type,y=estimate)) +
+  geom_boxplot()+
+  geom_hline(yintercept=fem$DirectChol%>%log2%>%mean) +
+  ggtitle("50 subjects")
 ```
 
 ### Distribution of sample mean
@@ -572,47 +578,62 @@ We illustrate this again with simulation using the NHANES study.
 The log2 cholesterol levels were normally distributed. 
 
 ```{r}
- fem %>% ggplot(aes(x=DirectChol%>%log2))+
+ fem %>% 
+  ggplot(aes(x=DirectChol%>%log2))+
   geom_histogram(aes(y=..density.., fill=..count..)) +
   xlab("Direct cholesterol (log2)") +
   stat_function(fun=dnorm,color="red",args=list(mean=mean(fem$DirectChol%>%log2), sd=sd(fem$DirectChol%>%log2))) +
   ggtitle("All females in Nhanes study")
   
-fem %>% ggplot(aes(sample=DirectChol%>%log2)) +
-stat_qq() +
-stat_qq_line() +
-ggtitle("All females in Nhanes study")
+fem %>% 
+  ggplot(aes(sample=DirectChol%>%log2)) +
+  stat_qq() +
+  stat_qq_line() +
+  ggtitle("All females in Nhanes study")
 ```
 
 ---
 
-- We do this look at the distribution for experiments with 5 subjects. 
+##### Evaluate distribution for samples with 5 subjects
 
 ```{r}
-femSamp5<-sapply(1:1000,function(j,x,size) sample(x,size),size=5,x=fem$DirectChol)
+femSamp5<-sapply(1:1000,function(j,x,size)
+  sample(x,size),size=5,x=fem$DirectChol)
 
-femSamp5[,1] %>% log2 %>% as.data.frame %>%
-ggplot(aes(x=.))+
+femSamp5[,1] %>% 
+  log2 %>% 
+  as.data.frame %>%
+  ggplot(aes(x=.))+
   geom_histogram(aes(y=..density.., fill=..count..),bins=10) +
   xlab("Direct cholesterol (log2)") +
   stat_function(fun=dnorm,color="red",args=list(mean=femSamp5[,1]%>%log2%>%mean, sd=femSamp5[,1]%>%log2%>%sd)) +
-ggtitle("5 random females") + 
-xlim(fem$DirectChol %>% log2 %>% range)
+  ggtitle("5 random females") + 
+  xlim(fem$DirectChol %>% log2 %>% range)
 
   
-femSamp5 %>% log2 %>% colMeans %>% as.data.frame %>% ggplot(aes(x=.)) +
+femSamp5 %>% 
+  log2 %>% 
+  colMeans %>% 
+  as.data.frame %>% 
+  ggplot(aes(x=.)) +
   geom_histogram(aes(y=..density.., fill=..count..),bins=15) +
   xlab("Mean cholesterol (log2)") +
   stat_function(fun=dnorm,color="red",args=list(mean=femSamp5%>%log2%>% colMeans %>% mean, sd=femSamp5%>%log2%>% colMeans %>% sd)) +
 ggtitle("Means on 5 females") 
 
-femSamp5 %>% log2 %>% colMeans %>% as.data.frame %>%  ggplot(aes(sample=.)) +
-stat_qq() +
-stat_qq_line() +
-ggtitle("Means on 5 females")
+femSamp5 %>% 
+  log2 %>% 
+  colMeans %>% 
+  as.data.frame %>%  
+  ggplot(aes(sample=.)) +
+  stat_qq() +
+  stat_qq_line() +
+  ggtitle("Means on 5 females")
 ```
 
 ---
+
+##### Explore the distribution of the mean for smaples of size 10
 
 Now we explore the results for the sample size of 10.
 
@@ -643,7 +664,7 @@ stat_qq_line() +
 ggtitle("Means on 10 females")
 ```
 
-**So we confirmed that the mean is normally distributed for studies with 5 and 10 females when the original data are normally distributed.** 
+**So we confirmed that the mean is approximately normally distributed for studies with 5 and 10 females when the original data are approximately normally distributed.** 
 
 ---
 
@@ -685,7 +706,8 @@ fem %>% ggplot(aes(x=DirectChol))+
  ggtitle("All females in Nhanes study")
 ```
 
-The cholesterol data is clearly non-Normally distributed. 
+The cholesterol data is clearly non-Normally distributed.
+
 ##### Distribution of the sample mean for different sample sizes 
 
 ```{r}
@@ -733,6 +755,8 @@ ggtitle("Means on 100 females")
 
 Let $X_1, \ldots, X_n$ are sequence of random variables that are drawn independently from the same distribution (population).
 As long as the sample size n is sufficiently large, the sample mean $\bar X$ is approximately normally distributed, irrespective of the distribution of the observations $X_i$.
+
+### Overview on the distribution of the mean
 
 ![](https://www.nature.com/articles/nmeth.2613.pdf){width=100%}
 
@@ -1122,6 +1146,7 @@ captoprilSamp$deltaSBP <- captoprilSamp$SBPa-captoprilSamp$SBPb
 captoprilSamp %>% 
   gather(type,bp,-id) %>%
   filter(type%in%c("SBPa","SBPb")) %>%
+  mutate(type=factor(type,levels=c("SBPb","SBPa")))%>%
   ggplot(aes(x=type,y=bp)) +
   geom_line(aes(group = id)) +
   geom_point()
@@ -1152,6 +1177,7 @@ captoprilSamp$deltaSBP <- captoprilSamp$SBPa-captoprilSamp$SBPb
 captoprilSamp %>% 
   gather(type,bp,-id) %>%
   filter(type%in%c("SBPa","SBPb")) %>%
+  mutate(type=factor(type,levels=c("SBPb","SBPa")))%>%
   ggplot(aes(x=type,y=bp)) +
   geom_line(aes(group = id)) +
   geom_point()
