@@ -15,7 +15,7 @@ output:
 In this short tutorial, we perform a hypothesis test on the
 "cuckoo" dataset. 
 
-## Cuckoo dataset
+# Cuckoo dataset
 
 The common cuckoo does not build its own nest: it prefers
 to lay its eggs in another birds' nest. It is known, since 1892,
@@ -42,9 +42,9 @@ The type column is coded as follows:
 - `type=5`: White wagtail
 - `type=6`: Eurasian wren
 
-## Goal
+# Goal
 
-The researchers want totest if the type of foster parent
+The researchers want to test if the type of foster parent
 has an effect on the average length of the cuckoo eggs.
 
 In theory, they want to study this for all six species.
@@ -58,13 +58,11 @@ This mean we need to perform n*(n-1)/2 = 15 t-tests.
 2. We perform an ANOVA analysis.
 
 The second strategy is much more efficient and has a higher
-statistical power. We will learn all about ANOVA in a later
-stage of this course week.
+statistical power. We will learn about ANOVA in chapter 7.
 
-In this tutorial, we will assess a single pairwise comparison,
-between the European robin and the European wren. In a following
-tutorial, we will come back to this dataset and make a full 
-analysis with ANOVA.
+In the current tutorial, we will assess a single pairwise comparison,
+between the European robin and the European wren. In later
+tutorials, we revisit this dataset and analyse all data.
 
 Load the required libraries
 
@@ -72,20 +70,20 @@ Load the required libraries
 
 ```
 
-## Import the data
+# Import the data
 
 ```{r, message=FALSE}
 
 ```
 
-Look at the data
+# Data Exploration
 
 ```{r}
 
 ```
 
 
-## Data tidying
+# Data tidying
 
 For this exercise, we only care about the European robin
 and the Eurasian wren. Therefore, we can remove the observations
@@ -99,7 +97,7 @@ Cuckoo <- Cuckoo %>%
 ```
 
 
-## Data exploration
+# Data exploration
 
 How many birds do we have for each type?
 
@@ -107,7 +105,7 @@ How many birds do we have for each type?
 Cuckoo %>%
   count(...)
 
-## in base R, you could use the table function
+# in base R, you could use the table function
 ```
 
 Visualize the data
@@ -116,27 +114,17 @@ Visualize the data
 
 ```
 
-We clearly see that, on average, the eggs laid in the 
-nest of the European robin (type=4) are larger than those 
-laid in the nest of the Eurasian wren. 
-But is this difference **significant**?
+1. What do you observe?
 
-We can test this with an unpaired, two-sample t-test. 
-Buu before we can start the analysis, we must check if
-all assumptions to perform a t-test are met.
+2. How will you model the data? 
 
-## Check the assumptions
+3. Translate the research question in a null and alternative hypothesis
 
-1. The observations are independent of each other (in both groups)
-2. The data (length) must be normally distributed (in both groups)
+4. Which test will you use to assess the research hypothesis? 
 
-Additionally, we should check if the variability within both
-groups is similar or not (in the lattter case we should use
-a Welch t-test).
+5. Formulate the assumptions of the test and assess the assumptions using diagnostic plots. 
 
-3. The variability within both groups is similar
-
-Assess the assumptions. If they are met, complete the analysis and
+6. If all assumptions to perform the test, complete the analysis and
 formulate a proper conclusion.
 
 
