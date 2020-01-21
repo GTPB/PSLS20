@@ -11,6 +11,7 @@ In this tutorial, you will learn the key principles of data exploration in R, in
 
 - Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_NHANES.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_NHANES.Rmd)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/NHANES.csv"
+- Solution: [Solution_01](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/solutions/04_DataExploration/Data_exploration_NHANES.Rmd)
 
 2) The armpit dataset:
 
@@ -28,6 +29,7 @@ In this tutorial, you will use your acquired skills from exercise 1 to explore t
 
 - Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_armpit.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_armpit.Rmd)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit.csv"
+- Solution: [Solution_02](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/solutions/04_DataExploration/Data_exploration_armpit.Rmd)
 
 
 3) The captopril dataset:
@@ -40,6 +42,8 @@ In this tutorial on data exploration, you will learn how to deal with data from 
 
 - Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_captopril.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/04_DataExploration/Data_exploration_captopril.Rmd)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/captopril.txt"
+- Solution: [Solution_03](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/solutions/04_DataExploration/Data_exploration_captopril.Rmd)
+
 
 4) The FEV dataset:
 
