@@ -1,5 +1,5 @@
 ---
-title: "Tutorial 1.2: Exploring the captopril dataset"   
+title: "Tutorial 1.1: Exploring the captopril dataset"   
 output:
     html_document:
       code_download: true    
@@ -142,6 +142,16 @@ captopril %>%
   gather(type,bp,-id) %>%
   mutate(type=factor(type,levels=c("SBPb","SBPa","DBPb","DBPa"))) %>%
   filter(type%in%c("SBPa","SBPb")) %>%
+  ggplot(aes(x=type,y=bp)) +
+  geom_line(aes(group = id)) +
+  geom_point()
+```
+
+```{r}
+captopril %>% 
+  gather(type,bp,-id) %>%
+  mutate(type=factor(type,levels=c("SBPb","SBPa","DBPb","DBPa"))) %>%
+  filter(type%in%c("DBPa","DBPb")) %>%
   ggplot(aes(x=type,y=bp)) +
   geom_line(aes(group = id)) +
   geom_point()
