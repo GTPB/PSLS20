@@ -1,5 +1,5 @@
 ---
-title: 'Tutorial 2.1: hypothesis testing on the armpit dataset'
+title: 'Tutorial 2.2: hypothesis testing on the armpit dataset'
 output:
   html_document:
     code_download: yes
