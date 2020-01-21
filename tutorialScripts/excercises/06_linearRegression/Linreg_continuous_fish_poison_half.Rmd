@@ -39,7 +39,7 @@ Read the required libraries
 poison <- read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/poison.csv")
 ```
 
-# Data Exploration
+# Data tidying
 
 Have a look at the data.
 
@@ -49,7 +49,7 @@ be improved upon:
 1. Capitalize the fist column name 
 2. Set the Species column as a factor
 3. Change the speciec factor levels from 0, 1 and 2 to
-Dojofish, Goldfish and Zebrafish. Hint: use the fct_recode
+Dojofish, Goldfish and Zebrafish. **Hint**: use the `fct_recode`
 function.
 
 ```{r}
@@ -57,18 +57,18 @@ function.
 ```
 
 
-How many fish do we have per species?
-
-```{r}
-
-```
-
-
+# Data Exploration
 
 Make a suitable visualization of the association between
 the dose and the survival time. **Hint:** put Dose on the
 x-axis and survival time on the y-axis. Try to see if
 a straight line can capture the trend in the data.
+
+```{r}
+
+```
+
+How many fish do we have per species?
 
 ```{r}
 
@@ -123,7 +123,7 @@ If there would be a linear relationship in the data,
 the residuals are expected to lie on the y=0 line for
 the entire range of predicted values. 
 
-Based on this, is the 2nd assumption met?
+Based on this explanation, is the 2nd assumption met?
 
 ## Normal Q-Q
 
@@ -145,7 +145,7 @@ horizontal over the entire range of fitted values.
 
 Do you think this assumption is met?
 
-## Log transormation
+# Log transormation
 
 Multiple assumptions are not met, so way not continue by performing
 a linear regression.
@@ -265,7 +265,7 @@ data that we use to build the model on!
 This is not really a problem: we are mainly interested in the slope
 parameter in the given range of datapoints.
 
-## Concluison
+## Conclusion
 
 - On the log scale:
 
