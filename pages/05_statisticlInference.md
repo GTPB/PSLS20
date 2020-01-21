@@ -8,7 +8,7 @@ both before and after treating the patient with a drug named captopril.
 
 In this tutorial on data exploration, you will learn how to deal with data from paired experimental designs.
 
-- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_captopril_half.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_captopril_half.Rmd)
+- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_captorpil_half.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_captorpil_half.Rmd)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/captopril.txt"
 
 
