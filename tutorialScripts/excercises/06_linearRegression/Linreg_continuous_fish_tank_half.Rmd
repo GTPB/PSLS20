@@ -36,7 +36,7 @@ Read the required libraries
 # Import the data
 
 ```{r, message=FALSE}
-poison <- read_csv("poison.csv")
+poison <- read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/poison.csv")
 ```
 
 # Data Exploration
