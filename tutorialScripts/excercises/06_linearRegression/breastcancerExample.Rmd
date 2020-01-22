@@ -56,7 +56,7 @@ Is the expression of the S100A8 gene associated with that of that of the ESR1 ge
 There are many variables in the data, we will plot all variables in a scatterplot matrix using the GGally package.
 
 ```{r}
-# install.packages(GGally)
+#install.packages("GGally")
 library(GGally)
 brca[,-(1:4)] %>% ggpairs()
 ```

@@ -87,7 +87,7 @@ How many birds do we have for each type?
 # in base R, you could use the table function
 ```
 
-Visualize the data
+Visualise the data
 
 ```{r}
 
