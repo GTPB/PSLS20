@@ -1,0 +1,46 @@
+---
+title: "Wrapup 2: Statistical Inference"   
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+# Distribution of the mean?
+- Unbiased
+- SE
+- SD vs SE in function of sample size
+- Normal data
+- Mean vs median
+
+# Confidence interval
+- Interpretation
+- Width?
+
+# Hypothesis testing
+
+- Reseach question
+- Modelling data
+- Translation research question to model parameters
+- H0 vs H1
+- Test statistic
+- One sided vs two sided
+- P-value
+- Errors
+- Accepting vs rejecting H_0
+- Importance of Assumptions?
+
+## Different tests
+- One sample T-test 
+- Paired T-test
+- Two sample T-test
+
+## What if assumptions are not met? 
+- Rank tests?
+- H0 vs H1
+
+## What affects the power of a test? 

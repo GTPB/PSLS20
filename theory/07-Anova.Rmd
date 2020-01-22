@@ -1,5 +1,5 @@
 ---
-title: "7. Analysis of variance" 
+title: "7. Analysis of Variance" 
 author: "Lieven Clement"
 date: "statOmics, Ghent University (https://statomics.github.io)"
 output:
@@ -28,7 +28,7 @@ Researchers study the effect of arachidonic acid on prostacyclin level in blood 
 - medium and 
 - high dose
 
-Each treatment is adopted to 12 rats. They measure the prostacycline levels in blood plasma using an elisa fluorescence measurement.
+Each treatment is adopted to 12 rats. They measure the prostacyclin levels in blood plasma using an elisa fluorescence measurement.
 
 
 ```{r}
@@ -60,7 +60,7 @@ The data in the three groups is approximately Normally distributed with equal va
 \[Y_i \vert \text{group j} \sim N(\mu_j,\sigma^2),\]
 with $j= \text{1, 2, 3}$
 
-## Research question
+## Research Question
 
 Research question can translated in the following hypotheses 
 
@@ -95,7 +95,7 @@ $\rightarrow$ assess $H_0:\mu_1=\mu_2=\mu_3$ with a *single test*.
 
 Correct solution for testing problem: ANalysis Of VAriance (ANOVA)
 
-- We develop the method for 3 groups (prostacycline example)
+- We develop the method for 3 groups (prostacyclin example)
 - Model data with linear model by using dummy variables.
 - 1 dummy variable less than the number of groups. Here we need 2 dummy variables.
 - Generalizing to g groups $g>3$ is trivial (extra dummy variables)
@@ -146,7 +146,7 @@ Interpretation of model parameters:
  3.  $\beta_2$ is effect of group H vs group L
 
 
-We reformulate the model by using $\mu$-notaties:
+We reformulate the model by using $\mu$-notations:
  \vspace{-7pt}
  \begin{eqnarray*}
   Y_{i\vert \text{dose=L}} &=& \beta_0+\epsilon_i = \mu_1+\epsilon_i \\
@@ -284,7 +284,7 @@ axis(at=1:3,labels=c(expression(paste(y[i]," - ",bar(y))),expression(paste(bar(y
 
 ## Anova test
 
-Testen $H_0: \beta_1=\beta_2=0$ via $F$-test.
+Test $H_0: \beta_1=\beta_2=0$ with $F$-test.
 \[
   F = \frac{\text{MST}}{\text{MSE}}
 \]
@@ -316,7 +316,7 @@ anova(model1)
 ```
 
 
-### F-distribution with critical value  ($\alpha$=5%) and observed F-statistiek for prostacyclin example
+### F-distribution with critical value  ($\alpha$=5%) and observed F-statistic for prostacyclin example
 ```{r prostacF, out.width='100%', fig.asp=.8, fig.align='center',echo=FALSE}
 grid <- seq(0,17,.01)
 df1=anova(model1)[1,1]
@@ -406,19 +406,19 @@ When we perform $m$-tests on the $\alpha$ significance level we cannot correctly
 
 ## We show with simulation that naive method does not work
 
-1. We simulate from an ANOVA model with $g=3$ groupen.
+1. We simulate from an ANOVA model with $g=3$ groups.
 2. The means in the ANOVA model are equal to each other, so that $$H_0: \mu_1=\mu_2=\mu_3$$.
 3. For each simulated dataset we conduct $m=3$ pairwise two-sample $t$-test
-4. As soon as one of the $p$-values is below significantie level $\alpha=5\%$, we reject $H_0: \mu_1=\mu_2=\mu_3$ because two means are different according to the  $t$-testen.
+4. As soon as one of the $p$-values is below significance level $\alpha=5\%$, we reject $H_0: \mu_1=\mu_2=\mu_3$ because two means are different according to the  $t$-tests.
 5. We rapport the relative frequency of rejection of the global null hypothesis, i.e. the probability on a type I error  $H_0: \mu_1=\mu_2=\mu_3$.
 
 
 ```{r}
 g<-3 # number of treatments (g=3)
 ni<-12 # number of observations in each group
-n<-g*ni # totaal number observation
+n<-g*ni # total number of observation
 alpha<-0.05 # significance level of individual test 
-N=10000 # number of simulaties
+N=10000 # number of simulations
 set.seed(302) #seed to reproduce results exactly 
 trt=factor(rep(1:g,ni)) #factor
 cnt<-0 #counter for erroneous rejections
@@ -450,11 +450,11 @@ cnt/N
 - When $m>1$ tests are used to make one decision it is necessary to correct for the risk on false positive results (type I errors).
 - Most procedures for multiple testing assume that *all $m$ null hypotheses are true*.
 
-- So one tries to control the*risk on at least 1 false positive* on the **family wise error rate (FWER) $\alpha_F$**, typical $\alpha_F=0.05$.
+- So one tries to control the *risk on at least 1 false positive* on the **family wise error rate (FWER) $\alpha_F$**, typical $\alpha_F=0.05$.
 
 ## Bonferroni correction
 
-When we conduct $m$ independent test each on the significantie level $\alpha$, then
+When we conduct $m$ independent test each on the significance level $\alpha$, then
 \begin{eqnarray*}
 \alpha_F&=&\text{P}[\text{at least 1 Type I fout}]\\
 &=&1-(1-\alpha)^m \leq m\alpha
@@ -476,7 +476,7 @@ An alternative approach is to report
 with(prostacyclin,pairwise.t.test(prostac,dose, data = prostacyclin, p.adjust.method="bonferroni"))
 ```
 
-- The conclusions remain similar, except that the FWER is now controled at $\alpha_F=5\%$ and that the $\tilde{p}$-values are larger with a factor 3. 
+- The conclusions remain similar, except that the FWER is now controlled at $\alpha_F=5\%$ and that the $\tilde{p}$-values are larger with a factor 3. 
 
 The same analysis can be conducted in the `multcomp` R package that is developed for multiple testing in linear models.
 ```{r}
@@ -488,7 +488,7 @@ model1.mcp<-glht(model1,linfct=mcp(dose="Tukey"))
 summary(model1.mcp,test=adjusted("bonferroni"))
 ```
 
-Note, that the user has to define costum functions to obtain Bonferonni adjusted confidence intervals. 
+Note, that the user has to define custum functions to obtain Bonferonni adjusted confidence intervals. 
 
 - Bonferonni confidence intervals are not implemented because better methods exist for multiple testing. 
 
@@ -531,7 +531,7 @@ cnt/N
 
 
 - We find an FWER of `r round(cnt/N*100,1)`%, which is slightly conservative. 
-- For simulaties of $g=5$ group the FWER is $4.1\%$ (more conservatieve).
+- For simulations of $g=5$ group the FWER is $4.1\%$ (more conservative).
 
 - By using Bonferroni the probability on at least one false positive result is lower than $< \alpha_F$.
 - Power loss because the real FWER is smaller than 5%
@@ -571,7 +571,7 @@ g<-3 # number of treatments (g=3)
 ni<-12 # number of observations in each group
 n<-g*ni # totaal number observation
 alpha<-0.05 # significance level of individual test 
-N <- 10000 # number of simulaties
+N <- 10000 # number of simulations
 set.seed(302) #seed to reproduce results exactly 
 trt <- factor(rep(1:g,ni)) #factor
 cnt<-0 #counter for erroneous rejections

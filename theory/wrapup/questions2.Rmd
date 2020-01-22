@@ -1,0 +1,21 @@
+---
+title: "Questions Wrapup 2"
+author: "Lieven Clement"
+date: "1/22/2020"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## How confident are you in understanding the difference between the standard deviation and the standard error?
+
+## How confident are you in understanding what the impact is of sample size on the standard error and the width of a confidence interval?
+
+## How confident are you in translating the research question in a null and alternative hypothesis?
+
+## How confident are you in interpreting the output of a one sample t-test and a two-sample t-test in terms of the research question?
+
+## How confident are you in checking the assumptions of a two sample t-test?
+
