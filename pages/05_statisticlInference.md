@@ -10,8 +10,7 @@ In this tutorial on data exploration, you will learn how to deal with data from 
 
 - Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_captorpil_half.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_captorpil_half.Rmd)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/captopril.txt"
-- Solution: [Solution_01](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/solutions/05_statisticalInference/Hypothesis_testing_captorpil.Rmd)
-- [test](./05-statisticalInference.html)
+- Solution: [Solution_1](./05_Hypothesis_testing_captorpil.html)
 
 
 2) The armpit dataset:
@@ -29,7 +28,7 @@ has helped in decreasing the (average) relative abundance Staphylococcus spp. in
 
 - Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_armpit_LC.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_armpit_LC.Rmd)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit.csv"
-- Solution: [Solution_52](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/solutions/05_statisticalInference/Hypothesis_testing_armpit.rmd)
+- Solution: [Solution_2](./05_Hypothesis_testing_armpit.rmd)
 
 
 3) The Shrimps dataset:
@@ -42,7 +41,7 @@ The research question is; is there an effect of the  growth condition on the PCB
 
 - Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_shrimps_half.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_shrimps_half.Rmd)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/shrimps.txt"
-- Solution: [Solution_53](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/solutions/05_statisticalInference/Non_parametric_shrimps.rmd)
+- Solution: [Solution_3](./05_Non_parametric_shrimps.rmd)
 
 
 4) The Cuckoo dataset:
@@ -59,7 +58,7 @@ The researchers want to test if the type of foster parent has an effect on the a
 
 - Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_cuckoo_half.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_cuckoo_half.Rmd)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/Cuckoo.txt"
-- Solution: [Solution_54](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/solutions/05_statisticalInference/Hypothesis_testing_cuckoo.rmd)
+- Solution: [Solution_4](./05_Hypothesis_testing_cuckoo.rmd)
 
 
 
