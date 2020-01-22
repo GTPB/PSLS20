@@ -15,7 +15,7 @@ As an exercise on linear regression, we will analyse the FEV dataset.
 # The FEV dataset
 
 The FEV, which is an acronym for forced expiratory volume,
-is a measure of how much air a person can exhale (in liters) 
+is a measure of how much air a person can exhale (in litres) 
 during  a forced breath. In this dataset, the FEV of 606 children,
 between the ages of 6 and 17, were measured. The dataset
 also provides additional information on these children:
@@ -48,7 +48,7 @@ factors.
 2. The `height` variable is written in inches. Assuming that
 this audience is mainly Portuguese/Belgian, inches are hard to
 interpret. Let's add a new column, `height_cm`, with the values
-converted to centimeter using the `mutate` function. 
+converted to centimeters using the `mutate` function. 
 
 ```{r}
 
@@ -57,14 +57,14 @@ converted to centimeter using the `mutate` function.
 
 # Data Exploration
 
-Explore the data. Visualize the FEV for smokers versus non-smokers:
+Explore the data. Visualise the FEV for smokers versus non-smokers:
 
 ```{r}
 
 ```
 
 Did you expect these results? Can you explain what we observe (and why)?
-Additionally, can you provide an even better visualization of the data, taking
+Additionally, can you provide an even better visualisation of the data, taking
 into account more useful explanatory variables with respect
 to the FEV?
 
@@ -74,11 +74,11 @@ to the FEV?
 
 # Analysis
 
-As stated above, the overarching goal of this experiment was to assess the impact of smokking on the FEV of children.
-In principle, we have multipe variables that can affect the FEV. 
+As stated above, the overarching goal of this experiment was to assess the impact of smoking on the FEV of children.
+In principle, we have multiple variables that can affect the FEV. 
 We have, however, not learned yet how to model the response based on multiple
 predictors. To answer this research question properly, we will need some
-more advanced modeling techniques. In the tutorial on `multiple regression`, 
+more advanced modelling techniques. In the tutorial on `multiple regression`, 
 we will learn those and come back to this dataset!
 
 For now, we can already assess other (less complex) research questions:
@@ -97,7 +97,7 @@ For now, we can already assess other (less complex) research questions:
 
 For each of these short research questions, you should:
 
-1. Check the assumptions of the linear model, and analyze the data accordingly.
+1. Check the assumptions of the linear model, and analyse the data accordingly.
 
 2. Interpret the output, focusing on the interpretation of the intercept and the slope parameters of the model.
 

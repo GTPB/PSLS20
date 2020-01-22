@@ -23,22 +23,22 @@ library(tidyverse)
 # Breast cancer dataset
 - Subset of study https://doi.org/10.1093/jnci/djj052
 
-- 32 breast cancer patients with estrogen recepter positieve tumor that had tamoxifen chemotherapy. Variabels:
+- 32 breast cancer patients with estrogen receptor positive tumour that had tamoxifen chemotherapy. Variables:
 
-    - grade: histological grade of tumor (grade 1 vs 3),
+    - grade: histological grade of tumour (grade 1 vs 3),
     - node: lymph node status  (0: not affected, 1: lymph nodes affected and removed),
-    - size: tumor size in cm,
-    - ESR1 and S100A8 gene expression in tumor biopsy (microarray technology)
+    - size: tumour size in cm,
+    - ESR1 and S100A8 gene expression in tumour biopsy (microarray technology)
     
 
-- ESR1 in active in $\pm$ 75% of breast cancer tumors.
+- ESR1 in active in $\pm$ 75% of breast cancer tumours.
 
-- Expression of ER gene positive for treatment: tumor responds to hormone therapy
+- Expression of ER gene positive for treatment: tumour responds to hormone therapy
     - Tamoxifen interacts with ER and modulates gene expression.
 
 - Proteins of S100 family often dysregulated in cancer
 
-      - S100A8 expressie represses immune systeem in tumor en creates an environment of inflamation that promotes tumor growth.
+      - S100A8 expression represses immune system in tumour en creates an environment of inflammation that promotes tumour growth.
 
 
 ```{r}
@@ -56,6 +56,7 @@ Is the expression of the S100A8 gene associated with that of that of the ESR1 ge
 There are many variables in the data, we will plot all variables in a scatterplot matrix using the GGally package.
 
 ```{r}
+# install.packages(GGally)
 library(GGally)
 brca[,-(1:4)] %>% ggpairs()
 ```
@@ -136,12 +137,12 @@ In the residuals vs fitted values plot we observe that the residuals are nicely 
 
 The QQ-plot further shows no substantial deviations from normality. So the assumptions hold. 
 
-We can now assess a formal hyptohesis test to for the linear association between the S100A8 gene and the ESR1 gene expression at the log2 scale. 
+We can now assess a formal hypothesis test to for the linear association between the S100A8 gene and the ESR1 gene expression at the log2 scale. 
 
 We can translate the hypothesis that there is an association between the S100A8 and ESR1 gene expression in terms of the slope of the model, so under the alternative hypothesis $\beta_1$ is different from zero. 
 $$H_1: \beta_1 \neq 0$$
 
-With data we can never prove a hypothesis si we therefore  falsify the opposite: the null hypothesis the there is no association between the expression of both genes: 
+With data we can never prove a hypothesis, so we therefore falsify the opposite: the null hypothesis the there is no association between the expression of both genes: 
 
 $$H_0: \beta_0 = 0$$
 We can do this by adopting a t-test on the slope and by using confidence intervals on the slope. 
