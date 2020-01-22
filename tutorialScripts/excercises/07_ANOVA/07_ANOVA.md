@@ -2,7 +2,7 @@ On the third day of the "Practical Statistics for the Life Sciences (2020)" cour
 
 1) The  lettuce freshweight dataset
 
-In agricultere, it is important to have a high yield of crops. One way to increase the number of leaves (or better, total leaf weigth) 
+In agriculture, it is important to have a high yield of crops. One way to increase the number of leaves (or better, total leaf weight) 
 is by using a fertilizer.  
 
 Here, we consider three types of fertilizers:
