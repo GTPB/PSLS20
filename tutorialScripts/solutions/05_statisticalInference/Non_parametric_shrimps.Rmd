@@ -1,5 +1,5 @@
 ---
-title: "Tutorial 3.1: Non-parametric analysis on the shrimps dataset"   
+title: "Tutorial 5.3: Non-parametric analysis on the shrimps dataset"   
 output:
     html_document:
       code_download: true    
@@ -13,7 +13,7 @@ output:
 To experiment with the concepts of non-paramteric,
 data analysis, we will work with the shrimps dataset.
 
-## The shrimps dataset
+# The shrimps dataset
 
 A dataset on PCBs (Polychlorinated biphenyls) accumulation
 in the adipose tissue of shrimps.
@@ -28,37 +28,44 @@ Load the required R libraries
 
 ```{r}
 library(tidyverse)
-library(ggplot2)
-library(car)
 ```
 
-## Import the data
+# Import the data
 
 ```{r}
-shrimps <- read.table("shrimps.txt")
+shrimps <- read.table("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/shrimps.txt",header = TRUE)
 ```
 
-## Initial exploration of the data
+# Initial exploration of the data
 
 ```{r}
 glimpse(shrimps)
 ```
 
+# Data tidying
+
 ```{r}
-shrimps$group <- factor(shrimps$group)
-table(shrimps$group) ## 18 samples in each group
+shrimps <- shrimps %>%
+  mutate(group = as.factor(group))
 ```
 
-## Goal
+# Goal
 
 The research question is; is there an effect of the 
 growth condition on the PCB concentration in the adipose 
 tissue of shrimps. Note that the PCB concentrations were 
-measured  in pg/g adipose tissue.
+measured in pg/g adipose tissue.
 
-## Data visualization
+# Data visualization
 
-It is always a good idea to first have a quick look at the raw data;
+The first step is to explore the data.
+
+```{r}
+shrimps %>%
+  count(group)
+```
+
+Visualize the data:
 
 ```{r}
 shrimps %>% 
@@ -94,38 +101,21 @@ correlation patterns are expected.
 We can check the second assumption with a QQ-plot.
 
 ```{r}
-PCB_1 <- shrimps %>%
-  filter(group==1) %>%
-  pull(PCB.conc)
-
-PCB_2 <- shrimps %>%
-  filter(group==2) %>%
-  pull(PCB.conc)
-
-par(mfrow=c(1,2)) ## to get both QQ plot next to each other
-car::qqPlot(PCB_1, main="QQ-plot of PCB_1")
-car::qqPlot(PCB_2, main="QQ-plot of PCB_2")
+shrimps %>% 
+  ggplot(aes(sample=PCB.conc)) +
+  geom_qq() +
+  geom_qq_line() + 
+  facet_grid(~group)
 ```
 
 We clearly see that we have strong deviations from
-normality. Many datapoints do not falls nicel within
-the 95% confidence interval around the quantile-quantile
-line (blue dashed line). As such, we may conclude that 
-our data is not normally distributed.
+normality. Many datapoints do not lie near the quantile-quantile
+line. As such, we may conclude that our data is not normally distributed.
+In addition, the visualization with the boxplots shows that the
+variability is quite different between the two groups.
 
-We also need to check if the variances are comparable between
-the two groups. To do so, we may use the var.test function 
-that we saw in the second tutorial.
-
-```{r}
-var.test(PCB_1,PCB_2)
-```
-
-The null hypothesis that the true ratio of variances 
-equals 1 (i.e. that the variances are equal) is rejected.
-
-As such, we are not allowed to continue performing the
-t-test. As an alternative, we may perform a non-parametric
+As such, we are not allowed to perform the t-test. 
+As an alternative, we may perform a non-parametric
 test, such as the Wilcoxon rank-sum test.
 
 ## Wilcoxon rank-sum test
@@ -234,19 +224,6 @@ equal to 27.2%.
 
 This chance is significantly different from 50% on the
 5% significance level (p = 0.01871).
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
