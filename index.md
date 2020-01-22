@@ -107,6 +107,7 @@ and https://raw.githubusercontent.com/GTPB/PSLS20/master/background_material/rma
 9. Nonparametric Statistics:
     - [9.1 Nonparametric Statistics: Wilcoxon-Mann-Whitney test](pages/09-NonparametericStatistics-WilcoxonMannWhitney.html)
     - [9.2 Nonparametric Statistics: Kruskal Wallis test](pages/09-NonparametericStatistics-KruskalWallis.html)
+    - [Tutorial](pages/09_kruskalWallis.md)
 10. [Multiple Regression](pages/10-MultipleRegression.html)
 11. [Categorical Data Analysis](pages/11-categoricalDataAnalysis.html)
 
