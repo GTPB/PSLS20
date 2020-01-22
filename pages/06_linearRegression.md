@@ -23,7 +23,7 @@ In this dataset, the FEV of 606 children, between the ages of 6 and 17, were mea
 these children: their `age`, their `height`, their `gender` and, most importantly, whether the child is a smoker or a non-smoker.
 The goal of this experiment was to find out whether or not smoking has an effect on the FEV of children.
 
-- Exercise: 
+- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/06_linearRegression/Linreg_FEV_halfRmd.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/06_linearRegression/Linreg_FEV_halfRmd.Rmd)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/fev.txt"
 
 
