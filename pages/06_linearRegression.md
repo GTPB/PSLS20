@@ -1,6 +1,8 @@
 On the third day of the "Practical Statistics for the Life Sciences (2020)" course, we will have three tutorials on data linear regression, based on different datasets:
 
-1) Add dataset 1
+1) Breast cancer dataset
+
+- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/06_linearRegression/breastcancerExample.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/06_linearRegression/breastcancerExample.Rmd)
 
 2) The fish dataset:
 
