@@ -2,7 +2,7 @@ On the third day of the "Practical Statistics for the Life Sciences (2020)" cour
 
 1) The  lettuce freshweight dataset
 
-In agricultere, it is important to have a high yield of crops. One way to increase the number of leaves (or better, total leaf weigth) 
+In agriculture, it is important to have a high yield of crops. One way to increase the number of leaves (or better, total leaf weight) 
 is by using a fertilizer.  
 
 Here, we consider three types of fertilizers:
@@ -40,6 +40,7 @@ The researchers want to test if the type of foster parent has an effect on the a
 
 - Exercise: ["https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/07_ANOVA/ANOVA_cuckoo_half.Rmd"]("https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/07_ANOVA/ANOVA_cuckoo_half.Rmd")
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/Cuckoo.txt"
+
 
 
 3) The NHANES dataset:
