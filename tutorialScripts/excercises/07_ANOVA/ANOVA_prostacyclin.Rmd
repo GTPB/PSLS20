@@ -18,7 +18,6 @@ knitr::opts_chunk$set(include = TRUE, comment = NA, echo = TRUE,
 library(tidyverse)
 ```
 
-
 # Prostacyclin Example
 
 Researchers study the effect of arachidonic acid on prostacyclin level in blood plasma. They use 3 different concentrations of arachidonic acid: 
@@ -27,14 +26,22 @@ Researchers study the effect of arachidonic acid on prostacyclin level in blood 
 - medium and 
 - high dose
 
-Each treatment is adopted to 12 rats. They measure the prostacycline levels in blood plasma using an elisa fluorescence measurement.
+Each treatment is adopted to 12 rats. They measure the prostacyclin levels in blood plasma using an ELOSA fluorescence measurement.
 
 
 ```{r}
 prostacyclin <- read_tsv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/prostacyclin.txt")
-prostacyclin$dose <- as.factor(prostacyclin$dose)
+```
+
+```{r}
 head(prostacyclin)
 ```
+
+```{r}
+prostacyclin <- prostacyclin %>%
+  mutate(dose = as.factor(dose))
+```
+
 
 ##Data exploration
 
@@ -91,6 +98,7 @@ Based on the anova analysis we can reject the omnibus null hypothesis that there
 Next we continue to assess for which treatment groups the means are different using a posthoc analysis with the Tukey method to correct for multiple testing. 
 
 ```{r}
+#install.packages("multcomp")
 library(multcomp)
 model1.mcp<-glht(model1,linfct=mcp(dose="Tukey"))
 summary(model1.mcp)

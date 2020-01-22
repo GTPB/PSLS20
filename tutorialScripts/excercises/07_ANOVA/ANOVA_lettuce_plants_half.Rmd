@@ -16,7 +16,7 @@ In agriculture, it is important to have a high yield
 of crops. For lettuce plants, plants with many leaves are known to be preferred by the consumers.
 
 One way to increase the number of leaves (or better, total
-leaf weigth) is by using a fertilizer. Recently, there is 
+leaf weight) is by using a fertilizer. Recently, there is 
 a tendency to rely more on natural fertilizers, such as compost.
 Near Ghent, the institute of research for agriculture and fishery is testing new, natural fertilization methods. One of these new fertilizers is called biochar. Biochar is a residual product from pyrolysis, a process in which biomass is burned under specific conditions (such as high pressure) in order to produce energy. Biochar is similar to charcoal, but has some very useful properties, such as retaining water in the soil. It also has a positive influence on the soil microbiome.
 
@@ -58,7 +58,8 @@ glimpse(lettuce)
 
 ```{r}
 ## treatment to factor
-lettuce$treatment <- as.factor(as.character(lettuce$treatment))
+lettuce <- lettuce %>%
+  mutate(treatment = as.factor(treatment))
 ```
 
 
@@ -66,7 +67,8 @@ lettuce$treatment <- as.factor(as.character(lettuce$treatment))
 
 ```{r}
 ## Count the number of observations per treatment
-table(lettuce$treatment)
+lettuce %>%
+  count(treatment)
 ```
 
 Make a plots to explore the data
@@ -79,5 +81,5 @@ Interpret the boxplots!
 1. How will you model the data. 
 2. Translate the research question into parameters of the model. 
 3. Check the assumptions.
-4. If the assumptions are fullfiled you can fit model
+4. If the assumptions are fulfilled you can fit model
 5. Further assess differences between the treatments in a posthoc analysis if applicable.  

@@ -13,7 +13,7 @@ output:
 In a previous tutorial, we analysed the dataset on
 lettuce plants with ANOVA (see ANOVA_lettuce_plants_half.rmd in chapter 7). 
 However, it was not clear if all the assumptions of ANOVA were met. 
-Indeed, with only 7 datapoints per group, it is very hard to assess
+Indeed, with only 7 values per group, it is very hard to assess
 the assumptions of normality and equal variances.
 
 Therefore, we will re-analyse the dataset by using the
@@ -85,7 +85,7 @@ Interpret the visualization!
 In the analysis in chapter 7 (ANOVA_lettuce_plants_half.rmd file),
 we accepted the assumptions for analyzing the data with an ANOVA.
 However, it was not clear if all the assumptions of ANOVA were met. 
-Indeed, with only 7 datapoints per group, it is very hard to assess
+Indeed, with only 7 values per group, it is very hard to assess
 the assumptions of normality and equal variances.
 
 Therefore, we will re-analyse the dataset by using the
@@ -128,7 +128,7 @@ Formulate a correct null and alternative hypothesis for the Wilcoxon test post-h
 What do you observe?
 
 ```
-## Alternative: caluclate the p-value for each treatment combination with wilcoxon_test
+## Alternative: caluculate the p-value for each treatment combination with wilcoxon_test
 
 treatments <- levels(lettuce$treatment)
 freshweight <- lettuce$freshweight
