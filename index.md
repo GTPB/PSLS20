@@ -80,10 +80,10 @@ source("https://raw.githubusercontent.com/GTPB/PSLS20/master/install.R")
 [![Binder](http://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/GTPB/PSLS20/master?urlpath=rstudio)
 
 - To get familiar with most important concepts in working with R and Rmarkdown, you may download the respective cheat sheets:
-https://raw.githubusercontent.com/GTPB/PSLS20/master/background_material/r-cheatsheet.pdf 
+https://raw.githubusercontent.com/GTPB/PSLS20/master/background_material/r-cheatsheet.pdf
 and https://raw.githubusercontent.com/GTPB/PSLS20/master/background_material/rmarkdown-cheatsheet.pdf
 
-- All data can be downloaded locally through 
+- All data can be downloaded locally through
 [data](assets/data.zip)
 
 
@@ -109,8 +109,7 @@ and https://raw.githubusercontent.com/GTPB/PSLS20/master/background_material/rma
     - [9.1 Nonparametric Statistics: Wilcoxon-Mann-Whitney test](pages/09-NonparametericStatistics-WilcoxonMannWhitney.html)
     - [9.2 Nonparametric Statistics: Kruskal Wallis test](pages/09-NonparametericStatistics-KruskalWallis.html)
     - [Tutorial](pages/09_kruskalWallis.md)
-10. [Multiple Regression](pages/10-MultipleRegression.html)
-11. [Categorical Data Analysis](pages/11-categoricalDataAnalysis.html)
+10. [Categorical Data Analysis](pages/10-categoricalDataAnalysis.html)
 
 ---
 
