@@ -1,0 +1,176 @@
+---
+title: "3. Breastcancer Gene Expression Study: KPNA2 gene"
+author: "Lieven Clement"
+date: "statOmics, Ghent University (https://statomics.github.io)"
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+#Background
+Background: Histologic grade in breast cancer provides clinically important prognostic information. Researchers examined whether histologic grade was associated with gene expression profiles of breast cancers and whether such profiles could be used to improve histologic grading. In this tutorial we will assess the association between histologic grade and the expression of the KPNA2 gene that is known to be associated with poor BC prognosis.
+The patients, however, do not only differ in the histologic grade, but also on their lymph node status. 
+The lymph nodes were not affected (0) or chirugically removed (1).
+
+
+#Data analysis
+##Import KPNA2 data in R
+```{r}
+kpna2 <- read.table("kpna2.txt",header=TRUE)
+head(kpna2)
+nrow(kpna2)
+```
+
+##Transform the variable grade and node to a factor
+```{r}
+kpna2$grade=as.factor(kpna2$grade)
+kpna2$node=as.factor(kpna2$node)
+```
+
+##Data exploration
+Histological grade and lymph node status can both have an effect on the KPNA2 gene. Moreover, it is also possible that the effect of the histological grade changes according to the lymph node status. Therefore, we plot the gene expression for each grade x node combination. 
+We can use the `interaction` function for this purpose.
+
+```{r}
+kpna2 %>% 
+  ggplot(aes(x=node,y=gene,color=grade)) %>%
+  geom_boxplot(outlier.shape = NA) %>%
+  geom_point(position="jitter")
+```
+
+The plot suggests
+
+- an effect of the histological grade
+- an effect of node status
+- The differential expression associated to grade seems to differ according to the lymph node status (interaction) 
+- Mean variance relation?
+
+##Model
+Histologic grade and lymph node status can have an effect on the kpna2 gene. Moreover, it is also possible that the differential expression due to histological grade is different in patients that have unaffected lymph nodes and patients for which the lymph nodes had to be removed. Hence, we will have to model the gene expression by using main effects for grade, node and a grade x node interaction. 
+ 
+```{r}
+#Model with main effects for histological grade and node and grade x node interaction
+fit=lm(gene~grade*node,data=kpna2)
+plot(fit)
+```
+
+The variance seems to increase with the mean. 
+The QQ-plot of the residuals shows deviations from normality or some outliers.
+
+We will first log transform the data.
+
+
+```{r}
+kpna2$lgene <- log2(kpna2$gene) 
+fit=lm(lgene~grade*node,data=kpna2)
+plot(fit)
+```
+
+- The variance is now more or less equal for every treatment x node combination. 
+- The QQ-plot of the residuals shows no deviations from normality.
+
+
+```{r}
+library(car)
+Anova(fit,type="III")
+```
+
+The output shows that there is a very significant interaction ($p=$ `r format(Anova(fit,type="III")["grade:node",4],digits=2)`). Hence, the association of the histological grade on the gene expression differs according to the lymph node status and vice versa.
+The researchers are therefore interested in studying and reporting on the following hypotheses:
+
+- Is the KPNA2 expression on average different between grade 3 and grade 1 tumors from patients with unaffected lymph nodes (by testing $H_0: \log_2{FC}_{g3n0-g1n0}=0\text{ vs }H1: \log_2{FC}_{g3n0-g1n0}\neq 0$)
+- Is the KPNA2 expression on average different between grade 3 and grade 1 tumors from patients with affected lymph nodes (by testing $H_0: \log_2{FC}_{g3n1-g1n1}=0\text{ vs }H1: \log_2{FC}_{g3n1-g1n1}\neq 0$)
+
+- Is the KPNA2 expression on average different in grade 1 tumors of patients with affected and patients with unaffected lymph nodes (by testing $H_0: \log_2{FC}_{g1n1-g1n0}=0\text{ vs }H1: \log_2{FC}_{g1n1-g1n0}\neq 0$)
+
+- Is the KPNA2 expression on average different in grade 3 tumors of patients with affected and patients with unaffected lymph nodes (by testing $H_0: \log_2{FC}_{g3n1-g3n0}=0\text{ vs }H1: \log_2{FC}_{g3n1-g3n0}\neq 0$)
+
+- Is the fold change of the KPNA2 gene between grade 3 and grade 1 different according to the lymph node status and vice versa (tested already by assessing the interaction: $H_0: \log_2{FC}_{g3n0-g1n0}=\log_2{FC}_{g3n1-g1n1} \text{ vs }H1:\log_2{FC}_{g3n0-g1n0}\neq\log_2{FC}_{g3n1-g1n1}$).
+
+
+
+#Interpretation of model parameters and statistical tests
+```{r}
+summary(fit)
+#Calculate confidence intervals for parameters of model
+CIfit <- confint(fit)
+#log_2 FC between g3n0-g1n0, g1n1-g1n0
+#and log_2 difference in FC g3n1-g1n1 and FC g3n0-g1n0
+CIfit
+#Transform parameters and the CI back to the original scale
+2^fit$coef
+2^CIfit
+2^-fit$coef["grade3:node1"]
+2^-CIfit["grade3:node1",]
+```
+
+We model the log$_2$-transformed intensities with the following model: 
+$$
+y=\beta_0+\beta_{g3}x_{g3}+\beta_{n1}x_{n1}+\beta_{g3n1}x_{g3}x_{n1},
+$$
+
+with $\beta_0$ the intercept, $\beta_{g3}$ the main effect for grade, $x_{g3}$ a dummy variable for grade which is 0 for the control treatment in the absence of grade and 1 for the treatment with grade, $\beta_{n1}$ the main effect for node, $x_{n1}$ a dummy variable that is 0 for the measurements of patients with unaffected lymph nodes and 1 for patients for which the lymph nodes were removed and $\beta_{g3n1}$ the interaction effect between grade and node. 
+To ease the interpretation of the parameters, $\log_2$ transformed geometric mean intensities are given for each treatment group as well as corresponding contrasts between treatments, which have an interpretation in terms of $\log_2$ transformed fold changes (FC). 
+
+- $\log_2\hat \mu_{g1n0}=\hat\beta_0$, $\log_2 \hat\mu_{g3n0}=\hat\beta_0+\hat\beta_{g3}$ --> $\log_2 \widehat{FC}_{g3n0-g1n0}=\hat\beta_{g3}$
+
+- $\log_2 \hat \mu_{g1n1}=\hat\beta_0+\hat\beta_{n1}$, $\log_2 \hat \mu_{g3n1}=\hat\beta_0+\hat\beta_{g3}+\hat\beta_{n1}+\hat\beta_{g3n1}$ --> $\log_2 \widehat{FC}_{g3n1-g1n1}=\hat \beta_{g3} +\hat\beta_{g3n1}$
+
+- Similarly, $\log_2 \widehat{FC}_{g1n1-g1n0}=\hat\beta_{n1}$, $\log_2 \widehat{FC}_{g3n1-g3n0}=\hat\beta_{n1}+\hat\beta_{g3n1}$ 
+
+- $\log_2\frac{\widehat{FC}_{g3n1-g1n1}}{\widehat{FC}_{g3n0-g1n0}}=\log_2\frac{\widehat{FC}_{g3n1-g3n0}}{\widehat{FC}_{g1n1-g1n0}}=\hat\beta_{g3n1}$
+
+with $\log_2\hat \mu_{g1n0}$, $\log_2\hat \mu_{g3n0}$, $\log_2\hat \mu_{g1n1}$ and $\log_2\hat \mu_{g3n1}$ the estimated mean $\log_2$ transformed intensity for patients with grade 1 and node 0 status, grade 3 and node 0 status, grade 1 and node 1 status and grade 3 and node 1 status, respectively. With $\log_2 \widehat{FC}_{b-a}$ we indicate $\log_2$ transformed fold change estimates between treatment b and treatment a, i.e. $\log_2 \widehat{FC}_{b-a}=\log_2 \hat\mu_{b}-\log_2 \hat\mu_a=\log_2 \frac{\hat\mu_{b}}{\hat\mu_{a}}$.
+
+The model immediately provides statistical tests for assessing the significance of fold changes between grade 3 and grade 1 for patients with unaffected lymph nodes (n=0) $\log_2 {FC}_{g3n0-g1n0}$,  fold changes between the grade 1-node 1 patients and grade 1- node 0 patients $\log_2 {FC}_{g1n1-g3n0}$ and for differences in fold change related to histological grade for node 1 patients and node 0 patients. $\log_2\frac{{FC}_{g3n1-g1n1}}{{FC}_{g3n0-g1n0}}$, the interaction term. 
+
+Interpretation of the model parameters and the statistical tests in the model output:
+
+- The geometric mean intensity for grade 1 patients with unaffected lymph nodes equals $\exp(\hat \beta_0)$=
+`r round(2^fit$coef["(Intercept)"],2)`.
+- The association between the KPNA2 expression and hystological grade effect in patients with unaffected lymph nodes is extremely significant (p<<0.001) and the association  with lymph node effect in grade 1 patients is very significant ($p=$ `r format(summary(fit)$coef["node1",4],digits=2)`). 
+	- When lymph nodes are unaffected, the expression is on average `r round(2^fit$coef["grade3"],2)` times higher for patients with histological grade 3 than patients with histological grade 1 (95% CI [`r round(2^CIfit["grade3",],2)`]). 
+	- The gene expression in histological grade 1 patients with affected lymph nodes is on average `r round(2^fit$coef["node1"],2)` times higher than for grade 1 patients with unaffected lymph nodes (95% CI [`r round(2^CIfit["node1",],2)`]).
+- The difference in association in gene expression and the histological grade in patients with and without affected lymph nodes is very significant (p=0.007). The fold change corresponding to histological grade is on average `r round(1/2^fit$coef["grade3:node1"],2)` times lower in patients with affected lymph nodes as compared to patients with unaffected lymph node (95% CI [`r round(1/2^CIfit["grade3:node1",2:1],2)`]).
+
+
+For the remaining hypothesis of interest we will have to define contrasts: linear combinations of the model parameters and evaluate the contrast with the multcomp package.
+
+# Assessing all hypothesis of interest
+We can assess all contrasts of interest using the multcomp package. This will also allow us to correct for multiple testing, since we assess multiple hypotheses to answer the relevant research question.
+
+
+- $H_0: \log_2{FC}_{g3n0-g1n0}= \beta_{g3}=0$ $\rightarrow$ "grade3 = 0"
+- $H_0: \log_2{FC}_{g3n1-g1n1}= \beta_{g3} + \hat\beta_{g3n1}=0$ $\rightarrow$ "grade3+grade3:node1 = 0"
+- $H_0: \log_2{FC}_{g1n1-g1n0}= \beta_{n1}$  $\rightarrow$ "node1 = 0"
+- $H_0: \log_2{FC}_{g3n1-g1n1}= \beta_{n1} + \hat\beta_{g3n1}=0$ $\rightarrow$ "node1+grade3:node1 = 0"
+- $H_0: \log_2{FC}_{g3n1-g1n1} - \log_2{FC}_{g3n0-g1n0} = \hat\beta_{g3n1}=0$, note that the latter hypothesis is also equivalent to $H_0: \log_2{FC}_{g3n1-g3n0} - \log_2{FC}_{g1n1-g1n0} = \hat\beta_{g3n1}=0$ $\rightarrow$ "grade3:node1 = 0"
+
+
+
+```{r}
+library(multcomp)
+fitGlht<- glht(fit, linfct = c("grade3 = 0","grade3+grade3:node1 = 0","node1 = 0","node1+grade3:node1 = 0","grade3:node1 = 0"))
+summary(fitGlht)
+confint(fitGlht)
+2^confint(fitGlht)$confint
+2^-confint(fitGlht)$confint["grade3:node1",]
+```
+
+#Conclusion
+
+- There is an extremely significant association between the KPNA2 expression and hystological grade in patients with unaffected as well as in patients with affected lymph nodes (both p<<0.001). 
+  When lymph nodes are unaffected, the expression is on average `r round(2^confint(fitGlht)$confint["grade3",1],2)` times higher for patients with histological grade 3 than patients with histological grade 1 (95% CI [`r round(2^confint(fitGlht)$confint["grade3",2:3],2)`]). 
+  For patients with affected lymph nodes the expression is on average `r round(2^confint(fitGlht)$confint["grade3 + grade3:node1",1],2)` times higher for patients with histological grade 3 tumors than patients with histological grade 1 tumors (95% CI [`r round(2^confint(fitGlht)$confint["grade3 + grade3:node1",2:3],2)`]). 
+
+- The association between the KPNA2 expression with the lymph node status in grade 1 patients is very significant ($p=$ `r format(summary(fitGlht)$test$pvalues[3],digits=2)`).  
+The KPNA2 expression in histological grade 1 patients with affected lymph nodes is on average `r round(2^confint(fitGlht)$confint["node1",1],2)` times higher than for grade 1 patients with unaffected lymph nodes (95% CI [`r round(2^confint(fitGlht)$confint["node1",2:3],2)`]). 
+In grade 3 patients, however, this association is not significant ($p=$ `r format(summary(fitGlht)$test$pvalues[4],digits=2)`, 95% CI [`r round(2^confint(fitGlht)$confint["node1 + grade3:node1",2:3],2)`] ).
+
+- There is also a significant interaction between the hystological grade and the lymph node status. So the association between the KPNA2 expression and the histological grade depends on the lymph node status and vice versa ($p=$ `r format(summary(fitGlht)$test$pvalues[5],digits=2)`). The fold change corresponding to histological grade is on average `r round(1/2^confint(fitGlht)$confint["grade3:node1",1],2)` times lower in patients with affected lymph nodes as compared to patients with unaffected lymph node (95% CI [`r round(1/2^confint(fitGlht)$confint["grade3:node1",3:2],2)`]). (Similarly, the fold change corresponding to the node status is on average `r round(1/2^confint(fitGlht)$confint["grade3:node1",1],2)` times lower in patients with grade 3 tumors as compared to patients with grade 1 tumors, 95% CI [`r round(1/2^confint(fitGlht)$confint["grade3:node1",3:2],2)`])
+
