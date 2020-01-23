@@ -317,3 +317,7 @@ Without the location-shift assumption the conclusion in terms of the probabilist
 There is a significant difference in the distribution of the cholesterol concentration of hart patients two days upon a stroke and that of healthy subject (($p=$ `r format(wTest$p.value,digits=3)`). It is more likely to observe higher cholesterol levels for hart patients then for healthy subjects. The point estimator for this probability is `r probInd*100`%.
 
 
+---
+
+# [Home](https://gtpb.github.io/PSLS20/) {-}
+s

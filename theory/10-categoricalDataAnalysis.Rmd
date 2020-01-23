@@ -917,3 +917,9 @@ data.frame(grid=seq(min(beetles$dose),max(beetles$dose),.1)) %>%
   geom_text(aes(x=dose%>%as.character%>%as.double,y=status%>%as.character%>%as.double,label=Freq),beetlesTab%>%filter(status==0)) +
 geom_text(aes(x=dose%>%as.character%>%as.double,y=status%>%as.character%>%as.double,label=Freq),beetlesTab%>%filter(status==1))
 ```
+
+
+
+---
+
+# [Home](https://gtpb.github.io/PSLS20/) {-}
