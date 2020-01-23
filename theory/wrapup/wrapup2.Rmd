@@ -44,3 +44,7 @@ output:
 - H0 vs H1
 
 ## What affects the power of a test? 
+
+---
+
+# [Home](https://gtpb.github.io/PSLS20/) {-}

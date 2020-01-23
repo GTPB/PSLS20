@@ -617,3 +617,8 @@ The average prostacyclin concentration is higher in the high dose group than in 
 - The average concentration in the high dose group is `r round(confint(model1.mcp)$confint[2,1],1)`ng/ml (95% CI [`r paste(round(confint(model1.mcp)$confint[2,2:3],1),collapse=",")`]ng/ml) and `r round(confint(model1.mcp)$confint[3,1],1)`ng/ml (95% BI [`r paste(round(confint(model1.mcp)$confint[3,2:3],1),collapse=",")`]ng/ml) higher than in the low and middle dose group, respectively.
 - The difference in average prostacyclin concentration between the moderate and low dose group is not significant  (p=`r round(summary(model1.mcp)$test$pvalues[1],2)`).
 (All p-values and confidence intervals for post-hoc tests are corrected for multiple testing using the Tukey method).
+
+
+---
+
+# [Home](https://gtpb.github.io/PSLS20/) {-}

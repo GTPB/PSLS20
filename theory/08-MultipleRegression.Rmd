@@ -244,13 +244,13 @@ plot(lmVWS)
 
 The previous model is additive because the contribution of the cancer volume on lpsa does not depend on the height of the prostate weight and the svi status.
 
-The slope for lcavol does not depend on log prostaat weight and svi. 
+The slope for lcavol does not depend on log prostate weight and svi. 
 
 $$
 \beta_0 + \beta_v (x_{v}+\delta_v) + \beta_w x_{w} +\beta_s x_{s} - \beta_0 - \beta_v x_{v} - \beta_w x_{w} -\beta_s x_s = \beta_v \delta_v
 $$
 
-The svi status and the log-prostaatgewicht ($x_w$) do not influence the contribution of the log-tumor volume ($x_v$) to the average log-PSA and vice versa. 
+The svi status and the log-prostategewicht ($x_w$) do not influence the contribution of the log-tumor volume ($x_v$) to the average log-PSA and vice versa. 
 
 ---
 
@@ -777,7 +777,12 @@ dfbetasPlots(lmVWS_IntVW)
 ---
 
 ```{r out.width='100%',fig.align='center', message=FALSE, echo=FALSE}
-boxplot(exp(prostate$lweight),ylab="Prostaatgewicht (g)")
+boxplot(exp(prostate$lweight),ylab="Prostate Weight (g)")
 ```
+
+
+---
+
+# [Home](https://gtpb.github.io/PSLS20/) {-}
 
 

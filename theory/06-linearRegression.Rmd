@@ -591,9 +591,9 @@ exp(fem$DirectChol%>%log%>%mean + c(-1,1)* qnorm(0.975) * (fem$DirectChol%>%log%
 - prediction interval 
     
 ```{r}
-lmChol <- lm(DirectChol %>% log~1,data=fem)
+lmChol <- lm(DirectChol %>% log2~1,data=fem)
 predInt <- predict(lmChol,interval="prediction",newdata=data.frame(noPred=1))
-round(predInt %>% exp,2)
+round(2^predInt,2)
 ```
 
 
@@ -607,15 +607,15 @@ We will do the same thing for the small sample size of 10 patients.
 set.seed(1)
 fem10<- NHANES %>% filter(Gender=="female"&!is.na(DirectChol)) %>% sample_n(size=10) 
 
-exp(fem10$DirectChol%>%log%>%mean + c(-1,1)* qnorm(0.975) * (fem10$DirectChol%>%log%>%sd))
+2^(fem10$DirectChol%>%log2%>%mean + c(-1,1)* qnorm(0.975) * (fem10$DirectChol%>%log2%>%sd))
 ```
 
 - Prediction interval
     
 ```{r}
-lmChol10 <- lm(DirectChol %>% log~1,data=fem10)
+lmChol10 <- lm(DirectChol %>% log2~1,data=fem10)
 predInt10 <- predict(lmChol10,interval="prediction",newdata=data.frame(noPred=1))
-round(predInt10 %>% exp,2)
+round(2^predInt10,2)
 ```
 
 - Note, that the PI now captures uncertainty in parameter estimators (mean and standard error).
@@ -852,3 +852,8 @@ for(i in 1:9) plot(rnorm(32)~node,brca,ylab="iid N(0,1)")
     - Because we were not able to fix the  ESR1-expression experimentally we cannot conclude that a higher ESR1-expression causes a decrease in the S100A8-expression.
     - We can only conclude that there is a negative association.
     - To assess the impact of a gene on other gene typically knockout mutants are used in the lab.  
+
+
+---
+
+# [Home](https://gtpb.github.io/PSLS20/) {-}

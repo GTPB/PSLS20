@@ -711,3 +711,8 @@ text(1.5,5,"EXP. DESIGN (1)",col="black",cex=1.2)
 text(8.5,5,"ESTIMATION &\nINFERENCE (3)",col="black",cex=1.2)
 text(7.5,.5,"DATA EXPLORATION &\nDESCRIPTIVE STATISTICS (2)",col="black",cex=1.2)
 ```
+
+
+---
+
+# [Home](https://gtpb.github.io/PSLS20/) {-}

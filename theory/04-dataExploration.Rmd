@@ -602,3 +602,9 @@ NHANES%>%
   na.exclude %>%
   cor(method="spearman")
 ```
+
+
+---
+
+# [Home](https://gtpb.github.io/PSLS20/) {-}
+

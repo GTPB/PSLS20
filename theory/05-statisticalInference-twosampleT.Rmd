@@ -256,3 +256,8 @@ t.test(rel~trt,data=ap)
 The result of an $\alpha$-level t-test is equivalent with comparing the effect size under $H_0$ with the $1-\alpha$ CI. 
 
 An effect can be extremely statistically significant, but scientifically irrelevant. With a CI you will spot this. 
+
+
+---
+
+# [Home](https://gtpb.github.io/PSLS20/) {-}

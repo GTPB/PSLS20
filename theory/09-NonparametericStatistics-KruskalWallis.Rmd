@@ -175,3 +175,8 @@ Because there are doubts on the location-shift model we draw our conclusions in 
 - There are no significant differences in the distributions of the comit-lengths among the treatment with the different DMH concentrations ($p=$ `r paste(format(range(pairWilcox$p.value[,-1],na.rm=TRUE),digit=2),collapse="-")`). 
 - DMH shows already genotoxic effects at low dose. 
 - (Alle paarswise tests are gecorrected for multiple testing using Holm's methode).
+
+
+---
+
+# [Home](https://gtpb.github.io/PSLS20/) {-}

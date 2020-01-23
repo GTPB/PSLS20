@@ -721,5 +721,9 @@ qnorm(0.975,mean=xBar10,sd=sdBar10) %>% .^2
 | $\sigma^2$ | $S^2$ or $\hat \sigma$|
         
       
+
+---
+
+# [Home](https://gtpb.github.io/PSLS20/) {-}
     
     
