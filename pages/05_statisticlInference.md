@@ -10,7 +10,7 @@ In this tutorial on data exploration, you will learn how to deal with data from 
 
 - Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_captorpil_half.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_captorpil_half.Rmd)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/captopril.txt"
-- Solution: [Solution_1](./05_Hypothesis_testing_captorpil.html)
+- [Solution_1](./05_Hypothesis_testing_captorpil.html)
 
 
 2) The armpit dataset:
