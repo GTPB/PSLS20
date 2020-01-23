@@ -1,0 +1,28 @@
+---
+title: "Wrapup 3: linear model & anova"   
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+# Linear model
+- Research question
+- Model
+- Interpretation
+- Assumptions 
+- Dummy
+- Prediction interval
+
+# Anova
+- Research question
+- Model
+- Interpretation
+- Assumptions
+- Multiple testing
+- Nonparameteric test
+

@@ -1,7 +1,7 @@
 ---
-title: "Questions Wrapup 2"
+title: "Questions Wrapup 3: Linear Model & ANOVA"
 author: "Lieven Clement"
-date: "1/22/2020"
+date: "1/23/2020"
 output: ioslides_presentation
 ---
 
@@ -9,13 +9,12 @@ output: ioslides_presentation
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## How confident are you in understanding the difference between the standard deviation and the standard error?
+## 1. How confident are you in translating the research question into a parameter of the simple linear model with one continuous predictor?
 
-## How confident are you in understanding what the impact is of sample size on the standard error and the width of a confidence interval?
+## 2. How confident are you in interpreting the results of the simple linear model with one continuous predictor in terms of the research question?
 
-## How confident are you in translating the research question in a null and alternative hypothesis?
+## 3. How confident are you in interpreting a dummy variable in a linear model?
 
-## How confident are you in interpreting the output of a one sample t-test and a two-sample t-test in terms of the research question?
+## 4. How confident are you in assessing the assumptions of Anova?
 
-## How confident are you in checking the assumptions of a two sample t-test?
-
+## 5. How confident are you in understanding the need for multiple testing?

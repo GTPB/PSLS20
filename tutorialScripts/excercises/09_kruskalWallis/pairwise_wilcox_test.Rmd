@@ -1,0 +1,56 @@
+---
+title: "Pairwise testing wilcoxon"
+author: "Lieven Clement"
+date: "statOmics, Ghent University (https://statomics.github.io)"
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+
+```{r}
+library(tidyverse)
+library(coin)
+```
+
+```{r}
+pairwise_wilcox_test<- function (x, g, p.adjust.method = p.adjust.methods, 
+    ...) 
+{
+    require(coin)
+    p.adjust.method <- match.arg(p.adjust.method)
+    DNAME <- paste(deparse(substitute(x)), "and", deparse(substitute(g)))
+    g <- factor(g)
+    dat<-data.frame(x=x,g=g)
+    METHOD <- "Wilcoxon rank sum test"
+    compare.levels <- function(i, j) {
+        wilcox_test(x~g,data=dat[as.integer(g)%in%c(i,j),], ...) %>% pvalue
+    }
+    PVAL <- pairwise.table(compare.levels, levels(g), p.adjust.method)
+    ans <- list(method = METHOD, data.name = DNAME, p.value = PVAL, 
+        p.adjust.method = p.adjust.method)
+    class(ans) <- "pairwise.htest"
+    ans
+}
+```
+
+# Lettuce Example
+```{r}
+lettuce<-read_csv("~/Dropbox/gitCollaborations/PSLS20/data/freshweight_lettuce.txt")
+lettuce$treatment<-as.factor(lettuce$treatment)
+lettuce$treatment<-relevel(lettuce$treatment,"control")
+kruskal_test(freshweight~treatment,data=lettuce,distribution=approximate(nresample=100000L))
+```
+
+#Pairwise test
+
+For the Wilcoxon test it is feasible to do the test exact: based on all possible permutations. 
+
+```{r}
+pairwise_wilcox_test(lettuce$freshweight,lettuce$treatment, distribution=exact())
+```
