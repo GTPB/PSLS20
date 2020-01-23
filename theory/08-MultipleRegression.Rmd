@@ -34,7 +34,7 @@ $\rightarrow$ Extend simple linear regression to multiple predictors.
 
 ## Prostate cancer example
 
-- Prostaat specific antigen (PSA) and a number of clinical variables for 97 males with radical prostatectomy. 
+- Prostate specific antigen (PSA) and a number of clinical variables for 97 males with radical prostatectomy. 
 - Association of PSA by 
 
     - tumor volume (lcavol)
