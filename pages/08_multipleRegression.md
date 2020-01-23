@@ -2,10 +2,33 @@ On the fourth day of the "Practical Statistics for the Life Sciences (2020)" cou
 
 1) The fish dataset
 
+In this experiments 96 fish (dojofish, goldfish and zebrafish) were placed separately in a tank with two liters of water and
+a certain dose (in mg) of a certain poison EI-43,064. The resistance of the fish a against the poison was measured as the
+amount of minutes the fish survived upon adding the poison (Surv_time, in minutes). Additionally, the weightt of each fish was
+measured.
+
+Yesterday, we have seen that with a simple linear regression model we are several variables that influence the association
+between the survival time of the fish and the poison dosage. By using a multiple linear regression model, we will learn 
+how to account for this.
+
+- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/08_multipleRegression/Multiple_Regression_fish_half.html](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/08_multipleRegression/Multiple_Regression_fish_half.html)
+- Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/poison.csv"
 
 
-- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/07_ANOVA/ANOVA_lettuce_plants_half.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/07_ANOVA/ANOVA_lettuce_plants_half.Rmd)
-- Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/freshweight_lettuce.txt"
+2) The FEV dataset
 
+The FEV, which is an acronym for forced expiratory volume, is a measure of how much air a person can exhale during  a forced 
+breath. In this dataset, the FEV of 606 children, between the ages of 6 and 17, were measured. The dataset also provides 
+additional information on  these children: their `age`, their `height`, their `gender` and, most importantly, whether the 
+child is a smoker or a non-smoker.
+
+The goal of this experiment was to find out whether or not smoking has an effect on the FEV of children.
+
+Yesterday, we already touched upon how the observed effect between smoking and the FEV in a simple linear regression
+model could be confounded with the other variables in the dataset. By using a multiple linear regression model, we will learn 
+how to account for this.
+
+- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/08_multipleRegression/Multiple_regression_FEV_half_2.html](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/08_multipleRegression/Multiple_regression_FEV_half_2.html)
+- Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/fev.txt"
 
 
