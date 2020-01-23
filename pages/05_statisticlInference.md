@@ -42,6 +42,7 @@ The research question is; is there an effect of the  growth condition on the PCB
 - Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_shrimps_half.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_shrimps_half.Rmd)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/shrimps.txt"
 - Solution: [Solution_3](./05_Non_parametric_shrimps.html)
+- [test](./06-linearRegression.html)
 
 
 4) The Cuckoo dataset:
