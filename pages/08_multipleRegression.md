@@ -11,7 +11,7 @@ Yesterday, we have seen that with a simple linear regression model we are severa
 between the survival time of the fish and the poison dosage. By using a multiple linear regression model, we will learn 
 how to account for this.
 
-- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/08_multipleRegression/Multiple_Regression_fish_half.html](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/08_multipleRegression/Multiple_Regression_fish_half.html)
+- Exercise: [exercise_1](./08-Multiple_regression_FEV_half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/poison.csv"
 
 
@@ -28,7 +28,7 @@ Yesterday, we already touched upon how the observed effect between smoking and t
 model could be confounded with the other variables in the dataset. By using a multiple linear regression model, we will learn 
 how to account for this.
 
-- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/08_multipleRegression/Multiple_regression_FEV_half_2.html](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/08_multipleRegression/Multiple_regression_FEV_half_2.html)
+- Exercise: [exercise_2](./Multiple_regression_FEV_half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/fev.txt"
 
 
