@@ -1,4 +1,4 @@
-On the fourth day of the "Practical Statistics for the Life Sciences (2020)" course, we will have two tutorials on ANOVA, based on different datasets:
+On the fourth day of the "Practical Statistics for the Life Sciences (2020)" course, we will have three multiple regression on ANOVA, based on different datasets:
 
 1) The fish dataset
 
@@ -31,5 +31,22 @@ how to account for this.
 
 - Exercise: [exercise_2](./08-Multiple_regression_FEV_half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/fev.txt"
+
+3) The KPNA2 dataset
+
+
+- Exercise: [exercise_2](./08-Multiple_regression_FEV_half.html)
+- Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/fev.txt"
+
+
+
+
+
+
+
+
+
+
+
 
 
