@@ -13,6 +13,7 @@ how to account for this.
 
 - Exercise: [exercise_1](./08-Multiple_Regression_fish_half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/poison.csv"
+- Partial solution: [sol_1](./08-fish_tank_explore.html)
 
 
 2) The FEV dataset
