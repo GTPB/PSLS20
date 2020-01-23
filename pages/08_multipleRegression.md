@@ -35,8 +35,8 @@ how to account for this.
 3) The KPNA2 dataset
 
 
-- Exercise: [exercise_2](./08-Multiple_regression_FEV_half.html)
-- Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/fev.txt"
+- Exercise: [exercise_2](./08-multipleRegression_KPNA2_half.html
+- Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/kpna2.txt"
 
 
 
