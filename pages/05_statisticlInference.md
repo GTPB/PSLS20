@@ -44,8 +44,8 @@ The research question is; is there an effect of the  growth condition on the PCB
 - Solution: [Solution_3](./05_Non_parametric_shrimps.html)
 - [solution_1](./05-Hypothesis_testing_captorpil.html)
 - [solution_2](./05-Hypothesis_testing_armpit.html)
-- [solution_3](./05_Non_parametric_shrimps.html)
-- [solution_4](./05_Hypothesis_testing_cuckoo.html)
+- [solution_3](./05-Non_parametric_shrimps.html)
+- [solution_4](./05-Hypothesis_testing_cuckoo.html)
 
 
 4) The Cuckoo dataset:
