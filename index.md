@@ -110,6 +110,7 @@ and https://raw.githubusercontent.com/GTPB/PSLS20/master/background_material/rma
     - [9.2 Nonparametric Statistics: Kruskal Wallis test](pages/09-NonparametericStatistics-KruskalWallis.html)
     - [Tutorial](pages/09_kruskalWallis.md)
 10. [Categorical Data Analysis](pages/10-categoricalDataAnalysis.html)
+      - [Tutorial](pages/10-categoricalAnalysis.md)
 
 ---
 
