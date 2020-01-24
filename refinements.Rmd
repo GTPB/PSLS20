@@ -1,0 +1,13 @@
+---
+title: "Improvements"
+author: "Lieven Clement"
+date: "1/23/2020"
+output: html_document
+---
+
+- Wrapup based on examples. 
+- Less time in teaching/instruction more focus on exercises
+- Exercises: learning outcome!
+- Materials: color material that is less important or put it in appendix
+- No derivations of formula for mean and standard deviation
+- 
