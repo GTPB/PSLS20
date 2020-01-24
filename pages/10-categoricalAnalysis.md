@@ -7,7 +7,7 @@ The variable sore encodes whether a patient experienced a sore throat on waking 
 (duration) in minutes and the type of device (variable type) used to secure the airway.
 Two types of devices were included: aryngeal mask ("mask") or tracheal tube ("tube") (Data taken from Agresti 2002).
 
-- Exercise: [exercise_1](./10-sore_half.html)
+- Exercise: [exercise_1](./10-categorical_sore_half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/sore.csv"
 
 2) The Salk dataset
