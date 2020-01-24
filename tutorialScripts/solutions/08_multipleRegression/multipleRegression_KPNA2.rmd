@@ -177,3 +177,8 @@ In grade 3 patients, however, this association is not significant ($p=$ `r forma
 
 - There is also a significant interaction between the hystological grade and the lymph node status. So the association between the KPNA2 expression and the histological grade depends on the lymph node status and vice versa ($p=$ `r format(summary(fitGlht)$test$pvalues[5],digits=2)`). The fold change corresponding to histological grade is on average `r round(1/2^confint(fitGlht)$confint["grade3:node1",1],2)` times lower in patients with affected lymph nodes as compared to patients with unaffected lymph node (95% CI [`r round(1/2^confint(fitGlht)$confint["grade3:node1",3:2],2)`]). (Similarly, the fold change corresponding to the node status is on average `r round(1/2^confint(fitGlht)$confint["grade3:node1",1],2)` times lower in patients with grade 3 tumors as compared to patients with grade 1 tumors, 95% CI [`r round(1/2^confint(fitGlht)$confint["grade3:node1",3:2],2)`])
 
+
+---
+
+# [Home](https://gtpb.github.io/PSLS20/) {-}
+
