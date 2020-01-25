@@ -17,5 +17,5 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## 4. How confident are you in understanding that the research question can involve a combination of multiple model parameters? 
 
-## 5. How confident are you in interpreting the results of the statistical analysis in terms of the research context?
+## 5. How confident are you in interpreting the results of the statistical analysis in terms of the research context? 
 

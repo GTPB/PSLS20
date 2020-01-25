@@ -10,4 +10,5 @@ output: html_document
 - Exercises: learning outcome!
 - Materials: color material that is less important or put it in appendix
 - No derivations of formula for mean and standard deviation
-- 
+- More time for anova
+- Keep wrapups on time

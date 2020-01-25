@@ -269,18 +269,22 @@ The systolic blood pressure differences are approximately normally distributed.
 
 
 - Simple random sample:  $X_1,...,X_n$ for characteristic $X$
+
 - $X_1,...,X_n$ have same distribution
 - They have same mean $\mu$ and variance $\sigma^2$
+
 - $E(X_1)=...=E(X_n)=\mu$ and $\text{Var}(X_1)=...=\text{Var}(X_n)=\sigma^2$
 
+- $\bar X$ is an *unbiased estimator* for $\mu$ 
+
+<details><summary>Click to see proof</summary><p>
 \begin{eqnarray*}
 E(\bar X) &=& E \left(\frac{X_1+ X_2+ ... + X_n}{n}\right) \\
 &= & \frac{E(X_1)+ E(X_2)+ ... + E(X_n)}{n} \\
 &=& \frac{\mu + \mu + ... +\mu}{n} \\
 &= & \mu
 \end{eqnarray*}
-
-- $\bar X$ is an *unbiased estimator* for $\mu$ 
+</p></details>
 
 ---
 
@@ -357,12 +361,21 @@ Copy the code, increase the sample size to 100 subjects and observe what happens
 
 - For the captopril study we had dependent observations. 
     
-    - blood pressure measurements before ($Y_{i,before}$) and  after ($Y_{i,after}$) administering captopril for the same subject $i=1,\ldots,n$.
+    - Blood pressure measurements before ($Y_{i,before}$) and  after ($Y_{i,after}$) administering captopril for the same subject $i=1,\ldots,n$.
     - We turned them into n independent measurements by taking the difference $Y_{i,after}-Y_{i,before}$
 
 ---
 
 ### Variance estimator for $\bar X$
+
+$$\sigma^2_{\bar X}=\frac{\sigma^2}{n}$$
+
+- The standard deviation of $\bar X$ around $\mu$ is $\sqrt{n}$ times smaller that the deviation around the original observations $X$.
+
+- The more observations we have the more precise $\bar X$.
+
+
+<details><summary>Click to see proof</summary><p>
 \begin{eqnarray*}
 \text{Var}(\bar X)&=&\text{Var} \left(\frac{X_1+ X_2+ ... + X_n}{n}\right) \\
 &= & \frac{\text{Var} (X_1+ X_2+ ... + X_n)}{n^2} \\
@@ -375,11 +388,7 @@ Copy the code, increase the sample size to 100 subjects and observe what happens
 $$\text{Var}[X_1 + X_2] = \text{Var}[X_1] + \text{Var}[X_2] + 2 \text{Covar}[X_1,X_2]$$
 
     - With $Covar[X_1,X_2]=0$ when $X_1$ and $X_2$ are independent. 
-    
-- the standard deviation of $\bar X$ around $\mu$ is $\sqrt{n}$ times smaller that the deviation around the original observations $X$.
-
-- The more observations we have the more precise $\bar X$.
-
+</p></details>
 
 **Definition: standard error**
 
