@@ -1,0 +1,136 @@
+---
+title: 'Tutorial 2.4: Hypothesis testing on the cuckoo dataset'
+output:
+  html_document:
+    code_download: yes
+    highlight: tango
+    number_sections: yes
+    theme: cosmo
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+In this short tutorial, we perform a hypothesis test on the
+"cuckoo" dataset. 
+
+# Cuckoo dataset
+
+The common cuckoo does not build its own nest: it prefers
+to lay its eggs in another birds' nest. It is known, since 1892,
+that the type of cuckoo bird eggs are different between different
+locations. In a study from 1940, it was shown that cuckoos return
+to the same nesting area each year, and that they always pick
+the same bird species to be a "foster parent" for their eggs.
+
+Over the years, this has lead to the development of geographically
+determined subspecies of cuckoos. These subspecies have evolved in
+such a way that their eggs look as similar as possible as those
+of their foster parents.
+
+The cuckoo dataset contains information on 120 Cuckoo eggs,
+obtained from randomly selected "foster" nests.
+For these eggs, researchers have measured the `length` (in mm)
+and established the `type` (species) of foster parent.
+The type column is coded as follows:
+
+- `type=1`: Meadow pipit
+- `type=2`: Tree pipit
+- `type=3`: Dunnock
+- `type=4`: European robin
+- `type=5`: White wagtail
+- `type=6`: Eurasian wren
+
+# Goal
+
+The researchers want to test if the type of foster parent
+has an effect on the average length of the cuckoo eggs.
+
+In theory, they want to study this for all six species.
+However, a t-test can only be used to study mean differences
+between two groups. If we want to analyze multiple groups, there
+are two options.
+
+1. We perform t-tests on all pairwise combinations of types.
+This mean we need to perform n*(n-1)/2 = 15 t-tests.
+
+2. We perform an ANOVA analysis.
+
+The second strategy is much more efficient and has a higher
+statistical power. We will learn about ANOVA in chapter 7.
+
+In the current tutorial, we will assess a single pairwise comparison,
+between the European robin and the European wren. In later
+tutorials, we revisit this dataset and analyse all data.
+
+Load the required libraries
+
+```{r, message=FALSE}
+
+```
+
+# Import the data
+
+```{r, message=FALSE}
+
+```
+
+# Data Exploration
+
+```{r}
+
+```
+
+
+# Data tidying
+
+For this exercise, we only care about the European robin
+and the Eurasian wren. Therefore, we can remove the observations
+of the other types. In addition, it seems that the `tpye` 
+column rather than a factor. Let's fix this:
+
+```{r}
+Cuckoo <- Cuckoo %>%
+  filter(type %in% c("4","6")) %>%
+  mutate(type = as.factor(type))
+```
+
+
+# Data exploration
+
+How many birds do we have for each type?
+
+```{r}
+Cuckoo %>%
+  count(...)
+
+# in base R, you could use the table function
+```
+
+Visualize the data
+
+```{r}
+
+```
+
+1. What do you observe?
+
+2. How will you model the data? 
+
+3. Translate the research question in a null and alternative hypothesis
+
+4. Which test will you use to assess the research hypothesis? 
+
+5. Formulate the assumptions of the test and assess the assumptions using diagnostic plots. 
+
+6. If all assumptions to perform the test, complete the analysis and
+formulate a proper conclusion.
+
+
+
+
+
+
+
+

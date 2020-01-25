@@ -1,0 +1,368 @@
+---
+title: "Tutorial 8.2: Multiple regression on the FEV dataset"   
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+As an exercise on multiple regression, we will analyse
+the FEV dataset.
+
+## The FEV dataset
+
+The FEV, which is an acronym for forced expiratory volume,
+is a measure of how much air a person can exhale (in liters) 
+during  a forced breath. In this dataset, the FEV of 606 children,
+between the ages of 6 and 17, were measured. The dataset
+also provides additional information on these children:
+their `age`, their `height`, their `gender` and, most
+importantly, whether the child is a smoker or a non-smoker.
+
+The goal of this experiment was to find out whether or not
+smoking has an effect on the FEV of children.
+
+# Load the required libraries
+
+```{r, message = FALSE}
+library(tidyverse)
+library(GGally)
+```
+
+# Import the data
+
+```{r}
+fev <- read_tsv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/fev.txt")
+```
+
+```{r}
+head(fev)
+```
+
+# Data tidying
+
+There are a few things in the formatting of the
+data that can be improved upon:
+
+1. Both the `gender` and `smoking` can be transformed to
+factors.
+2. The `height` variable is written in inches. Assuming that
+this audience is mainly Portuguese/Belgian, inches are hard to
+interpret. Let's add a new column, `height_cm`, with the values
+converted to centimeters
+
+```{r}
+fev <- fev %>%
+  mutate(gender = as.factor(gender)) %>%
+  mutate(smoking = as.factor(smoking)) %>%
+  mutate(height_cm = height*2.54)
+
+head(fev)
+```
+
+That's better!
+
+## Data exploration
+
+```{r}
+fev$height
+```
+
+
+```{r}
+fev %>% mutate(lfev=log(fev)) %>% dplyr::select(smoking,gender,age,height_cm,lfev) %>% ggpairs()
+```
+
+```{r}
+plot(log(fev$fev)~fev$age)
+```
+
+
+There a very strong associations between
+- age and height
+- age and FEV
+- heigth and FEV
+- gender and height
+- gender and FEV
+- ...
+
+Remember the "Data_exploration_FEV.Rmd" file? There, we
+saw that plotting the FEV in function of smoking status
+only, it appeared that the FEV was higher for smokers.
+
+```{r}
+fev %>%
+  ggplot(aes(x=smoking,y=age,fill=smoking)) +
+  geom_boxplot(outlier.shape=NA) +
+  geom_point(width = 0.2, size = 0.1, position = position_jitterdodge()) +
+  theme_bw() +
+  scale_fill_manual(values=c("dimgrey","firebrick")) +
+  ggtitle("Boxplot of FEV versus smoking") +
+  ylab("fev (l)") +
+  xlab("smoking status")
+```
+
+```{r}
+plot(fev$age~fev$height_cm)
+```
+
+
+However, if we "corrected" the visualization for a child's
+age and/or heigth and/or gender, this completely changed the picture.
+
+Let's again make a nice plot where we make a boxplot of the FEV 
+in function of age (as factor), stratified on gender (facet) 
+and colored based on the smoking status.
+
+```{r}
+fev %>%
+  ggplot(aes(x=as.factor(age),y=fev,fill=smoking)) +
+  geom_boxplot(outlier.shape=NA) +
+  geom_point(width = 0.2, size = 0.1, position = position_jitterdodge()) +
+  theme_bw() +
+  scale_fill_manual(values=c("dimgrey","firebrick")) +
+  ggtitle("Boxplot of FEV versus smoking, stratified on age and gender") +
+  ylab("fev (l)") +
+  xlab("age (years)") + 
+  facet_grid(rows = vars(gender))
+```
+
+# Analysis
+
+```{r}
+lm_sa <- lm(log(fev)~smoking+age+gender, data=fev)
+
+summary(lm_sa)
+plot(lm_sa)
+```
+
+
+```{r}
+table(fev$gender,fev$smoking)
+```
+
+```{r}
+
+```
+
+
+```{r}
+full_formula <- log(fev)~ age + height_cm + smoking + gender + smoking:age + smoking:height_cm + smoking:gender + age:height_cm + age:gender + height_cm:gender
+
+lm_full <- lm(full_formula, data=fev)
+
+summary(lm_full)
+```
+
+```{r}
+lm_red <- lm(log(fev)~ age + height_cm + smoking + gender, data=fev)
+
+summary(lm_red)
+```
+
+
+```{r}
+lm_2 <- lm(log(fev)~ age + height_cm + gender + smoking + age:height_cm + age:gender + height_cm:gender, data=fev)
+
+anova(lm_full, lm_2)
+```
+
+```{r}
+summary(lm_2)
+```
+
+```{r}
+car::vif(lm_2)
+```
+
+
+```{r}
+summary(lm_red)
+```
+
+
+```{r}
+summary(lm_2)
+```
+
+
+```{r}
+lm_3 <- lm(log(fev)~ age + height_cm + gender + age:height_cm + age:gender + height_cm:gender, data=fev)
+
+anova(lm_full, lm_3)
+```
+
+```{r}
+vif(lm_3)
+```
+
+
+```{r}
+plot(lm_full)
+```
+
+```{r}
+summary(lm_full)
+```
+
+```{r}
+lm_2 <- lm(log(fev)~ age + height_cm + smoking + gender + smoking:age, data=fev)
+
+plot(lm_2)
+
+summary(lm_2)
+```
+
+```{r}
+install.packages("margins")
+library(margins)
+```
+
+
+```{r}
+lm_3 <- lm(log(fev)~ age + height_cm + smoking + gender + smoking:age, data=fev_11_15)
+summary(margins(lm_3))
+#summary(lm_3)
+```
+
+
+## Multiple regression analysis with forward model selection
+
+Now, we will perform a multiple regression analysis on the data,
+accounting for all the required variables that may influence the
+relationship between smoking and FEV.
+
+** Note: to meet the required assumptions for linear regression, **
+** we will need to log-tranform the FEV response variable. **
+
+Having spurious terms in the model (main effects and interaction terms)
+may make the model worse. If an effect or interaction has no added
+value, it might be better not to have it in the model.
+
+We can select the best/required terms by performing a forward selection.
+Here, we will start with an _empty_ model, i.e. a model without
+explanatory variables. Each step, we will add the most useful
+variable to the model
+
+```{r}
+full_formula <- log(fev)~ age + height_cm + smoking + gender + smoking:age + smoking:height_cm + smoking:gender
+
+subfev <- fev[,c(-3)] ## retain the potential explanatory variables and the  response variable, remove height (inches)
+
+m1 <- lm(log(fev)~1, subfev) # empty model
+add1(m1, scope=full_formula, data=subfev, test="F")
+```
+
+The variable _height-cm_ has the most significant contribution 
+to the model (based on p-value and AIC. As such, we will include 
+it in our improved model:
+
+```{r}
+m2 <- update(m1,~.+height_cm)
+add1(m2, scope=full_formula, data=subfev, test="F")
+```
+
+After doing this, _age_ has the most significant contribution 
+to the model. As such, we will include it in our improved model:
+
+```{r}
+m3 <- update(m2,~.+age)
+add1(m3, scope=full_formula, data=subpoison, test="F")
+```
+
+After including height_cm and age in the model,
+the _smoking_ status (again) appears significant.
+Include it in the model:
+
+```{r}
+m4 <- update(m3,~.+smoking)
+add1(m4, scope=full_formula,data=subfev, test="F")
+```
+
+After including the smoking term, none of the remaining
+model parameters (including both interactions) appear
+significant (5%). As such, we won't include any other
+parameters in the model. As such, based on the forward
+selection, we assume the following model:
+
+$$y_i=\beta_0+\beta_a x_{ia} + \beta_h x_{ih} + \beta_{s1} x_{is1} + \epsilon_i,$$
+
+This model has a main effect for smoking (s), age (a) and height (h).
+
+## Check the assumptions
+
+For checking the assumptions of the final model,
+we will first fit it:
+
+```{r}
+lm_full <- lm(log(fev) ~ age + height_cm + smoking, data=fev)
+plot(lm_full)
+```
+
+List assumptions:
+
+1. The observations are independent of each other
+2. Linearity between the response and predictor variable
+3. The residues of the model must be normally distributed
+4. Homoscedasticity of the data
+
+1. The first assumption is **met**: children that are more 
+alike in terms of age, height and smoking status will probably 
+have more similar FEV values, but this is accounted for by 
+the model.
+
+2. The linearity assumption is **met** (see plot 1).
+
+3. The normality assumption is **met** (see plot 2).
+
+4. The homosccedasticity assumption is **met** (see plot 3).
+
+## Conclusion
+
+```{r}
+library(car)
+Anova(lm_full, type=3)
+```
+
+```{r}
+coefficients(lm_full)
+confint(lm_full)
+```
+
+
+- Age main effect: The log FEV for children is, on 
+average, `r format(abs(lm_full$coefficients["age"]),digits=3)` liters
+higher for every unit increase in age (year), after correcting
+for height and smoking effects (95% CI [0.01725221; 0.03166769]).
+This increase is extremely significant (p=6.001e-11) on the 5% 
+significance level.
+
+- Heigth main effect: The log FEV for children is, on 
+average, `r format(abs(lm_full$coefficients["height_cm"]),digits=3)` 
+liters higher for every unit increase in height (cm), after correcting
+for age and smoking effects (95% CI [0.01561981; 0.01827859]).
+This increase is extremely significant (p < 2.2e-16) on the 5% 
+significance level.
+
+- Smoking main effect: The log FEV for children is, on 
+average, `r format(abs(lm_full$coefficients["smoking"]),digits=3)` 
+liters lower for smokers than for non-smokers, after correcting
+for age and height effects (95% CI [-0.09651575; -0.01381958]).
+This decrease is highly significant (p =0.009007) on the 5% 
+significance level.
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,108 @@
+---
+title: "Tutorial 1.4: Exploring the FEV dataset"   
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+In this tutorial, you will learn how to import, tidy, wrangle and 
+visualize data yourself! You will work with one specific dataset;
+
+## The FEV dataset
+
+The FEV, which is an acronym for forced expiratory volume,
+is a measure of how much air a person can exhale (in liters) 
+during  a forced breath. In this dataset, the FEV of 606 children,
+between the ages of 6 and 17, were measured. The dataset
+also provides additional information on these children:
+their `age`, their `height`, their `gender` and, most
+importantly, whether the child is a smoker or a non-smoker.
+
+The goal of this experiment was to find out whether or not
+smoking has an effect on the FEV of children.
+
+Note: to analyse this dataset properly, we will need some
+relatively advanced modeling techniques. At the end of this 
+week, you will have seen all three required steps to analyse
+such a dataset! For now, we will limit ourselves to exploring
+the data.
+
+## Load the required libraries
+
+```{r, message = FALSE}
+...
+```
+
+## Import the data
+
+```{r}
+...
+```
+
+Have a first look at the data
+
+```{r}
+...
+```
+
+
+There are a few things in the formatting of the
+data that can be improved upon:
+
+1. Both the `gender` and `smoking` can be transformed to
+factors.
+2. The `height` variable is written in inches. Assuming that
+this audience is mainly Portuguese/Belgian, inches are hard to
+interpret. Let's add a new column, `height_cm`, with the values
+converted to centimeters
+
+```{r}
+...
+```
+
+That's better!
+
+Now, let's make a first explorative plot, showing
+only the FEV for both smoking categories.
+
+Which type of plot do you suggest? Generate a good-looking,
+informative representation of the data.
+
+```{r}
+...
+```
+
+Did you expect these results?
+
+Maybe there is something else going on in the data. 
+By taking more of the information in the dataset into account, can
+you provided a more detailed/accurate visualizition of the
+variables that effect the FEV?
+
+```{r}
+...
+
+
+## Try to get a visualization that describes the data as good as possible!!
+
+
+
+...
+```
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,718 @@
+---
+title: "1. Introduction: Why do we need statistics" 
+author: "Lieven Clement"
+date: "statOmics, Ghent University (https://statomics.github.io)"
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = TRUE, comment = NA, echo = TRUE,
+                      message = FALSE, warning = FALSE)
+library(tidyverse)
+```
+
+#Smelly armpit example
+
+- Smelly armpits are not caused by sweat itself. The smell is caused by specific micro-organisms belonging to the group of *Corynebacterium spp.* that metabolise sweat.
+Another group of abundant bacteria are the *Staphylococcus spp.*, these bacteria do not metabolise sweat in smelly compounds.
+
+- The CMET-groep at Ghent University does research on transplanting the armpit microbiome to save people with smelly armpits.
+
+- Proposed Therapy:
+  	1. Remove armpit-microbiome with antibiotics
+    2. Influence armpit microbiome with microbial  transplant (https://youtu.be/9RIFyqLXdVw)
+
+- Experiment:
+
+    - 20 subjects with smelly armpits are attributed to one of two treatment groups
+    - placebo (only antibiotics)
+    - transplant (antibiotics followed by microbial transplant).
+    - The microbiome is sampled 6 weeks upon the treatment.
+    - The relative abundance of *Staphylococcus spp.* on *Corynebacterium spp.* + *Staphylococcus spp.* in the microbiome is measured via DGGE (*Denaturing Gradient Gel Electrophoresis*).
+
+---
+
+## Import the data
+```{r}
+read_lines("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit.csv")
+```
+
+The file is comma separated and in tidy format
+
+```{r}
+ap<-read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit.csv")
+ap
+```
+
+---
+
+## Data Exploration and Descriptive Statistics
+
+- Data exploration is extremely important to get insight in the data. 
+- It is often underrated and overlooked. 
+
+### Descriptive statistics
+We first summarize the data and calculate the mean, standard deviation, number of observations and standard error and store the result in an object apRelSum via 'apRelSum<-`
+
+1. We pipe the `ap` dataframe to the group_by function to group the data by treatment trt `group_by(trt)`
+2. We pipe the result to the `summarize_at` function to summarize the "rel" variable and calculate the mean, standard deviation and the number of observations 
+3. We pipe the result to the `mutate` function to make a new variable in the data frame `se` for which we calculate the standard error 
+
+
+```{r}
+apRelSum<-ap%>%
+  group_by(trt)%>%
+  summarize_at("rel",
+               list(mean=~mean(.,na.rm=TRUE),
+                    sd=~sd(.,na.rm=TRUE),
+                    n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+  mutate(se=sd/sqrt(n))
+
+apRelSum
+```
+
+---
+
+### Plots
+We will use ggplot2 to make our plots. 
+With the ggplot2 library we can easily build plots by adding layers.
+
+#### barplot
+
+1. We pipe our summarized data to the `ggplot` function and we select the treatment variable trt and the variable mean for plotting `aes(x=trt,y=mean)`
+
+2. We make a barplot based on this data using the `geom_bar` function. The statistic is `stat="identity"` because the bar height should be equal the value for the mean of the relative abundance.
+
+```{r}
+apRelSum%>% 
+  ggplot(aes(x=trt,y=mean)) +
+  geom_bar(stat="identity") 
+```
+
+- Is this plot informative??
+
+---
+
+We will now add standard errors to the plot
+using `geom_errorbar` function and specify the minimum and maximum value for of the error bar, the width command is used to set the width of the error bar smaller than the width of the bar. 
+
+```{r}
+apRelSum%>% 
+  ggplot(aes(x=trt,y=mean)) +
+  geom_bar(stat="identity") + 
+  geom_errorbar(aes(ymin=mean-se,ymax=mean+se),width=.2)
+```
+
+- Is this plot informative??
+
+---
+
+#### boxplots
+
+I consider barplots to be bad plots
+
+- They are not informative
+- They just visualize a two point summary of the data. It is better to do this in a table
+- They use a lot of space (e.g. from zero up to the minimum relative abundance) where no data are present. 
+
+It is better to get a view on the distribution of the data. We can use a boxplot for this purpose.
+We first explain what a boxplot. 
+
+---
+
+```{r fig.align='center',echo=FALSE}
+fem <- NHANES::NHANES %>% filter(Gender=="female" & !is.na(DirectChol)) %>% select(DirectChol)
+boxplot(fem$DirectChol, ylab="Direct cholesterol",cex.lab=1.5,cex.axis=1.5,cex.main=1.5)
+rangeCl<-quantile(fem$DirectChol,c(.25,.75))+c(-1,1)*diff(quantile(fem$DirectChol,c(.25,.75)))*1.5
+boxYs<-c(range(fem$DirectChol[fem$DirectChol<=rangeCl[2]&fem$DirectChol>=rangeCl[1]]),quantile(fem$DirectChol,c(.25,.5,.75)),rangeCl[2]+(max(fem$DirectChol)-rangeCl[2])/2)
+text(1.3,boxYs,labels=c("wisker","wisker","x25","mediaan","x75","outliers"),pos=4,cex=1.3)
+lines(c(1.1,1.3,1.3,1.1),c(rangeCl[2],rangeCl[2]+(max(fem$DirectChol)-rangeCl[2])/2,rangeCl[2]+(max(fem$DirectChol)-rangeCl[2])/2,max(fem$DirectChol)),lty=2)
+```
+
+---
+
+We will now make a boxplot for the ap data
+
+1. We pipe the `ap` dataframe to the ggplot command
+2. We select the data with the command `ggplot(aes(x=trt,y=rel))`
+3. We add a boxplot with the command `geom_boxplot()`
+    
+```{r}
+ap %>%  
+  ggplot(aes(x=trt,y=rel)) + 
+  geom_boxplot()
+```
+
+---
+
+- Note, that we do not have so many observations.
+
+- It is always better to show the data as raw as possible!
+
+We will now add the raw data to the plot.
+
+- Note that we set the outlier.shape=NA in the geom_boxplot function because because we will add all raw data anyway.
+- We add the raw data using `geom_point(position="jitter")`, with the argument position='jitter' we will add some random noise to the x coordinate so that we can see all data.
+
+```{r}
+ap %>%  
+  ggplot(aes(x=trt,y=rel)) +
+  geom_boxplot(outlier.shape=NA) +
+  geom_point(position="jitter")
+```
+
+This is an informative plot!
+
+---
+
+## Some concepts
+
+- Why do we need more than one student per group?
+
+- What are the meaning and the consequences of the term "randomly"?
+
+- Consider two designs:
+
+1. A research assistant selects 20 male students with smelly armpits from his faculty.
+
+2. A research assistant selects 20 random people with smelly armpits from the Belgian population.
+
+---
+
+```{r echo=FALSE}
+ap2<-ap
+hlp<-lm(rel~trt,ap)
+ap2$rel<-rnorm(20,mean=hlp$fit-20,sd=sigma(hlp)*2)
+```
+
+
+```{r}
+ap %>%  
+  ggplot(aes(x=trt,y=rel)) +
+  geom_boxplot(outlier.shape=NA) +
+  geom_point(position="jitter") + 
+  ylim(0,100)
+
+ap2 %>%  
+  ggplot(aes(x=trt,y=rel)) +
+  geom_boxplot(outlier.shape=NA) +
+  geom_point(position="jitter") + 
+  ylim(0,100)
+```
+
+---
+
+- Design 1: smaller variability
+
+- Design 2: larger variability and lower relative abundance of *Staphylococcus*
+
+- What is the best design?
+
+---
+
+- Random sampling is closely related to the concept of the population or the scope of the study.
+
+- Based on a sample of subjects, the researchers want to come to conclusions that hold for
+
+    - all kinds of people
+    - only male students
+
+- Scope of the study should be well specified before the start of the study.
+
+- For the statistical analysis to be valid, it is required that the subjects are selected completely at random from the population to which we want to generalize our conclusions.
+
+- Selecting completely at random from a population implies:
+    - all subjects in the population should have the same probability of being selected in the sample,
+    - the selection of a subject in the sample should be independent from the selection of the other subjects in the sample.
+
+- The sample is thus supposed to be representative for the population, but still it is random.
+
+- What does this imply?
+
+---
+
+# Sample to sample variability
+
+National Health NHanes study
+
+  - Since 1960 individuals of all ages are interviewed in their homes every year
+  - The health examination component of the survey is conducted in a mobile examination centre (MEC).
+  - We will use this large study to select random subjects from the American population.
+  - This will help us to understand how the results of an analysis and the conclusions vary from sample to sample.
+
+---
+
+```{r}
+library(NHANES)
+head(NHANES)
+glimpse(NHANES)
+```
+
+---
+
+## Data exploration
+
+
+Suppose that we are interested in assessing the difference in direct cholesterol levels between males and females older than 25 years.
+
+1. We pipe the dataset to the function `filter` to filter the data according to age. 
+2. We plot the direct cholesterol levels.
+    - We select the data with the command `ggplot(aes(x=DirectChol))`
+    - We add a histogram with the command `geom_histogram()`
+    - We make to vertical panels using the command `facet_grid(Gender~.)`
+    - We customize the label of the x-axis with the `xlab` command.
+
+```{r}
+NHANES%>%filter(Age>25)%>%
+  ggplot(aes(x=DirectChol))+
+  geom_histogram() +
+  facet_grid(Gender~.) +
+  xlab("Direct cholesterol (mg/dl)")
+```
+
+---
+
+- Cholesterol levels and concentration measurements are often skewed.
+- Concentrations cannot be lower than 0.
+- They are often log transformed.
+
+```{r}
+NHANES%>%
+  filter(Age>25)%>%
+  ggplot(aes(x=DirectChol%>%log2))+
+  geom_histogram() +
+  facet_grid(Gender~.) +
+  xlab("Direct cholesterol (log2)")
+```
+
+We see that the data are more or less bell shaped upon log transformation.
+
+---
+
+We will now create a subset of the data that we will use to sample from in the next sections.
+
+  1. We filter on age and remove subjects with missing values (NA).
+  2. We only select the variables Gender and DirectChol from the dataset to avoid unnecessary variables.
+  3. With the mutate function we can add a new variable logChol with log transformed direct cholesterol levels.
+
+```{r}
+nhanesSub<- NHANES%>%
+  filter(Age>25&!is.na(DirectChol)) %>%
+  select(c("Gender","DirectChol")) %>%
+  mutate(cholLog=log2(DirectChol))
+```
+
+---
+
+We will calculate the summary statistics for the cholLog variable for males and females in the large dataset. 
+So we group by Gender
+
+```{r}
+cholLogSum<- nhanesSub %>% 
+  group_by(Gender) %>%
+   summarize_at("cholLog",
+               list(mean=~mean(.,na.rm=TRUE),
+                    sd=~sd(.,na.rm=TRUE),
+                    n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+  mutate(se=sd/sqrt(n))
+
+cholLogSum
+```
+
+---
+
+## Experiment
+
+- Suppose that we have no access to cholesterol levels of the American population,
+- we will have to setup an experiment.
+- Suppose we have a budget for assessing 10 females and 10 males,
+- we will subset 10 females and 10 males at random from the American population and measure their direct cholesterol levels.
+
+```{r}
+fem<-nhanesSub%>%filter(Gender=="female")%>%sample_n(size=10)
+mal<-nhanesSub%>%filter(Gender=="male")%>%sample_n(size=10)
+
+samp<-rbind(fem,mal)
+samp
+```
+
+---
+
+We will now plot the data with a histogram and boxplots
+
+```{r}
+samp %>%
+  ggplot(aes(x=cholLog))+
+  geom_histogram(binwidth = .1) +
+  facet_grid(Gender~.) +
+  xlab("Direct cholesterol (log2)")
+
+samp%>% 
+  ggplot(aes(x=Gender,y=cholLog)) +
+  geom_boxplot(outlier.shape=NA) +
+  geom_point(position="jitter")
+```
+
+---
+
+We summarize the data
+```{r}
+samp %>% 
+  group_by(Gender) %>%
+   summarize_at("cholLog",
+               list(mean=~mean(.,na.rm=TRUE),
+                    sd=~sd(.,na.rm=TRUE),
+                    n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+  mutate(se=sd/sqrt(n))
+```
+
+Note that the sample mean is different from that of the large experiment ("population") we sampled from. 
+
+We test for the difference between Males and females
+
+```{r}
+t.test(cholLog~Gender,samp,var.equal=TRUE)
+```
+
+---
+
+## Repeat the experiment
+
+If we do the experiment again we select other people and we obtain different results.
+
+
+```{r}
+fem<-nhanesSub%>%filter(Gender=="female")%>%sample_n(size=10)
+mal<-nhanesSub%>%filter(Gender=="male")%>%sample_n(size=10)
+
+samp2<-rbind(fem,mal)
+samp2%>%
+  ggplot(aes(x=DirectChol%>%log))+
+  geom_histogram(binwidth = .1) +
+  facet_grid(Gender~.) +
+  xlab("Direct cholesterol (log)")
+
+samp2%>% 
+  ggplot(aes(x=Gender,y=cholLog)) +
+  geom_boxplot(outlier.shape=NA) +
+  geom_point(position="jitter")
+
+samp2 %>% 
+  group_by(Gender) %>%
+   summarize_at("cholLog",
+               list(mean=~mean(.,na.rm=TRUE),
+                    sd=~sd(.,na.rm=TRUE),
+                    n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+  mutate(se=sd/sqrt(n))
+
+t.test(cholLog~Gender,samp2,var.equal=TRUE)
+```
+
+---
+
+## And again
+
+```{r}
+set.seed(12857)
+fem<-nhanesSub%>%filter(Gender=="female")%>%sample_n(size=10)
+mal<-nhanesSub%>%filter(Gender=="male")%>%sample_n(size=10)
+
+samp3<-rbind(fem,mal)
+samp3%>%
+  ggplot(aes(x=DirectChol%>%log))+
+  geom_histogram(binwidth = .1) +
+  facet_grid(Gender~.) +
+  xlab("Direct cholesterol (log)")
+
+samp3%>% 
+  ggplot(aes(x=Gender,y=cholLog)) +
+  geom_boxplot(outlier.shape=NA) +
+  geom_point(position="jitter")
+
+
+samp3 %>% 
+  group_by(Gender) %>%
+   summarize_at("cholLog",
+               list(mean=~mean(.,na.rm=TRUE),
+                    sd=~sd(.,na.rm=TRUE),
+                    n=function(x) x%>%is.na%>%`!`%>%sum)) %>%
+  mutate(se=sd/sqrt(n))
+
+t.test(cholLog~Gender,samp3,var.equal=TRUE)
+```
+
+---
+
+## Summary
+
+- Because we sampled other subjects in each sample, we obtain different cholesterol levels.
+- However, not only the cholesterol levels differ from sample to sample but also the summary statistics: means, standard deviations and standard errors.
+- Note, that in the last sample the log cholesterol levels are on average lower for females than for males; based on this sample we even would wrongly conclude that the cholesterol levels for females are on average larger than those of males.
+
+- This implies that our conclusions are also subjected to uncertainty and might change from sample to sample.
+
+- Samples as the one where the effect swaps and is statistically significant, however, are very rare.
+- This is illustrated with the code below, where we will draw 20000 repeated samples with sample size 10 for females and males from the NHanes study.
+
+```{r}
+nsim<-20000
+nSamp<-10
+res<-matrix(0,nrow=nsim,ncol=2)
+fem<-nhanesSub%>%filter(Gender=="female")
+mal<-nhanesSub%>%filter(Gender=="male")
+
+for (i in 1:nsim)
+{
+ femSamp<-sample(fem$cholLog,nSamp)
+ malSamp<-sample(mal$cholLog,nSamp)
+
+meanFem<-mean(femSamp)
+ meanMal<-mean(malSamp)
+ delta<-meanFem-meanMal
+ sdFem<-sd(femSamp)
+ sdMal<-sd(malSamp)
+ seFem<-sdFem/sqrt(nSamp)
+ seFem<-sdFem/sqrt(nSamp)
+ sdPool<-sqrt((sdFem^2*(nSamp-1) + sdMal^2*(nSamp-1))/(2*nSamp-2))
+tvalue<-(delta)/(sdPool*sqrt(1/nSamp+1/nSamp))
+pvalue<-pt(abs(tvalue),lower.tail = FALSE,df=2*nSamp-2)*2
+ res[i,]<-c(delta,pvalue)
+}
+sum(res[,2]<0.05&res[,1]>0)
+sum(res[,2]>0.05)
+sum(res[,2]<0.05&res[,1]<0)
+
+res<-res %>% as.data.frame
+names(res) <- c("delta","pvalue")
+res %>% 
+  ggplot(aes(x=delta,y=-log10(pvalue),color=pvalue<0.05)) + 
+  geom_point() + 
+  xlab("Average cholesterol difference") +
+  ylab("- log10(pvalue)") +
+  scale_color_manual(values=c("black","red"))
+
+res %>% 
+  ggplot(aes(y=delta)) +
+  geom_boxplot() +
+  geom_point(aes(x=0,y=c(mean(fem$cholLog)-mean(mal$cholLog)),color="pop. diff")) +
+  xlab("")
+```
+
+Only in `r sum(res[,2]<0.05&res[,1]<0)` out of 20000 samples we conclude that the mean cholesterol level of males is significantly lower than for females. For the remaining samples the cholesterol levels for males were on average significantly lower than for females (`r sum(res[,2]<0.05&res[,1]>0)` samples) or the average difference in cholesterol levels were not statistically significant (`r sum(res[,2]>0.05)` samples). The latter is because the power is rather low to detect the difference with 10 samples in each group.
+
+---
+
+##Assignment
+
+1. Copy the code chunk with the simulation study
+2. Add it here below
+3. Modify the sample size to 50.
+4. What do you observe?
+
+---
+
+# Salk Study
+
+- In 1916, the US experienced the first large epidemic of polio.
+- John Salk developed a vaccine with promising results in the lab in the early fifties.
+- In 1954, the National Foundation
+for Infantile Paralysis (NFIP) has setup a large study to assess the effectiveness of the Salk vaccine.
+- Suppose that the NFIP would have vaccinated a large number of children in 1954 and would have observed that the polio incidence in 1954 was lower than in 1953. Could they have concluded that the vaccine was effective?
+
+---
+
+##NFIP Study
+###Design
+
+- Large simultaneous study with cases, vaccinated children, and controls,  non-vaccinated children.
+- All schools in districts with high polio incidence
+- Cases: children with consent for vaccination from second grade of primary school.
+- Controls: children from  first and third grade.
+
+###Data
+```{r}
+nfip<-data.frame(group=c("cases","control","noConcent"),grade=c("g2","g1g3","g2"),vaccin=c("yes","no","no"),total=c(221998,725173,123605),polio=c(54,391,56))
+nfip$noPolio<-nfip$total-nfip$polio
+knitr::kable(nfip)
+```
+
+Compare polio incidence?
+
+```{r, echo=FALSE, eval=FALSE}
+nfip$incidencePM<-round(nfip$polio/nfip$total*1e6,0)
+knitr::kable(nfip)
+```
+
+What can we conclude?
+
+---
+
+##Confounding
+
+
+```{r,echo=FALSE, fig.align = "center",out.width = '50%'}
+plot(c(0,0,1),c(-2,2,0),pch=c("S","V","P"),xaxt="none",yaxt="none",axes=FALSE,xlab="",ylab="",cex=4,ylim=c(-2.2,2.2))
+arrows(x0=0.1,x1=.9,y0=1.8,y1=0.1,lwd=4)
+arrows(x0=0.1,x1=.9,y0=-1.8,y1=-0.2,lwd=4)
+arrows(x0=0,x1=0,y0=-1.4,y1=1.4,lwd=4)
+```
+
+
+- We observe a lower polio (P) incidence for children for who no consent was given than for the children in the control group.
+
+- Consent for vaccination (V) was associated with the socio-economic status (S).
+
+- Children of lower socio-economic status were more resistant to the disease.
+
+- The groups of cases and controls are not comparable:
+    - difference in age,
+    - difference in socio-economic status and
+    - difference in susceptible for disease.
+
+---
+
+##Salk Study
+
+### Design
+A new study was conducted: Randomized double blind study
+
+  - Children are assigned at random to the control or case treatment arm after consent was given by the parents.
+  - Control: vaccination with placebo
+  - Treatment: vaccination with vaccine
+  - double blinding:
+    - parents did not know if their child was vaccinated or received the placebo
+    - care-giver/researchers did not know if the child was vaccinated  or received placebo
+
+---
+
+###Data
+
+```{r}
+salk<-data.frame(group=c("cases","control","noConcent"),treatment=c("vaccine","placebo","none"),total=c(200745,
+201229, 338778),polio=c(57,142,157))
+salk$noPolio<-salk$total-salk$polio
+salk$incidencePM<-round(salk$polio/salk$total*1e6,0)
+knitr::kable(salk)
+```
+
+- We observe a much larger effect now that the cases and the controls are comparable, incidence of `r salk$incidencePM[1]`  and `r salk$incidencePM[2]` per million, respectively.
+
+- The polio incidence for children with no consent remains similar, `r nfip$incidencePM[3]` and `r salk$incidencePM[3]` per million in the NFIP and Salk study, respectively.
+
+---
+
+# Scientific Method
+
+- Empirical data is key in the life sciences.
+- Research is largely driven by data.
+
+```{r,echo=FALSE, fig.align = "center"}
+plot(0,0,col=0,xaxt="none",yaxt="none",axes=FALSE,xlab="",ylab="",cex=4,ylim=c(-.5,1.5),xlim=c(-.5,1.5))
+lines(c(0,1),c(0,0),lwd=4)
+lines(c(0,.5),c(0,1),lwd=4)
+lines(c(.5,1),c(1,0),lwd=4)
+text(0.5,1.2,"Nature",cex=2)
+text(0.8,.5,"Experiment",cex=2,pos=4,col="darkred")
+text(1,0,"Data",cex=2,pos=4)
+text(0.2,.5,"Theory",cex=2,pos=2,col="darkred")
+text(0,0,"Model",cex=2,pos=2)
+text(0.5,-0.3,"Statistical\nInference",cex=2,col="darkred")
+```
+
+- *Nature*: biological process which we study
+
+- *Deduction*: deduce logical consequences of  the theory/hypothesis that can be experimentally validated.
+
+- *Experiment*: collect data on the process. The data are a manifestation of the real process. The experiment has to be *representative* and *reproducible* and should challenge the theory. *Experimental Design*!
+
+- *Statistical inference*: Bridge to confront the model/hypothesis to the data $\rightarrow$ Cornerstone of the scientific method.
+
+- *Falsification principle*: Data cannot be used to prove a model/hypothesis, only to reject it.
+
+- *Data-exploration and analysis* is typically used to refine the theory and to generate new hypotheses.
+
+---
+
+# Role of Statistics in the Life Sciences
+
+- We have seen that
+    - it is important to carefully specify the scope of the study before the experiment,
+    - the sample size matters,
+    - we should be aware of confounding, and 
+    - a proper control is required.
+
+$\rightarrow$ Good experimental design is crucial!
+
+- We also observed that there is variability in the population and because we can only sample a small part of the population our results and conclusions are subjected to uncertainty.
+
+
+
+
+- Statistics is the science on
+    1. collecting (experimental design),
+    2. exploring (data exploration) and
+    3. learning from data and to generalize what we observe in the sample towards the population while quantifying, controlling and reporting variability and uncertainty (statistical modelling and statistical inference).
+
+- Therefore, statistics plays an important role in almost all sciences (e.g. column "points of significance" in Nature Methods. http://blogs.nature.com/methagora/2013/08/giving_statistics_the_attention_it_deserves.html)
+
+---
+
+```{r pop2Samp2Pop, out.width='80%',fig.asp=.8, fig.align='center',echo=FALSE}
+if ("pi"%in%ls()) rm("pi")
+kopvoeter<-function(x,y,angle=0,l=.2,cex.dot=.5,pch=19,col="black")
+{
+angle=angle/180*pi
+points(x,y,cex=cex.dot,pch=pch,col=col)
+lines(c(x,x+l*cos(-pi/2+angle)),c(y,y+l*sin(-pi/2+angle)),col=col)
+lines(c(x+l/2*cos(-pi/2+angle),x+l/2*cos(-pi/2+angle)+l/4*cos(angle)),c(y+l/2*sin(-pi/2+angle),y+l/2*sin(-pi/2+angle)+l/4*sin(angle)),col=col)
+lines(c(x+l/2*cos(-pi/2+angle),x+l/2*cos(-pi/2+angle)+l/4*cos(pi+angle)),c(y+l/2*sin(-pi/2+angle),y+l/2*sin(-pi/2+angle)+l/4*sin(pi+angle)),col=col)
+lines(c(x+l*cos(-pi/2+angle),x+l*cos(-pi/2+angle)+l/2*cos(-pi/2+pi/4+angle)),c(y+l*sin(-pi/2+angle),y+l*sin(-pi/2+angle)+l/2*sin(-pi/2+pi/4+angle)),col=col)
+lines(c(x+l*cos(-pi/2+angle),x+l*cos(-pi/2+angle)+l/2*cos(-pi/2-pi/4+angle)),c(y+l*sin(-pi/2+angle),y+l*sin(-pi/2+angle)+l/2*sin(-pi/2-pi/4+angle)),col=col)
+}
+
+par(mar=c(0,0,0,0),mai=c(0,0,0,0))
+plot(0,0,xlab="",ylab="",xlim=c(0,10),ylim=c(0,10),col=0,xaxt="none",yaxt="none",axes=FALSE)
+rect(0,6,10,10,border="red",lwd=2)
+text(.5,8,"population",srt=90,col="red",cex=2)
+symbols (3, 8, circles=1.5, col="red",add=TRUE,fg="red",inches=FALSE,lwd=2)
+set.seed(330)
+grid=seq(0,1.3,.01)
+
+for (i in 1:50)
+{
+	angle1=runif(n=1,min=0,max=360)
+	angle2=runif(n=1,min=0,max=360)
+	radius=sample(grid,prob=grid^2*pi/sum(grid^2*pi),size=1)
+	kopvoeter(3+radius*cos(angle1/180*pi),8+radius*sin(angle1/180*pi),angle=angle2)
+}
+text(7.5,8,"cholesterol in population",col="red",cex=1.2)
+
+rect(0,0,10,4,border="blue",lwd=2)
+text(.5,2,"sample",srt=90,col="blue",cex=2)
+symbols (3, 2, circles=1.5, col="red",add=TRUE,fg="blue",inches=FALSE,lwd=2)
+for (i in 0:2)
+	for (j in 0:4)
+{
+
+	kopvoeter(2.1+j*(3.9-2.1)/4,1.1+i)
+}
+text(7.5,2,"cholesterol in sample",col="blue",cex=1.2)
+
+arrows(3,5.9,3,4.1,col="black",lwd=3)
+arrows(7,4.1,7,5.9,col="black",lwd=3)
+text(1.5,5,"EXP. DESIGN (1)",col="black",cex=1.2)
+text(8.5,5,"ESTIMATION &\nINFERENCE (3)",col="black",cex=1.2)
+text(7.5,.5,"DATA EXPLORATION &\nDESCRIPTIVE STATISTICS (2)",col="black",cex=1.2)
+```
+
+
+---
+
+# [Home](https://gtpb.github.io/PSLS20/) {-}

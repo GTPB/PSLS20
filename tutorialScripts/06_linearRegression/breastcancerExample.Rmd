@@ -1,0 +1,176 @@
+---
+title: "Breast cancer example"   
+author: "Lieven Clement"
+date: "statOmics, Ghent University (https://statomics.github.io)"
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = TRUE, comment = NA, echo = TRUE,
+                      message = FALSE, warning = FALSE)
+library(Rmisc)
+library(tidyverse)
+```
+
+
+# Breast cancer dataset
+- Subset of study https://doi.org/10.1093/jnci/djj052
+
+- 32 breast cancer patients with estrogen receptor positive tumour that had tamoxifen chemotherapy. Variables:
+
+    - grade: histological grade of tumour (grade 1 vs 3),
+    - node: lymph node status  (0: not affected, 1: lymph nodes affected and removed),
+    - size: tumour size in cm,
+    - ESR1 and S100A8 gene expression in tumour biopsy (microarray technology)
+    
+
+- ESR1 in active in $\pm$ 75% of breast cancer tumours.
+
+- Expression of ER gene positive for treatment: tumour responds to hormone therapy
+    - Tamoxifen interacts with ER and modulates gene expression.
+
+- Proteins of S100 family often dysregulated in cancer
+
+      - S100A8 expression represses immune system in tumour en creates an environment of inflammation that promotes tumour growth.
+
+
+```{r}
+brca <- read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/breastcancer.csv")
+brca
+```
+
+
+# Research question
+
+Is the expression of the S100A8 gene associated with that of that of the ESR1 gene? 
+
+# Data exploration
+
+There are many variables in the data, we will plot all variables in a scatterplot matrix using the GGally package.
+
+```{r}
+#install.packages("GGally")
+library(GGally)
+brca[,-(1:4)] %>% ggpairs()
+```
+
+We now focus on the association between S100A8 expression and the ESR1 expression.
+
+```{r fig.align='center'}
+brca %>% 
+  ggplot(aes(x=ESR1,y=S100A8)) +
+  geom_point() +
+  geom_smooth(se=FALSE,col="grey") +
+  geom_smooth(method="lm",se=FALSE)
+```
+
+The association of S100A and ESR1 does not appear to be linear. 
+
+- Concentration measurements are often skewed.
+- We will log2 transform the data. 
+
+```{r fig.align='center'}
+brca %>% 
+  ggplot(aes(x=ESR1 %>% log2,y=S100A8 %>% log2)) +
+  geom_point() +
+  geom_smooth(se=FALSE,col="grey") +
+  geom_smooth(method="lm",se=FALSE)
+```
+
+Upon log transformation the data are showing a linear association. Is this association strong enough to be able to conclude that the S100A8 gene expression is associated to the ESR1 gene expression? 
+
+# Descriptive statistics
+
+We first calculate the Pearson and Spearman correlation based on the original data and the log2 transformed data
+
+Pearson  correlation
+```{r}
+brca %>% 
+  select(S100A8,ESR1) %>% 
+  mutate(S100A8Log2=S100A8%>%log2,ESR1Log2=ESR1%>%log2) %>%
+  cor
+```
+
+Spearman correlation
+```{r}
+brca %>% 
+  select(S100A8,ESR1) %>% 
+  mutate(S100A8Log2=S100A8%>%log2,ESR1Log2=ESR1%>%log2) %>%
+  cor(,method = "spearman")
+```
+
+Both the Pearson and Spearman correlation are negative. Note, that the Spearman correlation is much larger in absolute value than the Pearson correlation on the original expression measurements. Indeed, the Pearson correlation is affected by the non linear association at the original scale. 
+
+On the log scale the Pearson correlation is much higher. 
+The spearman correlation, however, remains because it is based on rank transformed data. 
+
+# Model 
+
+We will model the data on the log2 scale and we assume the following statistical model:
+
+$$Y_i\vert X_i\sim N(\beta_0+\beta_1X_i,\sigma^2)$$
+
+with $Y_i$ the log2 transformed S100A8 gene expression and $X_i$ the log2 transformed ESR1 gene expression. 
+
+## Model fitting
+
+We fit the model to the data using the lm function and we first assess the assumptions. Because the subjects were selected at random from the population they are independent. We still have to check the following assumptions.
+
+1. Linearity
+2. Equality of the variance
+3. The residuals are normally distribution. 
+
+```{r}
+lm2<-lm(S100A8%>%log2 ~ ESR1 %>% log2, brca)
+plot(lm2)
+summary(lm2)
+```
+
+In the residuals vs fitted values plot we observe that the residuals are nicely spread around zero with more or less the same variance and we do not observed a trend in the residuals so there is no indication on deviations from linearity and homoscedasticity. 
+
+The QQ-plot further shows no substantial deviations from normality. So the assumptions hold. 
+
+We can now assess a formal hypothesis test to for the linear association between the S100A8 gene and the ESR1 gene expression at the log2 scale. 
+
+We can translate the hypothesis that there is an association between the S100A8 and ESR1 gene expression in terms of the slope of the model, so under the alternative hypothesis $\beta_1$ is different from zero. 
+$$H_1: \beta_1 \neq 0$$
+
+With data we can never prove a hypothesis, so we therefore falsify the opposite: the null hypothesis the there is no association between the expression of both genes: 
+
+$$H_0: \beta_0 = 0$$
+We can do this by adopting a t-test on the slope and by using confidence intervals on the slope. 
+
+```{r}
+summary(lm2)
+confint(lm2)
+```
+
+Both the t-test and the confidence interval indicate that association is extremely significant. 
+The interval moreover shows that the association is biologically relevant.
+
+We will transform slope and the confidence interval back to the original scale to interpret the results in terms of fold changes.  
+
+```{r}
+2^(lm2$coef)
+```
+
+```{r}
+2^confint(lm2)
+```
+ 
+
+# Conclusion
+
+There is an extremely significant negative association between the S100A8 gene expression and that of ESR1 ($p<<0.001$). 
+
+A patient with an ESR1 expression that is 2 times the expression of that of another patient will on average have an  S100A8 expression that is `r round(2^-lm2$coef[2]
+,2)` times lower (95\% CI [`r paste(sort(round(2^-confint(lm2)[2,],2)),collapse=",")`]).
+
+

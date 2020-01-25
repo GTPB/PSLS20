@@ -1,0 +1,222 @@
+---
+title: "Tutorial 2.1: Hypothesis testing on the captopril dataset"   
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+In this second tutorial, we will see some basics
+in hypothesis testing and more specifically on
+t-tests. As an example, we will work with the
+captopril dataset that we explored in the tutorial on data exploration.
+
+We will work around these two research questions;
+
+1) Is the average systolic blood pressure
+before captopril treatment (SBPb) higher than 149 mmHg?
+
+2) Is the average SBP before captopril treatment 
+significantly different from the average SBP after
+captopril treatment?
+
+First, we will load the required R libraries:
+
+```{r, message=FALSE}
+
+```
+
+# Import the data
+
+```{r}
+captopril <- ...
+```
+
+# Data exploration
+
+**Note:** you may copy the results from the data exploration tutorial.
+
+Before we start with hypothesis testing, it is crucial to first explore the data. 
+
+```{r}
+
+```
+
+We have 15 patients, for which we have measured the systolic 
+blood pressure and diastolyic blood pressure, before and after
+treatment with the captopril drug.
+
+Visualize the data in an informative way (see tutorial of yesterday)
+
+```{r}
+
+```
+
+Interpret the plot!
+
+# Question 1
+
+Is the average systolic blood pressure (SBP)
+before captopril treatment higher than 149 mmHg?
+
+In the data exploration of the NHANES dataset we have set up a reference
+interval, i.e. an interval that is expected to hold 95% of
+the SBP values of healthy individuals. We found the interval
+of [93;149] mmHg. (If you did not get to this point of the script
+yet, don't worry!).
+
+To test the effect of the captopril on subjects with hypertension
+(patients), we need to find a group of patients that have
+elevated SBP levels, higher than 149 mmHg.Therefore, we want
+to test whether the patients in the captopril study indeed have on average a SBP level
+that is greater than 149 mmHg. 
+We can assess this research hypothesis using a one sample t-test.
+
+## Assess the assumptions
+
+Before we can perform a t-test, we must check that the required
+assumptions are met!
+
+1. The observations are independent of each other
+2. The data (SBPb) must be normally distributed
+
+
+```{r}
+... %>%
+  ... +
+  geom_qq() +
+  geom_qq_line()
+```
+
+Interpret the qq-plot
+
+If you feel comfortable with assuming normality based on the qq-plot,
+you may proceed with the analysis. 
+
+## Hypothesis test
+
+Here, we will 
+test if mean SBPb is significantly higher than 149 mmHg.
+
+More specifically, we will test the null hypothesis;
+
+H0: the mean SBPb is equal to 149 mmHg
+
+versus the alternative hypothesis;
+
+HA: the mean SBPb is greater than 149 mmHg
+
+```{r}
+output1 <- t.test(...,mu=...,alternative = ...,conf.level = ...,data=...)
+output1
+```
+
+When writing a conclusion on your research hypothesis,
+it is very important to be precise and concise, yet complete.
+Formulate a proper conclusion.
+
+# Question 2
+
+Is the average SBP before captopril treatment is different from the 
+average SBP after captopril treatment?
+
+The data are paired data; each patient's BP values were measured twice. 
+Therefore, there will be a strong correlation between the BP values before and
+after treatment of each individual patient. We can show this
+with a scatterplot.
+
+```{r}
+# Create scatterplot
+```
+
+We clearly see that if a patient's SBPb value is high, its
+SBPa value will be comparatively high as well. 
+
+As such, we will now need to perform a paired two-sample t-test. First, we must 
+check the assumptions.
+
+## Check the assumptions
+
+State the assumptions that you have to check and include the diagnostic plots to assess the assumption. 
+
+## Hypothesis test
+
+If all assumptions are met, we may continue with
+performing the paired two-sample t-test.
+
+```{r}
+output2 <- t.test(...,..., paired = ...,data=)
+output2
+```
+
+Formulate a conclusion bases on the output
+
+
+## One-sample t-test on the difference
+
+Performing a paired two-sample t-test is
+analogous to performing a one-sample t-test on the difference
+between both groups.
+
+This can be spotted in the output of the paired two-sample
+t-test. The alternative hypothesis HA there states that 
+the "true difference in means is not equal to 0". So internally,
+R will actually perform a one-sample t-test on the difference, and
+check whether or not the true mean difference is equal to 0.
+We can also set this up manually.
+
+```{r}
+captopril %>%
+  mutate(bp_diff = ...) %>%
+  t.test(...,mu=...)
+```
+
+Indeed, the output is completely analogous to that
+of the paired two-sample t-test.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

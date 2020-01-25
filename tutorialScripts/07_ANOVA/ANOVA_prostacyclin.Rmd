@@ -1,0 +1,115 @@
+---
+title: "7. Analysis of variance" 
+author: "Lieven Clement"
+date: "statOmics, Ghent University (https://statomics.github.io)"
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = TRUE, comment = NA, echo = TRUE,
+                      message = FALSE, warning = FALSE)
+library(tidyverse)
+```
+
+# Prostacyclin Example
+
+Researchers study the effect of arachidonic acid on prostacyclin level in blood plasma. They use 3 different concentrations of arachidonic acid: 
+
+- low, 
+- medium and 
+- high dose
+
+Each treatment is adopted to 12 rats. They measure the prostacyclin levels in blood plasma using an ELOSA fluorescence measurement.
+
+
+```{r}
+prostacyclin <- read_tsv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/prostacyclin.txt")
+```
+
+```{r}
+head(prostacyclin)
+```
+
+```{r}
+prostacyclin <- prostacyclin %>%
+  mutate(dose = as.factor(dose))
+```
+
+
+##Data exploration
+
+We assess if distribution of the prostacyclin concentration for each of the arachidonic acid treatments using a boxplot. We also assess if the data are normally distributed in each treatment group using QQ-plots. 
+
+```{r}
+prostacyclin %>% 
+  ggplot(aes(x=dose,y=prostac,fill=dose)) +
+  geom_boxplot() +
+  geom_point(position="jitter") +
+  ylab("prostacyclin (ng/ml)")
+  
+prostacyclin %>% 
+  ggplot(aes(sample=prostac)) +
+  geom_qq() +
+  geom_qq_line() + 
+  facet_grid(~dose)
+```
+
+
+The data in the three groups are approximately Normally distributed with equal variance:
+\[Y_i \vert \text{group j} \sim N(\mu_j,\sigma^2),\]
+with $j= \text{1, 2, 3}$
+
+## Research question
+
+Research question can translated in the following hypotheses 
+
+- $H_0$: the arachidonic acid concentration has no effect on the mean prostacyclin level in blood plasma in rats
+\[
+  H_0:\mu_1=\mu_2 = \mu_3
+\]
+
+- $H_1$: the arachidonic acid concentration has an effect on the mean prostacyclin level in blood plasma in rats, which implies that the at least two means are different.
+
+In terms of the model parameters this becomes
+
+\[
+  H_0:\mu_1=\mu_2 = \mu_3
+\]
+and
+\[H_1: \exists\ j,k \in \{1,\ldots,g\} : \mu_j\neq\mu_k\]
+
+We can assess this omnibus hypothesis using ANalysis of VAriance (ANOVA).
+
+# Analyse of Variance
+
+```{r}
+model1 <- lm(prostac~dose,data=prostacyclin)
+anova(model1)
+```
+
+Based on the anova analysis we can reject the omnibus null hypothesis that there is no effect of the arachidonic acid treatment on the average prostacyclin concentration in rats. 
+Next we continue to assess for which treatment groups the means are different using a posthoc analysis with the Tukey method to correct for multiple testing. 
+
+```{r}
+#install.packages("multcomp")
+library(multcomp)
+model1.mcp<-glht(model1,linfct=mcp(dose="Tukey"))
+summary(model1.mcp)
+confint(model1.mcp)
+plot(model1.mcp)
+```
+
+# Conclusion
+
+- There is an extreme significant effect of arachidonic acid on the average prostacyclin blood concentration in rats ($p<0.001$).
+The average prostacyclin concentration is higher in the high dose group than in the low and moderate dose group (both p-values are smaller than $p<0.001$).
+- The average concentration in the high dose group is `r round(confint(model1.mcp)$confint[2,1],1)`ng/ml (95% CI [`r paste(round(confint(model1.mcp)$confint[2,2:3],1),collapse=",")`]ng/ml) and `r round(confint(model1.mcp)$confint[3,1],1)`ng/ml (95% BI [`r paste(round(confint(model1.mcp)$confint[3,2:3],1),collapse=",")`]ng/ml) higher than in the low and middle dose group, respectively.
+- The difference in average prostacyclin concentration between the moderate and low dose group is not significant  (p=`r round(summary(model1.mcp)$test$pvalues[1],2)`).
+(All p-values and confidence intervals for post-hoc tests are corrected for multiple testing using the Tukey method).

@@ -1,0 +1,172 @@
+---
+title: "Tutorial 9.1: Kruskal-Wallis in the lettuce dataset"   
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+In a previous tutorial, we analysed the dataset on
+lettuce plants with ANOVA (see ANOVA_lettuce_plants_half.rmd in chapter 7). 
+However, it was not clear if all the assumptions of ANOVA were met. 
+Indeed, with only 7 values per group, it is very hard to assess
+the assumptions of normality and equal variances.
+
+Therefore, we will re-analyse the dataset by using the
+non-parametric alternative to ANOVA, the Kruskal-Wallis test,
+which is the alternative of ANOVA if the assumptions are not met.
+
+# The lettuce dataset
+
+The researcher want to find out if biochar, compost and
+a combination of both biochar and compost have an influence
+on the growth of lettuce plants. To this end, they grew up
+lettuce plants in a greenhouse. The pots were filled with
+one of four soil types;
+
+1. Soil only (control)
+2. Soil supplemented with biochar (refoak)
+3. Soil supplemented with compost (compost)
+4. Soil supplemented with both biochar and compost (cobc)
+
+The dataset `freshweight_lettuce.txt` contains the freshweight
+(in grams) for 28 lettuce plants (7 per condition). The researchers
+want to use an ANOVA test to find out whether or not there is an
+effect of one or more of the treatments on the growth of lettuce 
+plants. If so, they will use a post-hoc test (Tuckey test) to find
+which specific treatments have an effect.
+
+Load the required libraries
+
+```{r, message = FALSE}
+library(tidyverse)
+```
+
+# Data import
+
+```{r}
+lettuce <- read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/freshweight_lettuce.txt")
+```
+
+Take a glimpse at the data
+
+```{r}
+glimpse(lettuce)
+```
+
+# Data tidying
+
+```{r}
+## set treatment to factor
+## ...
+```
+
+
+# Data exploration
+
+```{r}
+## Count the number of observations per treatment
+
+```
+
+Now let's make a boxplot displaying the freshweight
+of each treatment condition:
+
+```{r}
+# ...
+```
+
+Interpret the visualization!
+
+In the analysis in chapter 7 (ANOVA_lettuce_plants_half.rmd file),
+we accepted the assumptions for analyzing the data with an ANOVA.
+However, it was not clear if all the assumptions of ANOVA were met. 
+Indeed, with only 7 values per group, it is very hard to assess
+the assumptions of normality and equal variances.
+
+Therefore, we will re-analyse the dataset by using the
+non-parametric alternative to ANOVA: the Kruskal-Wallis test.
+
+# Kruskal-Wallis rank test
+
+## Hypotheses
+
+Formulate a correct null and alternative hypothesis for the Kruskal-Wallis test in this analysis.
+
+## Analysis
+
+```{r}
+#set.seed(1)
+#kw <- kruskal_test(...)
+#kw
+```
+
+Interpret the results!
+
+# Post-hoc analysis
+
+We will perform a post-hoc analysis with pairwise Wilcoxon rank
+sum test. As we did not want to assume the location shift, we 
+will interpret the outcome in terms of probabilistic indices.
+Note that after the analysis, we will need to correct the acquired
+p-values for multiple testing.
+
+## Hypotheses
+
+Formulate a correct null and alternative hypothesis for the Wilcoxon test post-hoc analysis.
+
+## Analysis
+
+```{r}
+## pairwise.wilcox.test(...)
+```
+
+What do you observe?
+
+```
+## Alternative: caluculate the p-value for each treatment combination with wilcoxon_test
+
+treatments <- levels(lettuce$treatment)
+freshweight <- lettuce$freshweight
+
+pvalues <- combn(treatments,2,function(x){
+  
+  ## Pairwise Wilcoxon test
+  test = wilcox_test(freshweight~treatment,subset(lettuce,treatment%in%x), distribution = 'exact')
+  
+  ## Get and store p-value of test
+  pvalue(test)
+})
+
+## Adjust for multiple testing
+pvalues_bonf = p.adjust(pvalues,method = 'bonferroni') 
+
+## link the p-value with the correct pairwise test
+names(pvalues_bonf) <- combn(levels(lettuce$treatment),2,paste,collapse="_VS_")
+pvalues_bonf
+```
+
+Interpret.
+
+Based on the chunk of code above, can extract the point estimates
+for the probabilistic indices? Interpret those as well.
+
+# Conclusion
+
+Formulate a proper conclusion that answers the research hypothesis.
+
+
+
+
+
+
+
+
+
+
+
+

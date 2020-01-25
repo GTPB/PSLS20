@@ -1,0 +1,859 @@
+---
+title: "6. Simple linear regression"   
+author: "Lieven Clement"
+date: "statOmics, Ghent University (https://statomics.github.io)"
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = TRUE, comment = NA, echo = TRUE,
+                      message = FALSE, warning = FALSE)
+library(Rmisc)
+library(tidyverse)
+```
+
+
+# Breast cancer dataset
+
+
+- Subset of study https://doi.org/10.1093/jnci/djj052
+
+- 32 breast cancer patients with estrogen recepter positieve tumor that had tamoxifen chemotherapy. Variabels:
+
+    - grade: histological grade of tumor (grade 1 vs 3),
+    - node: lymph node status  (0: not affected, 1: lymph nodes affected and removed),
+    - size: tumor size in cm,
+    - ESR1 and S100A8 gene expression in tumor biopsy (microarray technology)
+
+
+```{r}
+brca <- read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/breastcancer.csv")
+brca
+```
+
+- For didactical reasons we first remove 3 outliers in the S100A8 expression data.
+- Later in the lecture we will show how to properly deal with all data.
+
+
+```{r out.width='70%', fig.align='center',warnings=FALSE}
+brca %>% ggplot(aes(x="",y=S100A8)) +
+geom_boxplot()
+```
+
+---
+
+```{r}
+library(GGally)
+brcaSubset<-brca %>% filter(S100A8<2000)
+brcaSubset[,-(1:4)] %>% ggpairs()
+```
+
+## Association between ESR1 and S100A8 expressie
+
+- ESR1 in $\pm$ 75% of breast cancer tumors.
+
+    - Expression of ER gene positive for treatment: tumor responds to hormone therapy
+    - Tamoxifen interacts with ER and modulates gene expression.
+
+- Proteins of S100 family often dysregulated in cancer
+
+      - S100A8 expressie represses immune systeem in tumor en creates an environment of inflamation that promotes tumor growth.
+
+- Assess association between ESR1 and S100A8 expression.
+
+1. pipe dataset to ggplot
+2. select data `ggplot(aes(x=ESR1,y=S100A8))`
+3. add points `geom_point()`
+4. add smooth line `geom_smooth()`
+
+```{r fig.align='center'}
+brcaSubset %>% 
+  ggplot(aes(x=ESR1,y=S100A8)) +
+  geom_point() +
+  geom_smooth()
+```
+
+# Lineair Regression
+
+- Statistical method to assess association between two variables $(X_i, Y_i)$, measured on each subject $i = 1, ..., n$.
+
+- Gene expression example 
+
+    - Response Y : S100A8 expression
+    - Predictor X: ESR1 expression 
+
+```{r fig.align='center'}
+brcaSubset %>% 
+  ggplot(aes(x=ESR1,y=S100A8)) +
+  geom_point() +
+  geom_smooth(se=FALSE,col="grey") +
+  geom_smooth(method="lm",se=FALSE)
+```
+
+## Model
+
+- For fixed $X$, $Y$ does not necessarly has the same value
+
+$$\text{observation = signal + noise}$$
+
+$$Y_i=g(X_i)+\epsilon_i$$
+- We define $g(x)$ als the expected outcome for subjects with $X_i=x$
+
+$$E[Y_i|X_i=x]=g(x)$$
+
+Hence, $\epsilon_i$ is on average 0 for subjects with same  $X_i$:
+$$E[\epsilon_i|X_i]=0$$
+
+## Lineair regression
+
+- To obtain *accurate* and *interpretable* results one often choose $g(x)$ to be a linear function with unknown parameter.
+
+$$E(Y|X=x)=\beta_0 + \beta_1 x$$
+
+unknown \alert{intercept} $\beta_0$ and
+\alert{slope} $\beta_1$.
+
+- Lineair model imposes an *assumption* on the distribution of $X$ and $Y$, which can be invalid.
+
+- *Efficient data-analysis*: because it uses all observations to learn on the expected outcome for $X=x$.
+
+
+## Use
+
+- *Prediction*: when $Y$ is unknown but $X$ is known we can predict $Y$ using 
+\[E(Y|X=x)=\beta_0 + \beta_1 x\]
+
+- *Association*: biological relation between variable $X$ and response $Y$
+- *Intercept:* $E(Y|X=0)=\beta_0$
+\vspace{10pt}
+- *Slope*:
+\begin{eqnarray*}
+E(Y|X=x+\delta)-E(Y|X=x)&=&\beta_0 + \beta_1 (x+\delta) -\beta_0-\beta_1 x\\
+&=& \beta_1\delta
+\end{eqnarray*}
+
+$\beta_1=$ difference in mean outcome for subjects that differ in one unit of the predictor  $X$.
+
+# Parameter estimation
+
+- Least squares
+
+```{r fig.align='center'}
+brcaSubset %>% 
+  ggplot(aes(x=ESR1,y=S100A8)) +
+  geom_point() +
+  geom_smooth(se=FALSE,col="grey") +
+  geom_smooth(method="lm",se=FALSE)
+```
+
+- Parameters $\beta_0$ en $\beta_1$ are unknown.
+
+- Estimate them using sample
+
+- Best fitting line
+    
+    - Point on regression line for a given $x_i$: $(x_i, \beta_0 + \beta_1 x_i)$ as close as possible $(x_i, y_i)$
+    - Choose $\beta_0$ and $\beta_1$ so that the sum between predicted and observed points becomes as small as possible. 
+
+$$SSE=\sum_{i=1}^n (y_i-\beta_0-\beta_1 x_i)^2=\sum_{i=1}^n e_i^2$$
+
+with residuals $e_i$ the vertical distances from the observations to the fitted regression line 
+
+## Estimators that minimise SSE
+
+$$\hat{\beta_1}= \frac{\sum\limits_{i=1}^n (y_i-\bar y)(x_i-\bar x)}{\sum\limits_{i=1}^n (x_i-\bar x_i)^2}=\frac{\mbox{cor}(x,y)s_y}{s_x} $$
+
+$$\hat{\beta_0}=\bar y - \hat{\beta}_1 \bar x $$
+
+Note, that the slope of the least squares fit is proportional to the correlation between the response and the predictor.
+
+Fitted model allows to:
+
+  - predict the response for subjects with a given value $x$ for the predictor: 
+$$\text{E} [ Y | X = x]=\hat{\beta}_0+\hat{\beta}_1x$$
+
+  - Assess how the mean response differs between two groups of subjects that differ $\delta$ units in the predictor:
+
+$$\text{E}\left[Y|X=x+\delta\right]-\text{E}\left[Y|X=x\right]= \hat{\beta}_1\delta$$
+
+### Breast cancer example
+
+```{r}
+lm1 <- lm(S100A8~ESR1,brcaSubset)
+summary(lm1)
+```
+
+\[E(Y|X=x)=`r round(lm1$coef[1],2)`-`r abs(round(lm1$coef[2],3))` x\]
+
+- Expected S100A8 expression is on average  `r abs(round(lm1$coef[2],3)*1000)` units lower for patients with ESR1 expression level that is 1000 units higher
+
+- Expected S100A8 expression level for patients with an ESR1 expression level of 2000:  
+\[`r round(lm1$coef[1],2)`-`r abs(round(lm1$coef[2],3))`\times 2000=`r round(lm1$coef[1]+lm1$coef[2]*2000,2)`\]
+
+- Expected S100A8 expression level for patients with an ESR1 expression level of 4000:  
+\[`r round(lm1$coef[1],2)`-`r abs(round(lm1$coef[2],3))`\times 4000=`r round(lm1$coef[1]+lm1$coef[2]*4000,2)`\]
+- Be careful when you extrapolate! (We can only assess the assumption of linearity within the range of the data).
+
+# Statistical inference 
+
+To draw conclusions based on the regression model
+\[E(Y|X)=\beta_0+\beta_1 X\]
+we need to know
+
+- How the least squares parameter estimators vary from sample to sample, and
+- how they deviate under the null hypothesis that there is no association between predictor and response
+- Requires a statistical model
+
+- Model the distribution of $Y$ given $X$ explicitly: f_{Y|X}(y)
+
+## Modelling distribution of Y?
+
+1. Besides *Linearity* we need additional assumptions!
+2. *Independence*: Observations $(X_1,Y_1), ...,  (X_n,Y_n)$ are made for n independent subjects (is required to estimate the variance)
+3. *Homoscedasticity* or *equal variances*: observations vary with equal mean around the regression line 
+    - Residuals $\epsilon_i$ have equal variance for each $X_i=x$
+    - $\text{var}(Y\vert X=x) = \sigma^2$ for each $X=x$
+    - $\sigma$ is referred to as the *residual standard deviation* 
+4. *Normality*: the residuals $\epsilon_i$ are normally distributed
+
+![](https://raw.githubusercontent.com/GTPB/PSLS20/gh-pages/assets/figs/RegModel3.png){width=100%}
+
+
+- Given 2, 3 and 4 
+$$\epsilon_i \text{ i.i.d.} N(0,\sigma^2).$$
+- Together with 1 this implies:
+$$Y_i\vert X_i\sim N(\beta_0+\beta_1 X_i,\sigma^2),$$
+
+- We can show that given these assumption
+$$\sigma^2_{\hat{\beta}_0}=\frac{\sum\limits_{i=1}^n X^2_i}{\sum\limits_{i=1}^n (X_i-\bar X)^2} \times\frac{\sigma^2}{n} \text{ en } \sigma^2_{\hat{\beta}_1}=\frac{\sigma^2}{\sum\limits_{i=1}^n (X_i-\bar X)^2}$$
+- and the parameter estimators are also normally distributed
+$$\hat\beta_0 \sim N\left(\beta_0,\sigma^2_{\hat \beta_0}\right) \text{ en } \hat\beta_1 \sim N\left(\beta_1,\sigma^2_{\hat \beta_1}\right)$$
+
+## High spread of $X$ improves the precision
+
+$$\sigma^2_{\hat{\beta}_1}=\frac{\sigma^2}{\sum\limits_{i=1}^n (X_i-\bar X)^2}$$
+
+![](https://raw.githubusercontent.com/GTPB/PSLS20/gh-pages/assets/figs/spread.png){ width=100% }
+
+- Conditional variance ($\sigma^2$) is unknown
+- Estimate using *mean squared error* (MSE)
+$$\hat\sigma^2=MSE=\frac{\sum\limits_{i=1}^n \left(y_i-\hat\beta_0-\hat\beta_1\times x_i\right)^2}{n-2}=\frac{\sum\limits_{i=1}^n e^2_i}{n-2}.$$
+- This estimator is based on independence (assumption 2) and equality of the variance (assumption 3).
+- Devide by $n-2$
+
+Upon the estimation of $\sigma^2$ we obtain following standard errors:
+
+$$\text{SE}_{\hat{\beta}_0}=\hat\sigma_{\hat{\beta}_0}=\sqrt{\frac{\sum\limits_{i=1}^n X^2_i}{\sum\limits_{i=1}^n (X_i-\bar X)^2} \times\frac{\text{MSE}}{n}} \text{ en } \text{SE}_{\hat{\beta}_1}=\hat\sigma_{\hat{\beta}_1}=\sqrt{\frac{\text{MSE}}{\sum\limits_{i=1}^n (X_i-\bar X)^2}}$$
+
+- Again we can construct tests and confidence intervals using 
+$$T=\frac{\hat{\beta}_k-\beta_k}{SE(\hat{\beta}_k)} \text{ with } k=1,2.$$
+
+- If all assumptions are valid $T$ follows t-verdeling with n-2 degrees of freedom.
+\vspace{15pt}
+- If no normality, but independence, linearity, equality of mean and large dataset
+\[\rightarrow \text{Central Limit theorem}\]
+
+
+### Breast cancer example
+
+- Negative association between S100A8 and ESR1 gene expression.
+
+- Generalize effect in sample to population using the confidence interval on the mean:
+$$[\hat\beta_1 - t_{n-2,\alpha/2} \text{SE}_{\hat\beta_1},\hat\beta_1 + t_{n-2,\alpha/2} \text{SE}_{\hat\beta_1}]$$.
+
+```{r}
+confint(lm1)
+```
+
+- Negative association is significant on 5% significance level.
+
+
+## Hypothesis test
+
+- Translate the research question to assess the association between the S100A8 and ESR1 gene expression to parameters in the model.
+
+- Under the null hypothesis of the absence of an association in the expression of both genes:
+$$H_0: \beta_1=0$$
+
+- Under the alternative hypothesis, there is an association between the expression of both genes :
+$$H_1: \beta_1\neq0$$
+\vspace{15pt}
+- Test statistic
+$$T=\frac{\hat{\beta}_1-0}{SE(\hat{\beta}_k)}$$
+\vspace{15pt}
+- Under $H_0$ the statistics follows a t-distribution with n-2 degrees of freedom.
+
+###brca dataset
+
+```{r}
+summary(lm1)
+```
+
+
+- The association between the S100A8 and ESR1 expression is extremely significant  (p<<0.001).
+- But, we first have to check all assumptions!
+- Otherwise the conclusions based on the statistical test and the CI can be incorrect.  
+
+# Assess assumptions
+
+- Independence: design
+- Linearity: inference is useless if the association is not linear 
+- Homoscedasticity: inference/p-value is incorrect if data are heteroscedastic
+- Normality: inference/p-value is incorrect if data are not normally distributed in small samples
+
+
+## Linearity
+
+```{r fig.align='center'}
+brcaSubset %>% 
+  ggplot(aes(x=ESR1,y=S100A8)) +
+  geom_point() +
+  geom_smooth(se=FALSE,col="grey") +
+  geom_smooth(method="lm",se=FALSE)
+```
+
+
+### Residual analysis
+
+- Assumption of linearity is typically assessed using *residual plot*. (Especially if the lineair model has multiple covariates, later chapters)
+- predictor of predictions $\hat\beta_0+\hat\beta_1 x$ on $X$-axis
+- *residuals* on $Y$-as
+$$e_i=y_i-\hat{g}(x_i)=y_i-\hat\beta_0-\hat\beta_1\times x_i,$$
+
+```{r}
+plot(lm1)
+```
+
+## Homoscedasticity (equal variances)
+
+- Residuals and squared residuals cary information on the residual variability 
+
+- Association with predictors $\rightarrow$ indication of heteroscedasticity.
+- Scatterplot of $e_i$ vs $x_i$ or predictions $\hat \beta_0+ \hat \beta_1 x_i$.
+- Scatterplot van standardized residual versus $x_i$ or predictions.
+
+## Normality
+
+- If the sample size is large the estimators are normally distributed even if the observations are not normally distributed: central limit theorem
+- How many observations? $\rightarrow$ depends on shape and magnitude of deviations 
+- Assumption: Data are Normally distributed conditional on X: 
+$$Y_i\vert X_i\sim N(\beta_0+\beta_1X_i,\sigma^2)$$
+- QQ-plot of response Y is misleading and useless: distribution of $Y_i$ are different because they have a different conditional mean!
+
+- QQ-plot of the residuals $e_i$
+
+```{r echo=FALSE}
+set.seed=200
+par(mfrow=c(1,3))
+x=rep(1:10,each=20)
+y=x+rnorm(length(x))
+boxplot(y~x)
+qqnorm(y, main="Original observations")
+qqline(y)
+lmH<-lm(y~x)
+plot(lmH,which=2,main="Residuals")
+```
+
+
+```{r}
+plot(lm1,which=2)
+```
+
+
+# Invalid assumptions 
+
+- Transformation of predictor does not change distribution of Y for given X:
+
+    - not useful to obtain homoscedasticity or Normal distribution
+    - useful for linearity when normality and homoscedasticity are valid
+    - Often inclusion of higher order terms: $X^2$, $X^3$, ...
+    $$Y_i=\beta_0+\beta_1X_i+\beta_2X_i^2+ ... + \epsilon_i$$
+
+
+- Transformation of response Y can be useful to obtain normality and homoscedasticity 
+
+-  $\sqrt(Y)$, $\log(Y)$, 1/Y, ...
+
+
+## Breast cancer example 
+
+Problems with
+
+- heteroscedasticity
+- possibly deviations from normality (skewed to the right)
+- negative concentration predictions are theoretically impossible 
+- non-linearity
+
+This is often the case for concentration and intensity measurements 
+
+- These are often log-normal distributed (normal distribution upon log-transformatie)
+- We also observed a kind of exponential relation with the smoother 
+- In gene expression literature often $\log_2$ transformation is adopted
+- gene-expression on log scale: differences on log scale are fold changes on original scale!  
+
+
+```{r}
+brca %>% ggplot(aes(x=ESR1,y=S100A8)) +
+  geom_point() +
+  geom_smooth()
+```
+
+```{r}
+brca %>% ggplot(aes(x=ESR1%>%log2,y=S100A8%>%log2)) +
+  geom_point() +
+  geom_smooth()
+```
+
+```{r}
+lm2<-lm(S100A8%>%log2 ~ ESR1 %>% log2, brca)
+plot(lm2)
+summary(lm2)
+```
+
+
+```{r}
+confint(lm2)
+```
+
+
+### Interpretation 1
+
+A patient with an ESR1 expression that is one unit on $\log_2$ scale higher than that of another patient on average has a $\log_2$ expression for S100A8 that is `r abs(round(lm2$coef[2],2))` units lower (95% CI [`r paste(round(confint(lm2)[2,],2),collapse=",")`]).
+
+$$\log_2 \hat\mu_1=23.401  -1.615 \times \text{logESR}_1,\text{ } \log_2 \hat\mu_2=23.401  -1.615 \times \text{logESR}_2 $$
+$$\log_2 \hat\mu_2-\log_2 \hat\mu_1=  -1.615 (\log_2 \text{ESR}_2-\log_2 \text{ESR}_1) = -1.615 \times 1 = -1.615$$
+
+### Interpretatie 2
+
+Model on log-scale: upon back-transformation we obtain geometric means
+
+\begin{eqnarray*}
+\sum\limits_{i=1}^n \frac{\log x_i}{n}&=&\frac{\log x_1 + \ldots + \log x_n}{n}\\\\
+&\stackrel{(1)}{=}&\frac{\log(x_1 \times \ldots \times x_n)}{n}=\frac{\log\left(\prod\limits_{i=1}^n x_i\right)}{n}\\\\
+&\stackrel{(2)}{=}&\log \left(\sqrt[\leftroot{-1}\uproot{2}\scriptstyle n]{\prod\limits_{i=1}^n x_i}\right)
+\end{eqnarray*}
+
+- Population mean $\mu$ is estimated as a geometric mean 
+- Logarithmic transformation is monotone: we can backtransform confidence intervals on log-scale!
+
+
+```{r}
+2^lm2$coef[2]
+2^-lm2$coef[2]
+2^-confint(lm2)[2,]
+```
+
+A patient with an ESR1 expression that is 2 times the expression of that of another patient will on average have an  S100A8 expression that is `r round(2^-lm2$coef[2]
+,2)` times lower (95\% CI [`r paste(sort(round(2^-confint(lm2)[2,],2)),collapse=",")`]).
+
+
+$$\log_2 \hat\mu_1=23.401  -1.615 \times \text{logESR}_1,\text{ } \log_2 \hat\mu_2=23.401  -1.615 \times \text{logESR}_2 $$
+$$\log_2 \hat\mu_2-\log_2 \hat\mu_1=  -1.615 (\log_2 \text{ESR}_2-\log_2 \text{ESR}_1) $$
+$$\log_2 \left[\frac{\hat\mu_2}{\hat\mu_1}\right]=  -1.615 \log_2\left[\frac{ \text{ESR}_2}{\text{ESR}_1}\right] $$
+$$\frac{\hat\mu_2}{\hat\mu_1}=\left[\frac{ \text{ESR}_2}{\text{ESR}_1}\right]^{-1.615}=2^ {-1.615} =0.326$$
+or
+$$\frac{\hat\mu_1}{\hat\mu_2}=2^{1.615} =3.06$$
+
+
+### Interpretation 3
+
+A patient with an ESR1 expression that is 1\% higher than that of another patient will on average have  an expression-level for S100A8 gen  that is approximately `r round(lm2$coef[2],2)`% lower (95\% CI [`r paste(round(confint(lm2)[2,],2),collapse=",")`])%.
+
+$$\log_2 \hat\mu_1=23.401  -1.615 \times \text{logESR}_1,\text{ } \log_2 \hat\mu_2=23.401  -1.615 \times \text{logESR}_2 $$
+$$\log_2 \hat\mu_2-\hat\log_2 \mu_1=  -1.615 (\log_2 \text{ESR}_2-\log_2 \text{ESR}_1) $$
+$$\log_2 \left[\frac{\hat\mu_2}{\hat\mu_1}\right]=  -1.615 \log_2\left[\frac{ \text{ESR}_2}{\text{ESR}_1}\right] $$
+$$\frac{\hat\mu_2}{\hat\mu_1}=\left[\frac{ \text{ESR}_2}{\text{ESR}_1}\right]^{-1.615}=1.01^ {-1.615} =0.984 \approx -1.6\%$$
+
+This is valid for low to moderate values of $\beta_1$:
+$$-10<\beta_1<10 \rightarrow 1.01^{\beta_1} -1 \approx \frac{\beta_1}{100}.$$
+
+
+## Inference on the mean outcome
+
+- A regression model can also be used for prediction
+- Inference on average outcome for a given value of $X=x$, i.e.
+$$\hat{g}(x)= \hat{\beta}_0 + \hat{\beta}_1 x$$
+- $\hat{g}(x)$ is an estimator of the conditional mean $E[Y\vert X=x]$
+- Parameter estimators are Normally distributed and unbiased $\rightarrow$ estimator $\hat{g}(x)$ is also Normally distributed and unbiased.
+
+$$\text{SE}_{\hat{g}(x)}=\sqrt{MSE\left\{\frac{1}{n}+\frac{(x-\bar X)^2}{\sum\limits_{i=1}^n (X_i-\bar X)^2}\right\}}.$$
+
+$$T=\frac{\hat{g}(x)-g(x)}{SE_{\hat{g}(x)}}\sim t_{n-2}$$
+
+- Mean response and confidence intervals for the mean response in R via de `predict(.)` functie.
+- `newdata` argument: predictor values (x-values) at which we want to calculate the mean response 
+- `interval="confidence"` argument to obtain CI.
+- Without newdata argument we perform predictions for all predictor values in the dataset used to fit the model. 
+
+```{r}
+grid <- 140:4000
+g <- predict(lm2,newdata=data.frame(ESR1=grid), interval="confidence")
+head(g)
+```
+
+Note, that we do not have to transform the new data that we specified for the ESR1 expression because we fitted the model with a call to the `lm` function and specified the transformation within the lm formula using the pipe command!
+
+```{r}
+brca %>% ggplot(aes(x=ESR1%>%log2,y=S100A8%>%log2)) +
+  geom_point() +
+  geom_smooth(method="lm")
+```
+
+## Back-transformation
+```{r}
+newdata<-data.frame(cbind(grid,2^g))
+brca %>% ggplot(aes(x=ESR1,y=S100A8)) +
+  geom_point() +
+  geom_line(aes(x=grid,y=fit),newdata) +
+  geom_line(aes(x=grid,y=lwr),newdata,color="grey") +
+  geom_line(aes(x=grid,y=upr),newdata,color="grey")
+```
+
+# Prediction-intervals
+
+- We can also make a prediction for the location of a new observation that would be collected in a new experiment for a patient with a particular value for their ESR1 expression  
+
+- It is important to notice that this experiment still has to be conducted. So we want to predict the non-observed individual expression value for a novel patient.
+
+- For a novel independent observation $Y^*$ 
+$$
+  Y^* = g(x) + \epsilon^*
+$$
+with $\epsilon^*\sim N(0,\sigma^2)$ and $\epsilon^*$ independent of the observations in the sample $Y_1,\ldots, Y_n$.
+
+- We predict a new log-S100A8 for a patient with a known log2-ESR1 expression level x
+\[
+  \hat{y}(x)=\hat{\beta}_0+\hat{\beta}_1 \times x
+\]
+
+- The estimated mean outcome and prediction for a new observation are equal. 
+
+- But, their sample distributions are different!
+
+    - Uncertainty on the estimated mean outcome  $\leftarrow$ uncertainty on estimated model parameters $\hat\beta_0$ en $\hat\beta_1$.
+    - Uncertainty on new observation $ $\leftarrow$ *uncertainty on estimated mean* and  *additional uncertainty* because the new observation will deviate around the mean!
+
+
+$$\text{SE}_{\hat{Y}(x)}=\sqrt{\hat\sigma^2+\hat\sigma^2_{\hat{g}(x)}}=\sqrt{MSE\left\{1+\frac{1}{n}+\frac{(x-\bar X)^2}{\sum\limits_{i=1}^n (X_i-\bar X)^2}\right\}}.$$
+
+$$\frac{\hat{Y}(x)-Y}{\text{SE}_{\hat{Y}(x)}}\sim t_{n-2}$$
+
+- Note, that a **prediction-interval** (PI) is an improved version of a reference-interval when the model parameters are unknown: Uncertainty on model parameters +  t-distribution.
+
+
+```{r}
+p <- predict(lm2,newdata=data.frame(ESR1=grid), interval="prediction")
+head(p)
+```
+
+```{r}
+preddata<-data.frame(cbind(grid=grid%>%log2,p))
+brca %>% ggplot(aes(x=ESR1%>%log2,y=S100A8%>%log2)) +
+  geom_point() +
+  geom_smooth(method="lm") + 
+     geom_line(aes(x=grid,y=lwr),preddata,color="blue") +
+  geom_line(aes(x=grid,y=upr),preddata,color="blue")
+```
+
+```{r}
+preddata<-data.frame(cbind(grid,2^p))
+brca %>% ggplot(aes(x=ESR1,y=S100A8)) +
+  geom_point() +
+  geom_line(aes(x=grid,y=fit),newdata) +
+  geom_line(aes(x=grid,y=lwr),newdata,color="grey") +
+  geom_line(aes(x=grid,y=upr),newdata,color="grey") + 
+    geom_line(aes(x=grid,y=lwr),preddata,color="blue") +
+  geom_line(aes(x=grid,y=upr),preddata,color="blue")
+```
+
+
+### NHANES voorbeeld
+
+
+- Replace reference interval for cholesterol level from chapter 2 by prediction-interval.
+
+- Reference interval 
+    
+```{r}
+library(NHANES)
+fem <- NHANES %>% filter(Gender=="female"&!is.na(DirectChol))
+
+exp(fem$DirectChol%>%log%>%mean + c(-1,1)* qnorm(0.975) * (fem$DirectChol%>%log%>%sd))
+```
+
+- prediction interval 
+    
+```{r}
+lmChol <- lm(DirectChol %>% log2~1,data=fem)
+predInt <- predict(lmChol,interval="prediction",newdata=data.frame(noPred=1))
+round(2^predInt,2)
+```
+
+
+Note, that the prediction interval is almost similar to the reference interval for the large sample. Indeed we could estimate the parameters very precise.
+
+We will do the same thing for the small sample size of 10 patients.
+
+- Reference interval
+    
+```{r}
+set.seed(1)
+fem10<- NHANES %>% filter(Gender=="female"&!is.na(DirectChol)) %>% sample_n(size=10) 
+
+2^(fem10$DirectChol%>%log2%>%mean + c(-1,1)* qnorm(0.975) * (fem10$DirectChol%>%log2%>%sd))
+```
+
+- Prediction interval
+    
+```{r}
+lmChol10 <- lm(DirectChol %>% log2~1,data=fem10)
+predInt10 <- predict(lmChol10,interval="prediction",newdata=data.frame(noPred=1))
+round(2^predInt10,2)
+```
+
+- Note, that the PI now captures uncertainty in parameter estimators (mean and standard error).
+And that the interval becomes much wider! This is particularly important here for the upper limit because we back-transformed the data! 
+
+- The interval is almost as wide as the one based on the large sample. 
+
+- In small samples it is very important to account for this additional uncertainty. 
+
+
+# Sum of squares and Anova-table 
+##Total sum of squares 
+$$\text{SSTot} = \sum_{i=1}^n (Y_i-\bar{Y})^2.$$
+
+- SStot can be used to estimate the variance of the **marginal distribution** of the response.
+
+- In this chapter we focused on the **conditional distribution** $f(Y\vert X=x)$.
+
+- We known that MSE is a good estimate of the variance of the conditional distribution of  $Y\vert X=x$.
+
+
+```{r out.width='100%', fig.asp=.8, fig.align='center', echo=FALSE}
+brca$log2ESR1<-log2(brca$ESR1)
+brca$log2S100A8<-log2(brca$S100A8)
+plot(log2S100A8~log2ESR1,data=brca,xlab="ESR1 expressie (log2)",ylab="S100A8 expressie (log2)",cex.axis=1.5,cex.main=1.5,cex.lab=1.5,col=4)
+abline(h=mean(brca$log2S100A8))
+for (i in 1:length(brca$log2S100A8)) lines(rep(brca$log2ESR1[i],2),c(mean(brca$log2S100A8),brca$log2S100A8[i]),lty=2,col=4)
+```
+
+## Sum of squares of the regression SSR
+
+$$\text{SSR} = \sum_{i=1}^n (\hat{Y}_i - \bar{Y})^2 = \sum_{i=1}^n (\hat{g}(x_i) - \bar{Y})^2.$$
+
+- Is a measure for the deviation of the predictions on the regression line and the marginal mean of the response. 
+
+- Another interpretation: difference between two models
+
+    - Estimated model $\hat{g}(x)=\hat\beta_0+\hat\beta_1x$
+    - Estimated model without predictor (only intercept): $g(x)=\beta_0$ $\rightarrow$ $\beta_0$ will be equal to $\bar{Y}$.
+
+- SSR measures the size of the effect of the predictor
+
+```{r out.width='100%', fig.asp=.8, fig.align='center',echo=FALSE}
+plot(log2S100A8~log2ESR1,brca,xlab="ESR1 expressie (log2)",ylab="S100A8 expressie (log2)",cex.axis=1.5,cex.main=1.5,cex.lab=1.5)
+abline(h=mean(brca$log2S100A8))
+abline(lm2,col=2)
+points(brca$log2ESR1,lm2$fitted,pch=2,col=2)
+for (i in 1:length(brca$log2S100A8)) lines(rep(brca$log2ESR1[i],2),c(mean(brca$log2S100A8),lm2$fitted[i]),lty=2,col=2)
+```
+
+
+## Sum of Squares of the Error
+
+$$ \text{SSE} = \sum_{i=1}^n (Y_i-\hat{Y}_i )^2 = \sum_{i=1}^n \left\{Y_i-\hat{g}\left(x_i\right)\right\}^2.$$
+
+- The smaller SSE the better the fit. 
+
+
+- Least squares method!
+
+---
+
+```{r out.width='100%', fig.asp=.8, fig.align='center',echo=FALSE}
+plot(log2S100A8~log2ESR1,brca,xlab="ESR1 expressie (log2)",ylab="S100A8 expressie (log2)",cex.axis=1.5,cex.main=1.5,cex.lab=1.5)
+abline(lm2,col=2)
+points(brca$log2ESR1,lm2$fitted,pch=2,col=2)
+for (i in 1:length(brca$log2S100A8)) lines(rep(brca$log2ESR1[i],2),c(brca$log2S100A8[i],lm2$fitted[i]),lty=2)
+```
+
+We can show that SST can be decomposed in 
+\begin{eqnarray*}
+  \text{SSTot}
+    &=&  \sum_{i=1}^n (Y_i-\bar{Y})^2 \\
+    &=&  \sum_{i=1}^n (Y_i-\hat{Y}_i+\hat{Y}_i-\bar{Y})^2 \\
+    &=&  \sum_{i=1}^n (Y_i-\hat{Y}_i)^2+\sum_{i=1}^n(\hat{Y}_i-\bar{Y})^2 \\
+    &=&  \text{SSE }+\text{SSR}  
+  \end{eqnarray*}
+
+-  Total variability in the data (SSTot) is partially explained by the predictor (SSR).
+- Variability that we cannot explain with the regression model is the residual variability (SSE).
+
+
+## Determination coefficient
+
+$$ R^2 = 1-\frac{\text{SSE}}{\text{SSTot}}=\frac{\text{SSR}}{\text{SSTot}}.$$
+
+- *Fraction of total variability of the sample outcomes explained by the model*.
+
+- Large $R^2$ indicates that the model has the potential to make good predictions  (small SSE).
+
+- Not very indicative for p-value of the test $H_0:\beta_1=0$ vs $H_1:\beta_1\neq0$.
+
+  - p-value is largely determined by SSE and sample size $n$, but not by SSTot.
+  - $R^2$ is determined by SSE and SSTot but not by sample size $n$. 
+- Model with low $R^2$ is still useful to study associations as long as the association is modelled correctly!
+
+### Breast cancer example 
+
+```{r}
+summary(lm2)
+```
+
+## F-Test in simple linear model
+
+- Sum of squares are the bases for $F$-tests
+$$  F  = \frac{\text{MSR}}{\text{MSE}}$$
+
+with  $\text{MSR} = \frac{\text{SSR}}{1} \text{ and } \text{MSE} = \frac{\text{SSE}}{n-2}.$
+
+- MSR mean sum of squares of the regression,
+
+- denominators 1 en $n-2$ are the degrees of freedom of SSR and SSE.
+
+- Under $H_0: \beta_1=0$ 
+$$H_0:F = \frac{\text{MSR}}{\text{MSE}} \sim F_{1,n-2},$$
+- F-test is always two-sided! $H_1:\beta_1\neq 0$
+$$  p = P_0\left[F\geq f\right]=1-F_F(f;1,n-2)$$
+
+
+```{r}
+summary(lm2)
+```
+
+
+```{r, echo=FALSE}
+grid<-seq(0,10,.1)
+plot(grid,df(grid,1,30),type="l",xlab="F",ylab="Density",main="F-distribution with 1 df in the nominator and 30 in the denominator",cex.main=1.5,cex.axis=1.5,cex.lab=1.5)
+```
+
+
+## Anova Table
+
+
+| |Df|Sum Sq|Mean Sq|F value|Pr(>F)|
+|---|---|---|---|---|---|
+|Regression|degrees of freedom SSR|SSR|MSR|f-statistic|p-value|
+|Error|degrees of freedom SSE|SSE|MSE| | |
+
+```{r}
+anova(lm2)
+```
+
+
+## Dummy variables
+
+- Linear regression model  can also be used to compare two group means.
+- brca: difference in average age between patients with unaffected and affected lymph nodes.
+
+- Define dummy variabele
+$$x_i = \left\{ \begin{array}{ll}
+1 & \text{affected lymph nodes} \\
+0 & \text{unaffected lymph nodes} \end{array}\right.$$
+
+- group with $x_i=0$ is referred to as the  **reference group**. 
+
+- Regression model remains unaltered,
+$$Y_i = \beta_0 + \beta_1 x_i +\epsilon_i$$
+with $\epsilon_i \text{ iid } N(0,\sigma^2)$
+
+
+Because $x_i$ only can take two values, we can study the regression model for each value of  $x_i$ separately:
+$$ \begin{array}{lcll}
+   Y_i &=& \beta_0 +\epsilon_i &\text{unaffected lymph nodes} (x_i=0) \\
+   Y_i &=& \beta_0 + \beta_1 +\epsilon_i &\text{ affected lymph nodes} (x_i=1) .
+ \end{array}$$
+So
+ \begin{eqnarray*}
+   E\left[Y_i\mid x_i=0\right] &=& \beta_0 \\
+   E\left[Y_i\mid x_i=1\right] &=& \beta_0 + \beta_1,
+\end{eqnarray*}
+
+ Hence, the interpretation of $\beta_1$:
+$$   \beta_1 = E\left[Y_i\mid x_i=1\right]-E\left[Y_i\mid x_i=0\right]$$
+
+$\beta_1$ is the average age difference between patients with affected and patients with unaffected lymph nodes (reference group).
+
+With notation $\mu_0= E\left[Y_i\mid x_i=0\right]$ and $\mu_1= E\left[Y_i\mid x_i=1\right]$ this becomes
+$$\beta_1 = \mu_1-\mu_0.$$
+
+We can show that
+$$\begin{array}{ccll}
+ \hat\beta_0
+   &=& \bar{Y}_1&\text{ (sample mean of reference group)} \\
+ \hat\beta_1
+   &=& \bar{Y}_2-\bar{Y}_1&\text{(estimator of effect size)} \\
+ \text{MSE}
+   &=& S_p^2 .
+\end{array}$$
+
+Tests $H_0:\beta_1=0$ vs.  $H_1:\beta_1\neq0$ can be used to assess the null hypothesis of the  two-sample $t$-test, $H_0:\mu_1=\mu_2$ vs $H_1:\mu_1\neq\mu_2$.
+
+
+```{r}
+brca$node <- as.factor(brca$node)
+t.test(age~node,brca,var.equal=TRUE)
+```
+
+```{r}
+lm3 <- lm(age~node,brca)
+summary(lm3)
+```
+
+```{r}
+plot(lm3)
+```
+
+
+
+```{r}
+brca %>% ggplot(aes(x=node%>%as.factor,y=age)) +
+  geom_boxplot()
+```
+
+
+```{r out.width='100%', fig.asp=.8, fig.align='center'}
+par(mfrow=c(3,3))
+set.seed(354)
+for(i in 1:9) plot(rnorm(32)~node,brca,ylab="iid N(0,1)")
+```
+
+
+## Observational study
+
+- We cannot conclude that age causes a higher risk for affected lymph nodes. 
+- Possibly **confounding**: no randomisation $\rightarrow$ groups of patients with affected and unaffected lymph nodes. They can also differ in other characteristics.
+
+- We can only conclude that there is an association between lymph node status and age.
+
+- However, the association does not have to be causal!
+
+
+- Note, that this is also the case for the linear model for $\log_2$-S100A8-expression.
+    
+    - Because we were not able to fix the  ESR1-expression experimentally we cannot conclude that a higher ESR1-expression causes a decrease in the S100A8-expression.
+    - We can only conclude that there is a negative association.
+    - To assess the impact of a gene on other gene typically knockout mutants are used in the lab.  
+
+
+---
+
+# [Home](https://gtpb.github.io/PSLS20/) {-}

@@ -1,0 +1,51 @@
+---
+title: "Tutorial 2.3: Hypothesis testing on the shrimps dataset"   
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+# The shrimps dataset
+
+A dataset on PCBs (Polychlorinated biphenyls) accumulation
+in the adipose tissue of shrimps.
+
+PCBs are often present in coolants, and are know to accumulate
+easily in the adipose tissue of shrimps. In this experiment, two
+groups of 18 samples (each 100 grams) of shrimps each were cultivated 
+in different conditions, one control condition and one condition 
+where the medium was poluted with PCBs.
+
+# Goal
+
+The research question is; is there an effect of the 
+growth condition on the PCB concentration in the adipose 
+tissue of shrimps. Note that the PCB concentrations were 
+measured in pg/g adipose tissue.
+
+# Develop a Rmarkdown file that weaves data analyses, plots and results and answers to the following questions.
+
+1. Explore the data what do you observe?
+
+2. How will you model the data? 
+
+3. Translate the research question in a null and alternative hypothesis
+
+4. Which test will you use to assess the research hypothesis? 
+
+5. Formulate the assumptions of the test and assess the assumptions using diagnostic plots. 
+
+6. If all assumptions to perform the test, complete the analysis and formulate a proper conclusion.
+
+
+
+
+
+
+
+

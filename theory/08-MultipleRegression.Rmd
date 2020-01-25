@@ -1,0 +1,788 @@
+---
+title: "10. Multiple regression" 
+author: "Lieven Clement"
+date: "statOmics, Ghent University (https://statomics.github.io)"
+output:
+    html_document:
+      code_download: true    
+      theme: cosmo
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = TRUE, comment = NA, echo = TRUE,
+                      message = FALSE, warning = FALSE)
+library(tidyverse)
+```
+
+
+# Intro
+
+- Until now: one outcome $Y$ and a single  predictor $X$.
+- Often useful to use multiple predictors to model the response. e.g
+
+1. Association between X and Y is affected by confounder: Smoking and age by youngsters are confounded and they both affect the lung capacity
+2. Which group of variables is associated with a given outcome. E.g Habitat and human activity on the biodiversity of the rain forest. (Size, age, height of the wood $\rightarrow$ assess all effects simultaneously.
+3. Prediction of outcome for individuals: use as many predictive information simultaneously. E.g prediction of risk on mortality is used on a daily basis in intensive care units to prioritise patient care. 
+
+$\rightarrow$ Extend simple linear regression to multiple predictors. 
+
+---
+
+## Prostate cancer example
+
+- Prostate specific antigen (PSA) and a number of clinical variables for 97 males with radical prostatectomy. 
+- Association of PSA by 
+
+    - tumor volume (lcavol)
+    - prostate weight (lweight)
+    - age
+    - benign prostate hypertrophy  (lbph)
+    - seminal vesicle invasion (svi)
+    - capsular penetration (lcp)
+    - Gleason score (gleason) 
+    - precentage gleason score 4/5 (pgg45)
+ 
+---
+
+```{r}
+prostate<-read_csv("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/prostate.csv")
+prostate
+prostate$svi<-as.factor(prostate$svi)
+```
+
+---
+
+```{r , out.width='100%', fig.asp=.8, fig.align='center',echo=FALSE}
+library(GGally)
+prostate %>% select(-pgg45)  %>% ggpairs()
+```
+
+---
+
+# Additive  multiple linair model
+
+Separate simple linair models, like 
+
+$$E(Y|X_v)=\alpha+\beta_v X_v$$
+
+- Association between lpsa en 1 variabele e.g lcavol.
+- More accurate predictions by simultaneously accounting for multiple predictors
+- Estimate for parameter $\beta_v$ does not only capture the effect of tumor volume.
+- $\beta_v$ average difference for log-psa for patients that differ in 1 unit of the log tumor volume. 
+- Even if lcavol is not associated with lpsa then patients with a higher tumor volume can have a higher lpsa because their semen vesicles are affected (svi status 1).
+$\rightarrow$ confounding.
+- Compare patients with same svi status
+- Is posible in multiple linear model
+
+---
+
+## Statistical model
+
+- $p-1$ predictors $X_1,...,X_{p-1}$ and outcome $Y$ for $n$ subjecten. 
+
+\begin{equation}  
+Y_i =\beta_0 + \beta_1 X_{i1} + ... +\beta_{p-1} X_{ip-1} + \epsilon_i
+\end{equation}
+
+- $\beta_0,\beta_1,...,\beta_{p-1}$ unknown parameters
+- $\epsilon_i$ residuals that cannot be explained by predictors
+- Estimation by *least squares method* 
+
+---
+
+Model allows to
+
+1. predict the expected outcome for subjects given their values $x_1,...,x_{p-1}$ for the predictor variables. 
+$E[Y\vert X_1=x_1, \ldots X_{p-1}=x_{p-1}]=\hat{\beta}_0+\hat{\beta}_1x_1+...+\hat{\beta}_{p-1}x_{p-1}$.
+2. Does the average outcome differ between two groups of patients that differ by $\delta$ units in predictor $X_j$ but have the same value for the remaining variables $\{X_k,k=1,...,p,k\ne j\}$. 
+$$
+\begin{array}{l}
+E(Y|X_1=x_1,...,X_j=x_j+\delta,...,X_{p-1}=x_{p-1}) \\
+\quad\quad - E(Y|X_1=x_1,...,X_j=x_j,...,X_{p-1}=x_{p-1}) \\\\
+\quad =\beta_0 + \beta_1 x_1 + ... + \beta_j(x_j+\delta)+...+\beta_{p-1} x_{p-1}\\ 
+\quad\quad- \beta_0 - \beta_1 x_1 - ... - \beta_jx_j-...-\beta_{p-1} x_{p-1} \\\\
+\quad= \beta_j\delta
+\end{array}
+$$
+
+Interpretation $\beta_j$: 
+
+- difference in mean outcome between subjects that differ in one unit of $X_j$, but have the same value for the remaining predictors in the model.  
+
+or 
+
+- Effect of predictor j corrected for the remaining predictors.  e.g. effect of cancer volume correct for prostate weight and the svi status. 
+
+---
+
+### Prostate example
+
+```{r}
+lmV <- lm(lpsa~lcavol,prostate)
+summary(lmV)
+```
+
+---
+
+```{r}
+lmVWS <- lm(lpsa~lcavol + lweight + svi ,prostate)
+summary(lmVWS)
+```
+
+---
+
+```{r out.width='80%', fig.asp=.8, fig.align='center', message=FALSE,echo=FALSE}
+library(plot3D)
+grid.lines = 10
+x<-prostate$lcavol
+y<-prostate$lweight
+z<-prostate$lpsa
+fit<-lm(z~x+y+svi,data=prostate)
+x.pred <- seq(min(x), max(x), length.out = grid.lines)
+y.pred <- seq(min(y), max(y), length.out = grid.lines)
+
+# fitted points for droplines to surface
+th=20
+ph=5 
+scatter3D(x, y, z, pch = 16,col=c("darkblue","red")[as.double(prostate$svi)], cex = .75, 
+    theta = th, phi = ph, ticktype = "detailed",
+    xlab = "lcavol", ylab = "lweight", zlab = "lpsa",  
+   colvar=FALSE,bty = "g")
+
+for (i in 1:nrow(prostate))
+lines3D(x=rep(prostate$lcavol[i],2),y=rep(prostate$lweight[i],2),z=c(prostate$lpsa[i],lmVWS$fit[i]),col=c("darkblue","red")[as.double(prostate$svi)[i]],add=TRUE,lty=2)
+
+z.pred3D <- outer(x.pred, y.pred, function(x,y) {lmVWS$coef[1]+lmVWS$coef[2]*x+lmVWS$coef[3]*y})
+x.pred3D <- outer(x.pred,y.pred,function(x,y) x)
+y.pred3D <- outer(x.pred,y.pred,function(x,y) y)
+surf3D(x.pred3D,y.pred3D,z.pred3D,col="blue",facets=NA,add=TRUE)
+z2.pred3D <- outer(x.pred, y.pred, function(x,y) {lmVWS$coef[1]+lmVWS$coef[4]+lmVWS$coef[2]*x+lmVWS$coef[3]*y})
+surf3D(x.pred3D,y.pred3D,z2.pred3D,col="red",facets=NA,add=TRUE)
+```
+
+---
+
+# Inference in multiple linear models
+
+If data are representative than the least squares estimators for the intercept and slopes are unbiased.
+$$E[\hat \beta_j]=\beta_j,\quad j=0,\ldots,p-1.$$
+
+- Gain insight in the distribution of the parameter estimators so as to generalize the effect in the sample to the population. 
+
+- Additional assumptions are needed for inference.  
+
+1. *Linearity*
+
+2. *Independence*
+
+3. *Homoscedasticity* of *equal variance*
+4. *Normality*: residuals $\epsilon_i$ are normally distributed.
+
+Under these assumptions:
+$$\epsilon_i \sim N(0,\sigma^2).$$ 
+en
+$$Y_i\sim N(\beta_0+\beta_1 X_{i1}+\ldots+\beta_{p-1} X_{ip-1},\sigma^2)$$
+
+---
+
+- Slopes are again more precise if the predictor values have a larger range. 
+
+- Conditional variance ($\sigma^2$) can again be estimated based on the *mean squared error* (MSE): 
+
+$$\hat\sigma^2=MSE=\frac{\sum\limits_{i=1}^n \left(y_i-\hat\beta_0-\hat\beta_1 X_{i1}-\ldots-\hat\beta_{p-1} X_{ip-1}\right)^2}{n-p}=\frac{\sum\limits_{i=1}^n e^2_i}{n-p}.$$
+
+Again hypothesis tests and confidence intervals by 
+$$T_k=\frac{\hat{\beta}_k-\beta_k}{SE(\hat{\beta}_k)} \text{ met } k=0, \ldots, p-1.$$
+
+If all assumptions are satisfied than the statistics $T_k$ t-distributed with $n-p$ degrees of freedom. 
+
+---
+
+When normality thus not hold, but lineariteit, independence and homoscedasticity are valid we can again adopt the CLT that states that statistic $T_k$ is approximately normally distributed in large samples.
+
+---
+
+We can build confidence intervals on the slopes by:
+$$[\hat\beta_j - t_{n-p,\alpha/2} \text{SE}_{\hat\beta_j},\hat\beta_j + t_{n-p,\alpha/2} \text{SE}_{\hat\beta_j}]$$.
+
+```{r}
+confint(lmVWS)
+```
+
+---
+
+Formal hypothesis tests: 
+$$H_0: \beta_j=0$$
+$$H_1: \beta_j\neq0$$
+
+With test statistic
+$$T=\frac{\hat{\beta}_j-0}{SE(\hat{\beta}_j)}$$ 
+which follows a t-distribution with $n-p$ degrees of freedom under $H_0$
+
+---
+
+```{r}
+summary(lmVWS)
+```
+
+---
+
+## Assess the model assumptions
+
+```{r}
+plot(lmVWS)
+```
+
+---
+
+## The non additive multiple linear model 
+### Interaction between two continuous variables 
+
+The previous model is additive because the contribution of the cancer volume on lpsa does not depend on the height of the prostate weight and the svi status.
+
+The slope for lcavol does not depend on log prostate weight and svi. 
+
+$$
+\beta_0 + \beta_v (x_{v}+\delta_v) + \beta_w x_{w} +\beta_s x_{s} - \beta_0 - \beta_v x_{v} - \beta_w x_{w} -\beta_s x_s = \beta_v \delta_v
+$$
+
+The svi status and the log-prostategewicht ($x_w$) do not influence the contribution of the log-tumor volume ($x_v$) to the average log-PSA and vice versa. 
+
+---
+
+- It is however possible that the association of lpsa and lcavol depends on the prostate weight. 
+- The average difference in lpsa for patients that differ in one unit of the log-tumor volume can for instance can be higher for patients wiht a high tumor weight then for those with a low tumor weight. 
+- The effect of the tumor volume on the PSA depends on the prostate weight.  
+
+To model this **interactie** or **effect modification** we can add a product term of both variables to the model
+
+$$
+Y_i = \beta_0 + \beta_v x_{iv} + \beta_w x_{iw} +\beta_s x_{is} + \beta_{vw} x_{iv}x_{iw} +\epsilon_i
+$$
+
+This term quantifies the *interactie-effect* of predictors $x_v$ en $x_w$ on the mean outcome. 
+
+Terms $\beta_vx_{iv}$ and $\beta_wx_{iw}$ are referred to as *main effects* of predictors $x_v$ and $x_w$.
+
+---
+
+The difference in lpsa for patients that differ 1 unit in $X_v$ and have an equal log prostate weight and the same svi status now becomes: 
+
+$$
+\begin{array}{l}
+E(Y | X_v=x_v +1, X_w=x_w, X_s=x_s) - E(Y | X_v=x_v, X_w=x_w, X_s=x_s) \\
+\quad = \beta_0 + \beta_v (x_{v}+1) + \beta_w x_w +\beta_s x_{s} + \beta_{vw} (x_{v}+1) x_w - \beta_0 - \beta_v x_{v} - \beta_w x_w -\beta_s x_{s} - \beta_{vw} (x_{v}) x_w \\
+\quad = \beta_v +  \beta_{vw} x_w
+ \end{array} 
+ $$
+
+---
+
+```{r}
+lmVWS_IntVW <- lm(lpsa~lcavol + lweight + svi + lcavol:lweight ,prostate)
+summary(lmVWS_IntVW)
+```
+
+---
+
+
+```{r out.width='100%', fig.asp=.8, fig.align='center', message=FALSE,echo=FALSE}
+par(mfrow=c(1,2))
+library(plot3D)
+grid.lines = 10
+x<-prostate$lcavol
+y<-prostate$lweight
+z<-prostate$lpsa
+fit<-lm(z~x+y+svi,data=prostate)
+x.pred <- seq(min(x), max(x), length.out = grid.lines)
+y.pred <- seq(min(y), max(y), length.out = grid.lines)
+
+# fitted points for droplines to surface
+th=-25
+ph=5 
+scatter3D(x, y, z, pch = 16,col=c("darkblue","red")[as.double(prostate$svi)], cex = .75, 
+    theta = th, phi = ph, ticktype = "detailed",
+    xlab = "lcavol", ylab = "lweight", zlab = "lpsa",  
+   colvar=FALSE,bty = "g",main="Additive model")
+
+for (i in which(prostate$svi=="healthy"))
+lines3D(x=rep(prostate$lcavol[i],2),y=rep(prostate$lweight[i],2),z=c(prostate$lpsa[i],lmVWS$fit[i]),col=c("darkblue","red")[as.double(prostate$svi)[i]],add=TRUE,lty=2)
+
+z.pred3D <- outer(x.pred, y.pred, function(x,y) {lmVWS$coef[1]+lmVWS$coef[2]*x+lmVWS$coef[3]*y})
+x.pred3D <- outer(x.pred,y.pred,function(x,y) x)
+y.pred3D <- outer(x.pred,y.pred,function(x,y) y)
+surf3D(x.pred3D,y.pred3D,z.pred3D,col="blue",facets=NA,add=TRUE)
+
+
+scatter3D(x, y, z, pch = 16,col=c("darkblue","red")[as.double(prostate$svi)], cex = .75, 
+    theta = th, phi = ph, ticktype = "detailed",
+    xlab = "lcavol", ylab = "lweight", zlab = "lpsa",  
+   colvar=FALSE,bty = "g",main="Model met lcavol:lweight interactie")
+
+for (i in which(prostate$svi=="healthy"))
+lines3D(x=rep(prostate$lcavol[i],2),y=rep(prostate$lweight[i],2),z=c(prostate$lpsa[i],lmVWS_IntVW$fit[i]),col=c("darkblue","red")[as.double(prostate$svi)[i]],add=TRUE,lty=2)
+
+z.pred3D <- outer(x.pred, y.pred, function(x,y) {lmVWS_IntVW$coef[1]+lmVWS_IntVW$coef[2]*x+lmVWS_IntVW$coef[3]*y+lmVWS_IntVW$coef[5]*x*y})
+x.pred3D <- outer(x.pred,y.pred,function(x,y) x)
+y.pred3D <- outer(x.pred,y.pred,function(x,y) y)
+surf3D(x.pred3D,y.pred3D,z.pred3D,col="blue",facets=NA,add=TRUE)
+```
+
+---
+
+- Note that the interaction effect that is observed is not statistically significant (p=`r round(summary(lmVWS_IntVW)$coef[5,4],2)`). 
+- The main effects that are involved in the interaction cannot be interpreted separately from one another. 
+- We will therefore remove non-significant interaction terms from the model.
+- Upon removal of non-significant interaction terms the main effects can be interpreted. 
+
+---
+
+## Interaction between a continuous variable and a factor variable 
+
+Interaction between lcavol $\leftrightarrow$ svi and lweight $\leftrightarrow$ svi. 
+
+The model becomes 
+
+$$Y=\beta_0+\beta_vX_v+\beta_wX_w+\beta_sX_s+\beta_{vs}X_vX_s + \beta_{ws}X_wX_s +\epsilon$$
+
+---
+
+```{r}
+lmVWS_IntVS_WS <- lm(lpsa ~ lcavol + lweight + svi + svi:lcavol + svi:lweight,data=prostate) 
+summary(lmVWS_IntVS_WS)
+```
+
+---
+
+Because $X_S$ is a dummy variabele we obtain to distinct regression planes:
+
+1. Model for $X_s=0$: $$Y=\beta_0+\beta_vX_v+\beta_wX_w + \epsilon$$ where the main effects are the slope for lcavol and lweight
+2. and model for $X_s=1$: 
+   $$\begin{array}{lcl}
+   Y&=&\beta_0+\beta_vX_v+\beta_s+\beta_wX_w+\beta_{vs}X_v + \beta_{ws}X_w +\epsilon\\
+  &=& (\beta_0+\beta_s)+(\beta_v+\beta_{vs})X_v+(\beta_w+\beta_{ws})X_w+\epsilon
+  \end{array}$$ 
+with intercept $\beta_0+\beta_s$ and slopes $\beta_v+\beta_{vs}$ and $\beta_w+\beta_{ws}$
+
+---
+
+```{r out.width='100%', fig.asp=.8, fig.align='center', message=FALSE,echo=FALSE}
+par(mfrow=c(1,2))
+library(plot3D)
+grid.lines = 10
+x<-prostate$lcavol
+y<-prostate$lweight
+z<-prostate$lpsa
+fit<-lm(z~x+y+svi,data=prostate)
+x.pred <- seq(min(x), max(x), length.out = grid.lines)
+y.pred <- seq(min(y), max(y), length.out = grid.lines)
+
+# fitted points for droplines to surface
+th=-25
+ph=5 
+scatter3D(x, y, z, pch = 16,col=c("darkblue","red")[as.double(prostate$svi)], cex = .75, 
+    theta = th, phi = ph, ticktype = "detailed",
+    xlab = "lcavol", ylab = "lweight", zlab = "lpsa",  
+   colvar=FALSE,bty = "g",main="Additive model")
+
+for (i in which(prostate$svi=="healthy"))
+lines3D(x=rep(prostate$lcavol[i],2),y=rep(prostate$lweight[i],2),z=c(prostate$lpsa[i],lmVWS$fit[i]),col=c("darkblue","red")[as.double(prostate$svi)[i]],add=TRUE,lty=2)
+
+z.pred3D <- outer(x.pred, y.pred, function(x,y) {lmVWS$coef[1]+lmVWS$coef[2]*x+lmVWS$coef[3]*y})
+x.pred3D <- outer(x.pred,y.pred,function(x,y) x)
+y.pred3D <- outer(x.pred,y.pred,function(x,y) y)
+surf3D(x.pred3D,y.pred3D,z.pred3D,col="blue",facets=NA,add=TRUE)
+z2.pred3D <- outer(x.pred, y.pred, function(x,y) {lmVWS$coef[1]+lmVWS$coef[4]+lmVWS$coef[2]*x+lmVWS$coef[3]*y})
+surf3D(x.pred3D,y.pred3D,z2.pred3D,col="orange",facets=NA,add=TRUE)
+
+
+scatter3D(x, y, z, pch = 16,col=c("darkblue","red")[as.double(prostate$svi)], cex = .75, 
+    theta = th, phi = ph, ticktype = "detailed",
+    xlab = "lcavol", ylab = "lweight", zlab = "lpsa",  
+   colvar=FALSE,bty = "g",main="Model met lcavol:lweight interactie")
+
+for (i in which(prostate$svi=="healthy"))
+lines3D(x=rep(prostate$lcavol[i],2),y=rep(prostate$lweight[i],2),z=c(prostate$lpsa[i],lmVWS_IntVS_WS$fit[i]),col=c("darkblue","red")[as.double(prostate$svi)[i]],add=TRUE,lty=2)
+
+z.pred3D <- outer(x.pred, y.pred, function(x,y) {lmVWS_IntVS_WS$coef[1]+lmVWS_IntVS_WS$coef[2]*x+lmVWS_IntVS_WS$coef[3]*y})
+x.pred3D <- outer(x.pred,y.pred,function(x,y) x)
+y.pred3D <- outer(x.pred,y.pred,function(x,y) y)
+surf3D(x.pred3D,y.pred3D,z.pred3D,col="blue",facets=NA,add=TRUE)
+z2.pred3D <- outer(x.pred, y.pred, function(x,y) {lmVWS_IntVS_WS$coef[1]+lmVWS_IntVS_WS$coef[4]+lmVWS_IntVS_WS$coef[2]*x+lmVWS_IntVS_WS$coef[3]*y+lmVWS_IntVS_WS$coef[5]*x+lmVWS_IntVS_WS$coef[6]*y})
+surf3D(x.pred3D,y.pred3D,z2.pred3D,col="orange",facets=NA,add=TRUE)
+```
+
+---
+
+# ANOVA Tabel
+
+The total SSTot is again
+
+$$
+  \text{SSTot} = \sum_{i=1}^n (Y_i - \bar{Y})^2.
+$$
+
+The residual sum of squares remains similar
+$$
+  \text{SSE} = \sum_{i=1}^n (Y_i-\hat{Y}_i)^2.
+$$
+
+Again the total sum of squares can be decomposed in ,
+$$
+  \text{SSTot} = \text{SSR} + \text{SSE} ,
+$$
+with
+$$
+  \text{SSR} = \sum_{i=1}^n (\hat{Y}_i-\bar{Y})^2.
+$$
+
+---
+
+We have following degrees of freedom and mean sum of squares: 
+
+- SSTot has $n-1$ degrees of freedom and $\text{SSTot}/(n-1)$ is an estimator for the total variance in $Y$ (marginal distribution of $Y$). 
+- SSE has $n-p$ degrees of freedom and $\text{MSE}=\text{SSE}/(n-p)$ is an schatter for the residual variance of $Y$ given the predictores (i.e. an estimator for the residual variance $\sigma^2$ of the error term $\epsilon$).
+- SSR has $p-1$ degrees of freedom   and $\text{MSR}=\text{SSR}/(p-1)$ is the mean sum of squares of the regression. 
+
+The determination coefficients remains as before,  i.e.
+$$
+  R^2 = 1-\frac{\text{SSE}}{\text{SSTot}} = \frac{\text{SSR}}{\text{SSTot}}
+$$
+and is the fraction of the total variability that can be explained by the regression model. 
+
+Teststatistic $F=\text{MSR}/\text{MSE}$ is under $H_0:\beta_1=\ldots=\beta_{p-1}=0$ distributed by an F distribution: $F_{p-1;n-p}$.
+
+---
+
+```{r, echo=FALSE}
+summary(lmVWS)
+```
+
+---
+
+## Additional sums of squares
+
+
+Consider 2 models for the predictors $x_1$ en $x_2$:
+$$
+  Y_i = \beta_0+\beta_1 x_{i1} + \epsilon_i,
+$$
+with $\epsilon_i\text{ iid } N(0,\sigma_1^{2})$, and 
+$$
+Y_i = \beta_0+\beta_1 x_{i1}+\beta_2 x_{i2} + \epsilon_i,
+$$
+with $\epsilon_i\text{ iid } N(0,\sigma_2^{2})$.
+
+for the first (gereduceerde) model we have decomposition
+\[
+  \text{SSTot} = \text{SSR}_1 + \text{SSE}_1
+\]
+en for the second non-reduced model we have 
+\[
+  \text{SSTot} = \text{SSR}_2 + \text{SSE}_2
+\]
+(SSTot is of course the same because it only depends on the response and not of the models). 
+
+---
+
+**Definition of additional sum of squares**
+The *additional sum of squares* of predictor $x_2$ as compared to the model with only $x_1$ as predictor is given by
+$$
+  \text{SSR}_{2\mid 1} = \text{SSE}_1-\text{SSE}_2=\text{SSR}_2-\text{SSR}_1.
+$$  
+
+Note that,  $\text{SSE}_1-\text{SSE}_2=\text{SSR}_2-\text{SSR}_1$ is triviaal is because of the decomposition of the total sum of squares. 
+
+The additional sum of squares $\text{SSR}_{2\mid 1}$ can simply be interpreted as the additional variability that can be explained by adding predictor $x_2$ to the model with predictor $x_1$. 
+
+With this sum of squares we can further decompose the total sum of squares
+$$
+  \text{SSTot} = \text{SSR}_1+ \text{SSR}_{2\mid 1} + \text{SSE}.
+$$
+which follows directly from the definition $\text{SSR}_{2\mid 1}$. 
+
+---
+
+Extension: ($s<p-1$)
+$$
+Y_i = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_{s} x_{is} + \epsilon_i 
+$$
+with $\epsilon_i\text{ iid }N(0,\sigma_1^{2})$, and ($s< q\leq p-1$)
+$$
+Y_i = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_{s} x_{is} + \beta_{s+1} x_{is+1} + \cdots \beta_{q}x_{iq}+ \epsilon_i 
+$$
+with $\epsilon_i\text{ iid } N(0,\sigma_2^{2})$.
+
+
+The **additional sum of squares** of predictor $x_{s+1}, \ldots, x_q$ compared to a model with only predictors  $x_1,\ldots, x_{s}$ is given by 
+
+$$
+  \text{SSR}_{s+1, \ldots, q\mid 1,\ldots, s} = \text{SSE}_1-\text{SSE}_2=\text{SSR}_2-\text{SSR}_1.
+$$  
+
+---
+
+### Type I Sums of Squares
+Suppose that $p-1$ predictors are considered, and suppose the following sequence of models ($s=2,\ldots, p-1$)
+$$
+Y_i = \beta_0 + \sum_{j=1}^{s} \beta_j x_{ij} + \epsilon_i
+$$
+wuth $\epsilon_i\text{ iid } N(0,\sigma^{2})$.
+
+- The corresponding sum of squares are denoted as $\text{SSR}_{s}$ and $\text{SSE}_{s}$. 
+- The sequence of models gives rise to the following sums of squares: $\text{SSR}_{s\mid 1,\ldots, s-1}$. 
+- The latter sum of squares is referred to as type I sums of squares. Note that they depend on the order in which the models were added to the model. 
+
+---
+
+We can show for model Model with $s=p-1$ that
+$$
+ \text{SSTot} = \text{SSR}_1 + \text{SSR}_{2\mid 1} + \text{SSR}_{3\mid 1,2} + \cdots + \text{SSR}_{p-1\mid 1,\ldots, p-2} + \text{SSE},
+$$
+with $\text{SSE}$ the residual sum of squares of the model with all $p-1$ predictors 
+$$
+  \text{SSR}_1 + \text{SSR}_{2\mid 1} + \text{SSR}_{3\mid 1,2} + \cdots + \text{SSR}_{p-1\mid 1,\ldots, p-2} = \text{SSR}
+$$
+with $\text{SSR}$ the sum of squares of all  $p-1$ predictors.
+
+- The interpretation of each term depends on the order of the sequence of the regression models. 
+
+---
+
+- Each type I SSR involves 1 predictor and has 1 degree of freedom (note that multiple dummies for a factor are typically removed together). 
+- For each type I SSR term the mean sum of squares is defined by  $\text{MSR}_{j\mid 1,\ldots, j-1}=\text{SSR}_{j\mid 1,\ldots, j-1}/1$.
+- And teststatistic $F=\text{MSR}_{j\mid 1,\ldots, j-1}/\text{MSE}$ follows a $F_{1;n-(j+1)}$ distribution under  $H_0:\beta_j=0$ with $s=j$.
+- These sums of squares are the default sum of squares in the anova function of R. 
+
+---
+
+### Type III Sums of squares
+
+ Type III sum of squares for predictor $x_j$ are given by the additional sum of squares
+$$
+  \text{SSR}_{j \mid 1,\ldots, j-1,j+1,\ldots, p-1} = \text{SSE}_1-\text{SSE}_2
+$$
+
+- $\text{SSE}_2$ the sum of squares of the residuals of the model with all $p-1$ predictors.
+- $\text{SSE}_1$ sum of squares of the residuals with all $p-1$ predictors, except for predictor $x_j$. 
+
+The type III sum of squares $\text{SSR}_{j \mid 1,\ldots, j-1,j+1,\ldots, p-1}$ quantify the contribution in the total variance of the outcome explained by $x_j$ that cannot be explained by the remaining $p-2$ predictors. 
+
+---
+
+The type III sum of squares has 1 degree of freedom because it involves 1 $\beta$-parameter. 
+
+For each type III SSR term the mean sum of squares is defined by $\text{MSR}_{j \mid 1,\ldots, j-1,j+1,\ldots, p-1}=\text{SSR}_{j \mid 1,\ldots, j-1,j+1,\ldots, p-1}/1$.
+
+Teststatistiek $F=\text{MSR}_{j \mid 1,\ldots, j-1,j+1,\ldots, p-1}/\text{MSE}$ is $F_{1;n-p}$ distributed under $H_0:\beta_j=0$.
+
+We can obtain these sums of squares using the `Anova` function from the `car` package. 
+---
+
+```{r}
+library(car)
+Anova(lmVWS,type=3)
+```
+
+The p-values are identical to those of two-sided t-tests
+
+Note, however, that all dummies for factors with multiple levels will be taken out of the model at once. So then the type III sum of squares will have as many degrees of freedom as the number of dummies and an omnibus test is performed for the effect of the factor. 
+
+---
+
+#Diagnostics
+## Multicollineariteit
+
+```{r echo=FALSE}
+summary(lmVWS)
+```
+
+---
+
+```{r echo=FALSE}
+summary(lmVWS_IntVW)
+```
+
+---
+
+- Estimates are different from those in the additive model and the standard errors are much higher! 
+
+- This is caused by the multicollinearity problem. 
+
+- If 2 predictors are strongly correlated than they share a lot of information. 
+
+- It is therefore difficult to estimate the individual contribution of each predictor on the outcome. 
+
+- Least squares estimators become instable.
+
+- Standard errors become inflated.
+
+- As long as we only do predictions on the basis of the regression model without extrapolating beyond the range of the predictors observed in the sample multicolinearity is not problematic.
+
+- But for inference it is problematic.
+
+---
+
+```{r}
+cor(cbind(prostate$lcavol,prostate$lweight,prostate$lcavol*prostate$lweight))
+```
+
+- High correlation between log-tumor volume and interaction. 
+- It is a known problem for higher order terms (interactions and quadratic terms) 
+
+--- 
+
+- Detect multicollineariteit based on the correlation matrix or scatterplot matrix is suboptimal. 
+- In models with 3 or more predictors, say X1, X2, X3 we can have high multicollinearity while alle pairswise correlations between the predictors are low. 
+- We also have multicollinearity if there is a high correlation between X1 and a linair combination of X2 and X3.
+
+---
+
+### Variance inflation factor (VIF)
+
+For parameter $j$ in de regression model 
+\[\textrm{VIF}_j=\left(1-R_j^2\right)^{-1}\]
+
+- In this expression $R_j^2$ is the multiple determination coefficient of the linear regression of predictor j on the remaining predictors in the model. 
+- VIF is 1 if predictor j is not linear associated with the remaining predictors in the model. 
+- VIF is larger than 1 in all andere cases. 
+- VIF is the factor with which the observed variance inflates as compared to a model for which all predictoren would be independend. 
+- VIF > 10 $\rightarrow$ strong multicollinearity. 
+
+---
+
+### Body fat example
+
+```{r out.width='90%', fig.asp=.8, fig.align='center', message=FALSE,echo=FALSE}
+bodyfat <- read_delim("https://raw.githubusercontent.com/GTPB/PSLS20/master/data/bodyfat.txt",delim=" ")
+bodyfat %>% ggpairs()
+```
+
+---
+
+```{r echo=FALSE}
+lmFat <- lm(Body_fat~Triceps+Thigh+Midarm ,data=bodyfat)
+summary(lmFat)
+```
+
+---
+
+```{r}
+vif(lmFat)
+```
+
+---
+
+```{r echo=FALSE}
+lmMidarm <- lm(Midarm ~ Triceps+Thigh,data=bodyfat)
+summary(lmMidarm)
+```
+
+---
+
+
+We evaluate the VIF in the prostate cancer example for the additive model and the model with interactie.
+
+```{r}
+vif(lmVWS)
+vif(lmVWS_IntVW)
+```
+
+- Inflation in interaction terms often caused because main effect get another interpretation. 
+
+---
+
+## Influencial Observaties
+
+
+```{r}
+set.seed(112358)
+nobs<-20
+sdy<-1
+x<-seq(0,1,length=nobs)
+y<-10+5*x+rnorm(nobs,sd=sdy)
+x1<-c(x,0.5)
+y1 <- c(y,10+5*1.5+rnorm(1,sd=sdy))
+x2 <- c(x,1.5)
+y2 <- c(y,y1[21])
+x3 <- c(x,1.5)
+y3 <- c(y,11)
+plot(x,y,xlim=range(c(x1,x2,x3)),ylim=range(c(y1,y2,y3)))
+points(c(x1[21],x2[21],x3[21]),c(y1[21],y2[21],y3[21]),pch=as.character(1:3),col=2:4) 
+abline(lm(y~x),lwd=2)
+abline(lm(y1~x1),col=2,lty=2,lwd=2)
+abline(lm(y2~x2),col=3,lty=3,lwd=2)
+abline(lm(y3~x3),col=4,lty=4,lwd=2)
+legend("topleft",col=1:4,lty=1:4,legend=paste("lm",c("",as.character(1:3))),text.col=1:4)
+```
+
+---
+
+- It is not desirable that a single observation largely influences the result of a linear regression analysis
+
+- Diagnostics allow us to detect extreme observations. 
+- *Studentized residuals* to spot outliers 
+- *Leverage* to spot observations with extreem covariate pattern
+
+---
+
+### Cook's distance
+
+- A statistics to assess the influence the effect of a single observation on the regression analysis  
+- Cook's distance for observation i is diagnostic measure for this particular observation on all all predictions or on *all* estimated parameters. 
+\[D_i=\frac{\sum_{j=1}^n(\hat{Y}_j-\hat{Y}_{j(i)})^2}{p\textrm{MSE}}\] 
+
+- Observation $i$ has a large influence on the regression parameters and predictions if the  Cook's distance $D_i$ is large. 
+- Extreme Cook's distance if it is larger than the 50% quantile of an $F_{p+1,n-(p+1)}$-distribution.
+
+---
+
+
+```{r  out.width='100%', fig.asp=.8, fig.align='center', message=FALSE, echo=FALSE}
+par(mfrow=c(2,2))
+plot(lmVWS,which=5)
+plot(lmVWS_IntVW,which=5)
+plot(cooks.distance(lmVWS),type="h",ylim=c(0,1),main="Additive model")
+abline(h=qf(0.5,length(lmVWS$coef),nrow(prostate)-length(lmVWS$coef)),lty=2)
+plot(cooks.distance(lmVWS_IntVW),type="h",ylim=c(0,1), main="Model with lcavol:lweight interaction")
+abline(h=qf(0.5,length(lmVWS_IntVW$coef),nrow(prostate)-length(lmVWS_IntVW$coef)),lty=2)
+```
+
+---
+
+- Once we established that an observation is influential we can use *DFBETAS* to find the parameters for which the estimates are largely affected by the observation
+-  DFBETAS of observatie i is a diagnostic measure for *each model parameter separately*. 
+$$\textrm{DFBETAS}_{j(i)}=\frac{\hat{\beta}_{j}-\hat{\beta}_{j(i)}}{\textrm{SD}(\hat{\beta}_{j})}$$ 
+-  DFBETAS is extreme when it is larger than 1 in small to moderate datasets or exceeds $2/\sqrt{n}$ in large datasets.
+
+---
+
+
+```{r out.width='90%', fig.asp=.8, fig.align='center', message=FALSE, echo=FALSE}
+par(mfrow=c(2,2))
+dfbetasPlots(lmVWS)
+```
+
+---
+
+```{r out.width='90%', fig.align='center', message=FALSE, echo=FALSE}
+par(mfrow=c(2,2))
+dfbetasPlots(lmVWS_IntVW)
+```
+
+---
+
+```{r out.width='100%',fig.align='center', message=FALSE, echo=FALSE}
+boxplot(exp(prostate$lweight),ylab="Prostate Weight (g)")
+```
+
+
+---
+
+# [Home](https://gtpb.github.io/PSLS20/) {-}
+
+
