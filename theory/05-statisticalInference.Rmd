@@ -1284,7 +1284,7 @@ When is the p-value sufficiently small to conclude that there is strong evidence
 
 $$t=\frac{\bar X - \mu}{se_{\bar X}}$$
 
-follows a t-distribution. 
+follows a t-distribution (with 14 df for the captopril example). 
 
 
 - Under H$_0$ $\mu=0$ and $$t=\frac{\bar X-0}{se_{\bar X}}\sim f_{T,14}$$
@@ -1300,11 +1300,13 @@ tPermPlot +
 
 - We need to make assumptions for this, which we verify in the data exploration phase. 
 
-- We will now develop the statistical test using statistical modelling.
 
 ---
 
+
 ## Hypotheses
+
+<details><summary>Click to see more formal details </summary><p>
 
 Translate the research question to a null hypothesis ($H_0$) and an alternative hypothesis ($H_1$)
 
@@ -1313,9 +1315,11 @@ First the we need to translate the research question to a parameterized statisti
 - From the experimental design it follows that  $$X_1,...,X_n \text{ i.i.d } f(X),$$ with $f(X)$ the density function of blood pressure differences.
 
 - **Simplify**: assume that $f(X)$ is known except for an finite dimensional set of parameters $\mathbf{\theta}$ that still has to be estimated (parametric statistic model).
+</p></details>
 
 ### Captopril example 
 
+<details><summary>Click to see more formal details </summary><p>
 $X \sim N(\mu,\sigma^2)$ with $\mathbf{\theta}=(\mu,\sigma^2)$, the mean $\mu$ and variance $\sigma^2$.
 
 The research question is now translated in terms of the average blood pressure drop: $\mu=E_f[X]$.
@@ -1336,9 +1340,13 @@ The **null hypothesis** generally expresses a null condition, i.e. when notting 
 - Here:
 $$H_0 : \mu=0$$ i.e. on average the systolic blood pressure remains unchanged upon administering captopril. 
 
+</p></details>
+
 ---
 
 ## Test-statistic
+
+<details><summary>Click to see more formal details </summary><p>
 
 Once the population, the parameters, and, $H_0$ and $H_1$ are determined the concept of hypothesis testing is as follows: 
 
@@ -1353,7 +1361,11 @@ Construct a test statistic so that it
 
 A test statistic thus has to be a function of the observations in the sample. 
 
+</p></details>
+
 ### Captopril example
+
+<details><summary>Click to see more formal details </summary><p>
 
 $$T=\frac{\bar{X}-\mu_0}{\text{SE}_{\bar X}}$$
 With $\mu_0=0$ under $H_0$ 
@@ -1369,6 +1381,8 @@ Again
 - Is $t = -8.12$ large enough in absolute value to conclude that  $\mu < 0$ and with which confidence can we make this conclusion? 
 
 - We known that t follows a t-distribution with 14 d.f. under $H_0$  
+
+</p></details>
 
 ---
 
@@ -1386,8 +1400,10 @@ with the index "0" in $\text{P}_0\left[.\right]$ indicates that the probability 
 
 It gives the probability to observe a test statistic $T$ lower or equal to the value observed in the current sample in a random sample under $H_0$
     - i.e. a test statistic $T$ in the random sample under $H_0$ with a value that is more extreme, more in the direction of $H_1$ then the one observed in the current sample. 
-
+    
 ### Captopril example
+
+<details><summary>Click to see more formal details </summary><p>
 
 - The $p$-value for the captopril example is calculated as follows 
   $$p= \text{P}_0\left[T\leq -8.12\right]=F_t(-8.12;14) = 0.6\ 10^{-6}.$$
@@ -1412,6 +1428,8 @@ stat<-(mean(captopril$deltaSBP)-0)/(sd(captopril$deltaSBP)/sqrt(n))
 stat
 pt(stat,n-1)
 ```
+
+</p></details>
 
 In practice we will not calculate the test ourself, but we will use the function t.test: 
 
