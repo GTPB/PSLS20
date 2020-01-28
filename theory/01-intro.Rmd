@@ -18,7 +18,7 @@ knitr::opts_chunk$set(include = TRUE, comment = NA, echo = TRUE,
 library(tidyverse)
 ```
 
-#Smelly armpit example
+# Smelly armpit example
 
 - Smelly armpits are not caused by sweat itself. The smell is caused by specific micro-organisms belonging to the group of *Corynebacterium spp.* that metabolise sweat.
 Another group of abundant bacteria are the *Staphylococcus spp.*, these bacteria do not metabolise sweat in smelly compounds.
@@ -509,7 +509,7 @@ Only in `r sum(res[,2]<0.05&res[,1]<0)` out of 20000 samples we conclude that th
 
 ---
 
-##Assignment
+## Assignment
 
 1. Copy the code chunk with the simulation study
 2. Add it here below
@@ -528,15 +528,15 @@ for Infantile Paralysis (NFIP) has setup a large study to assess the effectivene
 
 ---
 
-##NFIP Study
-###Design
+## NFIP Study
+### Design
 
 - Large simultaneous study with cases, vaccinated children, and controls,  non-vaccinated children.
 - All schools in districts with high polio incidence
 - Cases: children with consent for vaccination from second grade of primary school.
 - Controls: children from  first and third grade.
 
-###Data
+### Data
 ```{r}
 nfip<-data.frame(group=c("cases","control","noConcent"),grade=c("g2","g1g3","g2"),vaccin=c("yes","no","no"),total=c(221998,725173,123605),polio=c(54,391,56))
 nfip$noPolio<-nfip$total-nfip$polio
@@ -554,7 +554,7 @@ What can we conclude?
 
 ---
 
-##Confounding
+## Confounding
 
 
 ```{r,echo=FALSE, fig.align = "center",out.width = '50%'}
@@ -578,7 +578,7 @@ arrows(x0=0,x1=0,y0=-1.4,y1=1.4,lwd=4)
 
 ---
 
-##Salk Study
+## Salk Study
 
 ### Design
 A new study was conducted: Randomized double blind study
@@ -592,7 +592,7 @@ A new study was conducted: Randomized double blind study
 
 ---
 
-###Data
+### Data
 
 ```{r}
 salk<-data.frame(group=c("cases","control","noConcent"),treatment=c("vaccine","placebo","none"),total=c(200745,
