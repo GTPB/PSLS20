@@ -120,7 +120,7 @@ and https://raw.githubusercontent.com/GTPB/PSLS20/master/background_material/rma
 
 ---
 
-The source for this course webpage is [in github](https://github.com/GTPB/Web_course_template).
+The source for this course webpage is [in github](https://github.com/GTPB/PSLS20).
 
 <br/>
 
