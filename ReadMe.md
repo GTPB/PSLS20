@@ -1,4 +1,4 @@
-## COURSE_SHORT - COURSE_EXTENDED_NAME
+## PSLS20 - Practical Statistics for the Life Sciences
 
 ###  Instituto Gulbenkian de Ciência (IGC) - Oeiras, Portugal - January 20<sup>th</sup> - January 24<sup>th</sup> 2020
 Go to the [course oficial website](http://gtpb.igc.gulbenkian.pt/bicourses/2020/PSLS20/)
