@@ -1,7 +1,13 @@
 ---
 layout: page
 title: Instructors
-description: PDA18 Course instructors description
+schemadotorg:
+  "@context": http://schema.org/
+  "@type": CreativeWork
+  "genre": TrainingMaterial
+  isPartOf:
+      url: "https://gtpb.github.io/PSLS20/"
+      name: "PSLS20 - Practical Statistics for the Life Science"
 ---
 
 ## Lieven Clement
@@ -15,7 +21,7 @@ His lab is built around three strategic research pillars each connected to an om
 
 He also serves as a member of the core team that established a new Master of Science in Bioinformatics at Ghent University, as a board member of the Belgian Proteomics Association, as an expert in genomics projects of the Belgian Health Care Knowledge Center (KCE), and as an Associate Editor for the journal Biometrics (2011-2017).
 
-## Jeroen Lieven
+## Jeroen Gilis
 **Affiliation**: Department of Applied Mathematics, Computer Science and Statistics, Ghent University, Ghent, BE
 Jeroen Gilis is a PhD student in the statOmics Group at Ghent University, headed by prof. Lieven Clement. After completing a bachelor's and master's degree in biochemistry and biotechnology at KU Leuven, he obtained an additional master's degree in bioinformatics at Ghent University. During his master thesis at the statistical omics group, he has worked on developing novel, scalable tools for studying differential expression in single-cell transcriptomics applications. Jeroen is currently continuing his research as a PhD student in the group.
 

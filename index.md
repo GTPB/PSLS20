@@ -9,7 +9,7 @@ schemadotorg:
        # "name" -> The acronym and extended name of the course, separated by " - "
        # "description" -> Short description of the course
   name: "PSLS20 - Practical Statistics for the Life Sciences 2020"
-  description: ""
+  description: "Training material that covers essential statistical concepts and methods for extracting insights from empirical data in the life sciences."
 
   # Keywords -> Consult EDAM:Topic
   keywords:  ""
@@ -124,4 +124,4 @@ The source for this course webpage is [in github](https://github.com/GTPB/PSLS20
 
 <br/>
 
-<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Web_course_template</span> by <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">GTPB</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">PSLS20</span> by <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">GTPB</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.

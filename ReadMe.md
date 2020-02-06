@@ -1,24 +1,7 @@
-## GTPB Course Pages
-
-### Usage Instructions
-
-1. Create contents using .md files in the pages folder. Use normal markdown format for your page contents.
-2. The index.md page is the homepage for the website. Customise it as you would create a README.md file.
-3. If using pdf or images upload them to the assets folder.
-4. DO NOT erase or mess with any of the other folders and/or files without consulting with the organisation, as they are necessary for the website structure, layout and integrity.
-
-### Deployment instructions
-
-1. Edit the config.yml file to change the course name and url link.
-2. When ready, copy the contents in the master branch to the gh-pages branch.
-3. Make sure everything works properly and do your final corrections.
-
-<!---
-
 ## COURSE_SHORT - COURSE_EXTENDED_NAME
 
-###  Instituto Gulbenkian de Ciência (IGC) - Oeiras, Portugal - MONTH DAY<sup>th</sup> - MONTH DAY<sup>th</sup> YEAR
-Go to the [course oficial website](http://gtpb.igc.gulbenkian.pt/bicourses/YEAR/COURSE_SHORT/)
+###  Instituto Gulbenkian de Ciência (IGC) - Oeiras, Portugal - January 20<sup>th</sup> - January 24<sup>th</sup> 2020
+Go to the [course oficial website](http://gtpb.igc.gulbenkian.pt/bicourses/2020/PSLS20/)
 
 ---
 
@@ -26,13 +9,11 @@ Go to the [course oficial website](http://gtpb.igc.gulbenkian.pt/bicourses/YEAR/
 
 The following co-authors contributed to the development of the training material.
 
-* [CO-AUTHOR_1](https://github.com/CO-AUTHOR_1)
-* [CO-AUTHOR_2](https://github.com/CO-AUTHOR_2)
+* [Lieven Clement](https://github.com/lievenclement)
+* [Jeroen Gilis](https://github.com/jgilis)
 
 #### Course Webpage
-This is the link to the [course webpage](http://gtpb.igc.gulbenkian.pt/bicourses/YEAR/COURSE_SHORT/), for further information about the course.
-
---->
+This is the link to the [course webpage](http://gtpb.igc.gulbenkian.pt/bicourses/2020/PSLS20/), for further information about the course.
 
 #### Code of Conduct
 Please read the [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) for details on contributing and reusing the training material.
