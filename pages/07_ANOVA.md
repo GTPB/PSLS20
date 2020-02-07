@@ -24,8 +24,9 @@ The researchers want to test if  there is an effect of one or more of the treatm
 
 ANOVA_lettuce_plants_half.Rmd
 
-- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/07_ANOVA/ANOVA_lettuce_plants_half.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/07_ANOVA/ANOVA_lettuce_plants_half.Rmd)
+- Exercise: [Exercise_1](./07-ANOVA-exercises-solutions/ANOVA_lettuce_plants_half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/freshweight_lettuce.txt"
+- Solution: [Solution_1](./07-ANOVA-exercises-solutions/ANOVA_lettuce_plants.html)
 
 
 2) The cuckoo dataset 
