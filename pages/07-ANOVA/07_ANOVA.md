@@ -2,7 +2,7 @@
 
 On the third day of the "Practical Statistics for the Life Sciences (2020)" course, we will have three tutorials on ANOVA, based on different datasets:
 
-### 1) The  lettuce freshweight dataset
+#### 1) The  lettuce freshweight dataset
 
 In agriculture, it is important to have a high yield of crops. One way to increase the number of leaves (or better, total leaf weight) 
 is by using a fertilizer.  
@@ -29,7 +29,7 @@ The researchers want to test if  there is an effect of one or more of the treatm
 - Solution: [Solution_1](./ANOVA_lettuce_plants.html)
 
 
-### 2) The cuckoo dataset 
+#### 2) The cuckoo dataset 
 
 The common cuckoo does not build its own nest: it prefers to lay its eggs in another birds' nest. It is known, since 1892,
 that the type of cuckoo bird eggs are different between different locations. In a study from 1940, it was shown that cuckoos return
@@ -48,7 +48,7 @@ ANOVA_cuckoo_half.Rmd
 - Solution: [Solution_2](./ANOVA_cuckoo.html) 
 
 
-### 3) The NHANES dataset:
+#### 3) The NHANES dataset:
 
 The National Health and Nutrition Examination Survey (NHANES) contains data that has been collected since 1960. 
 For this tutorial, we will make use of the data that was collected  between 2009 and  2012, for 10.000 U.S. civilians. 

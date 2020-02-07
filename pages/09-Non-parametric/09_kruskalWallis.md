@@ -1,6 +1,18 @@
 On the third day of the "Practical Statistics for the Life Sciences (2020)" course, we will have one exrecise on non-parametric, multigroup analysis.
 We base ourselves on the lettuce freshweight dataset.
 
+3) The Shrimps dataset:
+
+PCBs are often present in coolants, and are know to accumulate easily in the adipose tissue of shrimps. In this experiment, two
+groups of 18 samples (each 100 grams) of shrimps each were cultivated in different conditions, one control condition and one condition 
+where the medium was poluted with PCBs. 
+
+The research question is; is there an effect of the  growth condition on the PCB concentration in the adipose tissue of shrimps?
+
+- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_shrimps_half.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_shrimps_half.Rmd)
+- Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/shrimps.txt"
+- [solution_3](./05-Non_parametric_shrimps.html)
+
 1) The lettuce freshweight dataset
 
 In agriculture, it is important to have a high yield of crops. One way to increase the number of leaves (or better, total leaf weight) 
