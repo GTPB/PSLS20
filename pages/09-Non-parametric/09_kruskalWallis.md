@@ -37,7 +37,7 @@ one of four soil types;
 The dataset `freshweight_lettuce.txt` contains the freshweight for 28 lettuce plants. 
 The researchers want to test if  there is an effect of one or more of the treatments on the growth of lettuce plants.
 
-- Exercise: ["Exercise_2"](./Kruskal_Wallis_lettuce_plants_half.html)
+- Exercise: [Exercise_2](./Kruskal_Wallis_lettuce_plants_half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/freshweight_lettuce.txt"
 - Solution: [Solution_2](./Kruskal_Wallis_lettuce_plants.html)
 

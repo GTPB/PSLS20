@@ -9,7 +9,7 @@ The variable sore encodes whether a patient experienced a sore throat on waking 
 (duration) in minutes and the type of device (variable type) used to secure the airway.
 Two types of devices were included: aryngeal mask ("mask") or tracheal tube ("tube") (Data taken from Agresti 2002).
 
-- Exercise: [exercise_1](./10-categorical_sore_half.html)
+- Exercise: [Exercise_1](./10-categorical_sore_half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/sore.csv"
 - Solution: [Solution_1](./10-categorical_soreBase.html)
 - Extensive solution: [Solution_1_ext](./10-categorical_soreExtended.html)
@@ -31,7 +31,7 @@ In order to limit confounding, the experiment used  double blinding:
 After one year, the polio status of the child was recorded. The goal of the experiment is to find out if the vaccine reduces the
 incidence of getting the polio disease.
 
-- Exercise: [exercise_2](./10-salk_half.html)
+- Exercise: [Exercise_2](./10-salk_half.html)
 - Data: The data is generated in the script itself
 
 
