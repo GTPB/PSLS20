@@ -2,7 +2,7 @@
 
 On the third day of the "Practical Statistics for the Life Sciences (2020)" course, we will have three tutorials on ANOVA, based on different datasets:
 
-## 1) The  lettuce freshweight dataset
+### 1) The  lettuce freshweight dataset
 
 In agriculture, it is important to have a high yield of crops. One way to increase the number of leaves (or better, total leaf weight) 
 is by using a fertilizer.  
@@ -24,14 +24,12 @@ one of four soil types;
 The dataset `freshweight_lettuce.txt` contains the freshweight for 28 lettuce plants. 
 The researchers want to test if  there is an effect of one or more of the treatments on the growth of lettuce plants.
 
-ANOVA_lettuce_plants_half.Rmd
-
-- Exercise: [Exercise_1](./07-ANOVA/ANOVA_lettuce_plants_half.html)
+- Exercise: [Exercise_1](./ANOVA_lettuce_plants_half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/freshweight_lettuce.txt"
-- Solution: [Solution_1](./07-ANOVA/ANOVA_lettuce_plants.html)
+- Solution: [Solution_1](./ANOVA_lettuce_plants.html)
 
 
-## 2) The cuckoo dataset 
+### 2) The cuckoo dataset 
 
 The common cuckoo does not build its own nest: it prefers to lay its eggs in another birds' nest. It is known, since 1892,
 that the type of cuckoo bird eggs are different between different locations. In a study from 1940, it was shown that cuckoos return
@@ -45,12 +43,12 @@ The researchers want to test if the type of foster parent has an effect on the a
 
 ANOVA_cuckoo_half.Rmd
 
-- Exercise: [Exercise_2](./07-ANOVA/ANOVA_cuckoo_half.html) 
+- Exercise: [Exercise_2](./ANOVA_cuckoo_half.html) 
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/Cuckoo.txt"
-- Solution: [Solution_2](./07-ANOVA/ANOVA_cuckoo.html) 
+- Solution: [Solution_2](./ANOVA_cuckoo.html) 
 
 
-## 3) The NHANES dataset:
+### 3) The NHANES dataset:
 
 The National Health and Nutrition Examination Survey (NHANES) contains data that has been collected since 1960. 
 For this tutorial, we will make use of the data that was collected  between 2009 and  2012, for 10.000 U.S. civilians. 
@@ -59,8 +57,8 @@ The dataset contains a large number of physical, demographic, nutritional and li
 We want to test whether or not the mean systolic blood pressure value (take column `BPSys1`) is equal between the five self-reported
 health categories. To this end, we will use an ANOVA analysis (if the required assumptions are met).
 
-- Exercise: [Exercise_3](./07-ANOVA/ANOVA_NHANES_half.html) 
+- Exercise: [Exercise_3](./ANOVA_NHANES_half.html) 
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/NHANES.csv"
-- Solution: [Exercise_3](./07-ANOVA/ANOVA_NHANES.html) 
+- Solution: [Exercise_3](./ANOVA_NHANES.html) 
 
 
