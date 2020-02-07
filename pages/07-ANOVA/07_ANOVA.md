@@ -26,9 +26,9 @@ The researchers want to test if  there is an effect of one or more of the treatm
 
 ANOVA_lettuce_plants_half.Rmd
 
-- Exercise: [Exercise_1](./07-ANOVA-exercises-solutions/ANOVA_lettuce_plants_half.html)
+- Exercise: [Exercise_1](./07-ANOVA/ANOVA_lettuce_plants_half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/freshweight_lettuce.txt"
-- Solution: [Solution_1](./07-ANOVA-exercises-solutions/ANOVA_lettuce_plants.html)
+- Solution: [Solution_1](./07-ANOVA/ANOVA_lettuce_plants.html)
 
 
 2) The cuckoo dataset 
@@ -45,9 +45,9 @@ The researchers want to test if the type of foster parent has an effect on the a
 
 ANOVA_cuckoo_half.Rmd
 
-- Exercise: [Exercise_2](./07-ANOVA-exercises-solutions/ANOVA_cuckoo_half.html) 
+- Exercise: [Exercise_2](./07-ANOVA/ANOVA_cuckoo_half.html) 
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/Cuckoo.txt"
-- Solution: [Solution_2](./07-ANOVA-exercises-solutions/ANOVA_cuckoo.html) 
+- Solution: [Solution_2](./07-ANOVA/ANOVA_cuckoo.html) 
 
 
 3) The NHANES dataset:
@@ -59,8 +59,8 @@ The dataset contains a large number of physical, demographic, nutritional and li
 We want to test whether or not the mean systolic blood pressure value (take column `BPSys1`) is equal between the five self-reported
 health categories. To this end, we will use an ANOVA analysis (if the required assumptions are met).
 
-- Exercise: [Exercise_3](./07-ANOVA-exercises-solutions/ANOVA_NHANES_half.html) 
+- Exercise: [Exercise_3](./07-ANOVA/ANOVA_NHANES_half.html) 
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/NHANES.csv"
-- Solution: [Exercise_3](./07-ANOVA-exercises-solutions/ANOVA_NHANES.html) 
+- Solution: [Exercise_3](./07-ANOVA/ANOVA_NHANES.html) 
 
 

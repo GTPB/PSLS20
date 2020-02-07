@@ -101,8 +101,8 @@ and https://raw.githubusercontent.com/GTPB/PSLS20/master/background_material/rma
     - [Tutorial](pages/05_statisticlInference.md)
 6. [Linear Regression](pages/06-linearRegression.html)
     - [Tutorial](pages/06_linearRegression.md)
-7. [Analysis of Variance](pages/07-Anova.html)
-    - [Tutorial](pages/07_ANOVA.md)
+7. [Analysis of Variance](pages/07-ANOVA/07-Anova.html)
+    - [Tutorial](pages/07-ANOVA/07_ANOVA.md)
 8. [Multiple Regression](pages/08-MultipleRegression.html)
     - [Tutorial](pages/08_multipleRegression.md)
 9. Nonparametric Statistics:
