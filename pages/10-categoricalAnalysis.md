@@ -1,6 +1,8 @@
-On the third day of the "Practical Statistics for the Life Sciences (2020)" course, we will have two exercises on categorical analysis:
+# Categorical analysis tutorial
 
-1) The sore throat example
+On the fifth day of the "Practical Statistics for the Life Sciences (2020)" course, we will have two exercises on categorical analysis:
+
+#### 1) The sore throat example
 
 The "sore" dataset contains results of a study on throat soreness upon surgery with general anaesthesia.  
 The variable sore encodes whether a patient experienced a sore throat on waking (0: no, 1: yes),  as a function of the duration of the surgery
@@ -12,7 +14,7 @@ Two types of devices were included: aryngeal mask ("mask") or tracheal tube ("tu
 - Solution: [Solution_1](./10-categorical_soreBase.html)
 - Extensive solution: [Solution_1_ext](./10-categorical_soreExtended.html)
 
-2) The Salk dataset
+#### 2) The Salk dataset
 
 In 1916, the US experienced the first large epidemic of polio. John Salk developed a vaccine with promising results in the lab in the early fifties.
 In this experiment, children are assigned at random to the control (placebo treatment) or vaccine treatment arm after consent was given by

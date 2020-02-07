@@ -1,6 +1,8 @@
+# Multiple regression tutorial
+
 On the fourth day of the "Practical Statistics for the Life Sciences (2020)" course, we will have three multiple regression on ANOVA, based on different datasets:
 
-1) The fish dataset
+#### 1) The fish dataset
 
 In this experiments 96 fish (dojofish, goldfish and zebrafish) were placed separately in a tank with two liters of water and
 a certain dose (in mg) of a certain poison EI-43,064. The resistance of the fish a against the poison was measured as the
@@ -15,8 +17,7 @@ how to account for this.
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/poison.csv"
 - Partial solution: [sol_1](./08-fish_tank_explore.html)
 
-
-2) The FEV dataset
+#### 2) The FEV dataset
 
 The FEV, which is an acronym for forced expiratory volume, is a measure of how much air a person can exhale during  a forced 
 breath. In this dataset, the FEV of 606 children, between the ages of 6 and 17, were measured. The dataset also provides 
@@ -32,7 +33,7 @@ how to account for this.
 - Exercise: [exercise_2](./08-Multiple_regression_FEV_half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/fev.txt"
 
-3) The KPNA2 dataset
+#### 3) The KPNA2 dataset
 
 - Exercise: [exercise_3](./08-multipleRegression_KPNA2_half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/kpna2.txt"

@@ -1,6 +1,8 @@
+# Data exploration tutorial
+
 In the first day of the "Practical Statistics for the Life Sciences (2020)" course, we will have four tutorials on data exploration, based on different datasets:
 
-1) The NHANES dataset:
+#### 1) The NHANES dataset:
 
 The National Health and Nutrition Examination Survey (NHANES) contains data that has been collected since 1960. 
 For this tutorial, we will make use of the data that was collected  between 2009 and  2012, for 10.000 U.S. civilians. 
@@ -13,7 +15,7 @@ In this tutorial, you will learn the key principles of data exploration in R, in
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/NHANES.csv"
 - Solution: [Solution_01](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/solutions/04_DataExploration/Data_exploration_NHANES.Rmd)
 
-2) The armpit dataset:
+#### 2) The armpit dataset:
 
 Smelly armpits are not caused by sweat, itself. The smell is caused by specific micro-organisms belonging to the group of
 Corynebacterium spp. that metabolise sweat. Another group of abundant bacteria are the Staphylococcus spp.,
@@ -32,7 +34,7 @@ In this tutorial, you will use your acquired skills from exercise 1 to explore t
 - Solution: [Solution_02](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/solutions/04_DataExploration/Data_exploration_armpit.Rmd)
 
 
-3) The captopril dataset:
+#### 3) The captopril dataset:
 
 The captopril dataset holds information on a small experiment with 15 patients that have increased blood pressure values. 
 More specifically, for each patient we will have four values; one value for systolic blood pressure and one for diastolyic,
@@ -45,7 +47,7 @@ In this tutorial on data exploration, you will learn how to deal with data from 
 - Solution: [Solution_03](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/solutions/04_DataExploration/Data_exploration_captopril.Rmd)
 
 
-4) The FEV dataset:
+#### 4) The FEV dataset:
 
 The FEV, which is an acronym for forced expiratory volume, is a measure of how much air a person can exhale (in liters)  during  a forced breath. 
 In this dataset, the FEV of 606 children, between the ages of 6 and 17, were measured. The dataset also provides additional information on 

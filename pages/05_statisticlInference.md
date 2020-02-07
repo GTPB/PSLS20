@@ -1,6 +1,8 @@
+# Statistical inference tutorial
+
 On the second day of the "Practical Statistics for the Life Sciences (2020)" course, we will have three tutorials on data exploration, based on different datasets:
 
-1) The captopril dataset:
+#### 1) The captopril dataset:
 
 The captopril dataset holds information on a small experiment with 15 patients that have increased blood pressure values. 
 More specifically, for each patient we will have four values; one value for systolic blood pressure and one for diastolyic,
@@ -13,7 +15,7 @@ In this tutorial on data exploration, you will learn how to deal with data from 
 - [solution_1](./05-Hypothesis_testing_captopril.html)
 
 
-2) The armpit dataset:
+#### 2) The armpit dataset:
 
 Smelly armpits are not caused by sweat, itself. The smell is caused by specific micro-organisms belonging to the group of
 Corynebacterium spp. that metabolise sweat. Another group of abundant bacteria are the Staphylococcus spp.,
@@ -31,7 +33,7 @@ has helped in decreasing the (average) relative abundance Staphylococcus spp. in
 - [solution_2](./05-Hypothesis_testing_armpit.html)
 
 
-3) The Shrimps dataset:
+#### 3) The Shrimps dataset:
 
 PCBs are often present in coolants, and are know to accumulate easily in the adipose tissue of shrimps. In this experiment, two
 groups of 18 samples (each 100 grams) of shrimps each were cultivated in different conditions, one control condition and one condition 
@@ -44,7 +46,7 @@ The research question is; is there an effect of the  growth condition on the PCB
 - [solution_3](./05-Non_parametric_shrimps.html)
 
 
-4) The Cuckoo dataset:
+#### 4) The Cuckoo dataset:
 
 The common cuckoo does not build its own nest: it prefers to lay its eggs in another birds' nest. It is known, since 1892,
 that the type of cuckoo bird eggs are different between different locations. In a study from 1940, it was shown that cuckoos return
