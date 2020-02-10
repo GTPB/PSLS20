@@ -93,7 +93,7 @@ and https://raw.githubusercontent.com/GTPB/PSLS20/master/background_material/rma
 1. [Introduction](pages/01-intro/01-intro.html)
 2. [Concepts](pages/02-concepts/02-concepts.html)
 3. [Experimental Design](pages/03-experimentalDesign/03-experimentalDesign.html)
-4. [Data Exploration](pages/04-dataExploration.html)
+4. [Data Exploration](pages/04-dataExploration/04-dataExploration.html)
     - [Tutorial](pages/04-dataExploration/04_dataExploration.md)
 5. Statistical Inference
     - [5.1. Statistical Inference](pages/05-Hypothesis-testing/05-statisticalInference.html)
