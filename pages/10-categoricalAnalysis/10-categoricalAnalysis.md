@@ -31,9 +31,9 @@ In order to limit confounding, the experiment used  double blinding:
 After one year, the polio status of the child was recorded. The goal of the experiment is to find out if the vaccine reduces the
 incidence of getting the polio disease.
 
-- Exercise: [Exercise_2](./10-salk_half.html)
+- Exercise: [Exercise_2](./10-categorical-salk-half.html)
 - Data: The data is generated in the script itself
-- Solution: must still add interpretation and conclusion
+- Solution: [Solution_2](./10-categorical-salk.html)
 
 
 

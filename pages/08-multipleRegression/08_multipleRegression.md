@@ -1,8 +1,8 @@
 # Multiple regression tutorial
 
-On the fourth day of the "Practical Statistics for the Life Sciences (2020)" course, we will have three multiple regression on ANOVA, based on different datasets:
+On the fourth day of the "Practical Statistics for the Life Sciences (2020)" course, we will have three exercises multiple regression, based on different datasets:
 
-#### 1) The fish dataset
+#### 1) The fish tank dataset
 
 In this experiments 96 fish (dojofish, goldfish and zebrafish) were placed separately in a tank with two liters of water and
 a certain dose (in mg) of a certain poison EI-43,064. The resistance of the fish a against the poison was measured as the
@@ -13,9 +13,9 @@ Yesterday, we have seen that with a simple linear regression model we are severa
 between the survival time of the fish and the poison dosage. By using a multiple linear regression model, we will learn 
 how to account for this.
 
-- Exercise: [exercise_1](./08-Multiple_Regression_fish_half.html)
+- Exercise: [exercise_1](./08-MultipleRegression_fish_half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/poison.csv"
-- Partial solution: [sol_1](./08-fish_tank_explore.html)
+- Solution: 
 
 #### 2) The FEV dataset
 
@@ -30,8 +30,9 @@ Yesterday, we already touched upon how the observed effect between smoking and t
 model could be confounded with the other variables in the dataset. By using a multiple linear regression model, we will learn 
 how to account for this.
 
-- Exercise: [exercise_2](./08-Multiple_regression_FEV_half.html)
+- Exercise: [Exercise_2](./08-MultipleRegression_FEV_half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/fev.txt"
+- Solution
 
 #### 3) The KPNA2 dataset
 
