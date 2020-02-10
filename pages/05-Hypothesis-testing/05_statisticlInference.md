@@ -10,9 +10,9 @@ both before and after treating the patient with a drug named captopril.
 
 In this tutorial on data exploration, you will learn how to deal with data from paired experimental designs.
 
-- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_captorpil_half.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_captorpil_half.Rmd)
+- Exercise: [Exercise_1](./05-Hypothesis-testing-captopril.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/captopril.txt"
-- [solution_1](./05-Hypothesis_testing_captopril.html)
+- Solution: [Solution_1](./05-Hypothesis-testing-captopril.html)
 
 
 #### 2) The armpit dataset:
@@ -28,9 +28,9 @@ treated with a placebo, while the other had a microbiome transplant.
 In this tutorial, you will use your acquired skills on hypothesis testing to test whether or not the microbial transplant
 has helped in decreasing the (average) relative abundance Staphylococcus spp. in the microbiome of the armpit.
 
-- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_armpit_LC.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_armpit_LC.Rmd)
+- Exercise: [Exercise_2](./05-Hypothesis-testing-armpit.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit.csv"
-- [solution_2](./05-Hypothesis_testing_armpit.html)
+- Solution: [Solution_2](./05-Hypothesis-testing-armpit.html)
 
 
 #### 3) The Shrimps dataset:
@@ -41,9 +41,9 @@ where the medium was poluted with PCBs.
 
 The research question is; is there an effect of the  growth condition on the PCB concentration in the adipose tissue of shrimps?
 
-- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_shrimps_half.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_shrimps_half.Rmd)
+- Exercise: [Exercise_3](05-Non-parametric-shrimps.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/shrimps.txt"
-- [solution_3](./05-Non_parametric_shrimps.html)
+- Solution: [Solution_3](./05-Non-parametric-shrimps.html)
 
 
 #### 4) The Cuckoo dataset:
@@ -58,9 +58,9 @@ such a way that their eggs look as similar as possible as those of their foster 
 The cuckoo dataset contains information on 120 Cuckoo eggs, obtained from randomly selected "foster" nests.
 The researchers want to test if the type of foster parent has an effect on the average length of the cuckoo eggs. 
 
-- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_cuckoo_half.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/05_statisticalInference/Hypothesis_testing_cuckoo_half.Rmd)
+- Exercise: [Exercise_4](./05-Hypothesis-testing-cuckoo.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/Cuckoo.txt"
-- [solution_4](./05-Hypothesis_testing_cuckoo.html)
+- [solution_4](./05-Hypothesis-testing-cuckoo.html)
 
 
 
