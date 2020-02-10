@@ -4,7 +4,7 @@ On the third day of the "Practical Statistics for the Life Sciences (2020)" cour
 
 #### 1) Breast cancer dataset
 
-- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/06_linearRegression/breastcancerExample.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/06_linearRegression/breastcancerExample.Rmd)
+- Exercise: [Exercise_1](./breastcancerExample.html)
 
 #### 2) The fish dataset:
 
@@ -14,8 +14,9 @@ minutes the fish survived upon adding the poison (Surv_time, in minutes). Additi
 
 In this tutorial, we will study the association between dose and survival time by using a linear regression model.
 
-- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/06_linearRegression/Linreg_continuous_fish_tank_half.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/06_linearRegression/Linreg_continuous_fish_poison_half.Rmd)
+- Exercise: [Exercise_2](./Linreg_fish_tank_half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/poison.csv"
+- Solution: [Solution_2](./Linreg_fish_tank_half.html)
 
  #### 3) The FEV dataset:
 
@@ -24,8 +25,9 @@ In this dataset, the FEV of 606 children, between the ages of 6 and 17, were mea
 these children: their `age`, their `height`, their `gender` and, most importantly, whether the child is a smoker or a non-smoker.
 The goal of this experiment was to find out whether or not smoking has an effect on the FEV of children.
 
-- Exercise: [https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/06_linearRegression/Linreg_FEV_halfRmd.Rmd](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/excercises/06_linearRegression/Linreg_FEV_halfRmd.Rmd)
+- Exercise: [Exercise_3](./Linreg_FEV_half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/fev.txt"
+- Exercise: [Exercise_3](./Linreg_FEV.html)
 
 
 
