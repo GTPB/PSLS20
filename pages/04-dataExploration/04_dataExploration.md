@@ -30,7 +30,7 @@ In this tutorial, you will use your acquired skills from exercise 1 to explore t
 
 - Exercise: [Exercise_2](./04-Data-exploration-armpit-half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit.csv"
-- Solution: [Solution_2](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/solutions/04_DataExploration/Data_exploration_armpit.Rmd)
+- Solution: [Solution_2](./04-Data-exploration-armpit.html)
 
 
 #### 3) The captopril dataset:
@@ -43,7 +43,7 @@ In this tutorial on data exploration, you will learn how to deal with data from 
 
 - Exercise: [Exercise_3](./04-Data-exploration-captopril-half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/captopril.txt"
-- Solution: [Solution_3](https://raw.githubusercontent.com/GTPB/PSLS20/master/tutorialScripts/solutions/04_DataExploration/Data_exploration_captopril.Rmd)
+- Solution: [Solution_3](./04-Data-exploration-captopril.html)
 
 
 #### 4) The FEV dataset:
@@ -58,7 +58,7 @@ In this tutorial, you will learn about the importance of confounders in real-lif
 
 - Exercise: [Exercise_4](./04-Data-exploration-FEV-half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/fev.txt"
-- Solution: [Solution_4](./Data_exploration_FEV.html)
+- Solution: [Solution_4](./04-Data-exploration-FEV.html)
 
 
 
