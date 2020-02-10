@@ -11,8 +11,8 @@ Two types of devices were included: aryngeal mask ("mask") or tracheal tube ("tu
 
 - Exercise: [Exercise_1](./10-categorical_sore_half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/sore.csv"
-- Solution: [Solution_1](./10-categorical_soreBase.html)
-- Extensive solution: [Solution_1_ext](./10-categorical_soreExtended.html)
+- Solution: [Solution_1](./10-categorical-soreBase.html)
+- Extensive solution: [Solution_1_ext](./10-categorical-soreExtended.html)
 
 #### 2) The Salk dataset
 
@@ -33,6 +33,7 @@ incidence of getting the polio disease.
 
 - Exercise: [Exercise_2](./10-salk_half.html)
 - Data: The data is generated in the script itself
+- Solution: must still add interpretation and conclusion
 
 
 

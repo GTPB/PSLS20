@@ -16,7 +16,7 @@ In this tutorial, we will study the association between dose and survival time b
 
 - Exercise: [Exercise_2](./Linreg_fish_tank_half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/poison.csv"
-- Solution: [Solution_2](./Linreg_fish_tank_half.html)
+- Solution: [Solution_2](./Linreg_fish_tank.html)
 
  #### 3) The FEV dataset:
 
