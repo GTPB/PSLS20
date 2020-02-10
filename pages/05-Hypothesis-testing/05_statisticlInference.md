@@ -5,12 +5,12 @@ On the second day of the "Practical Statistics for the Life Sciences (2020)" cou
 #### 1) The captopril dataset:
 
 The captopril dataset holds information on a small experiment with 15 patients that have increased blood pressure values. 
-More specifically, for each patient we will have four values; one value for systolic blood pressure and one for diastolyic,
+More specifically, for each patient we will have four values; one value for systolic blood pressure and one for diasystolyic,
 both before and after treating the patient with a drug named captopril.
 
 In this tutorial on data exploration, you will learn how to deal with data from paired experimental designs.
 
-- Exercise: [Exercise_1](./05-Hypothesis-testing-captopril.html)
+- Exercise: [Exercise_1](./05-Hypothesis-testing-captopril-half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/captopril.txt"
 - Solution: [Solution_1](./05-Hypothesis-testing-captopril.html)
 
@@ -28,7 +28,7 @@ treated with a placebo, while the other had a microbiome transplant.
 In this tutorial, you will use your acquired skills on hypothesis testing to test whether or not the microbial transplant
 has helped in decreasing the (average) relative abundance Staphylococcus spp. in the microbiome of the armpit.
 
-- Exercise: [Exercise_2](./05-Hypothesis-testing-armpit.html)
+- Exercise: [Exercise_2](./05-Hypothesis-testing-armpit-half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/armpit.csv"
 - Solution: [Solution_2](./05-Hypothesis-testing-armpit.html)
 
@@ -37,11 +37,11 @@ has helped in decreasing the (average) relative abundance Staphylococcus spp. in
 
 PCBs are often present in coolants, and are know to accumulate easily in the adipose tissue of shrimps. In this experiment, two
 groups of 18 samples (each 100 grams) of shrimps each were cultivated in different conditions, one control condition and one condition 
-where the medium was poluted with PCBs. 
+where the medium was polluted with PCBs. 
 
 The research question is; is there an effect of the  growth condition on the PCB concentration in the adipose tissue of shrimps?
 
-- Exercise: [Exercise_3](05-Non-parametric-shrimps.html)
+- Exercise: [Exercise_3](05-Non-parametric-shrimps-half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/shrimps.txt"
 - Solution: [Solution_3](./05-Non-parametric-shrimps.html)
 
@@ -58,7 +58,7 @@ such a way that their eggs look as similar as possible as those of their foster 
 The cuckoo dataset contains information on 120 Cuckoo eggs, obtained from randomly selected "foster" nests.
 The researchers want to test if the type of foster parent has an effect on the average length of the cuckoo eggs. 
 
-- Exercise: [Exercise_4](./05-Hypothesis-testing-cuckoo.html)
+- Exercise: [Exercise_4](./05-Hypothesis-testing-cuckoo-half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/Cuckoo.txt"
 - [solution_4](./05-Hypothesis-testing-cuckoo.html)
 
