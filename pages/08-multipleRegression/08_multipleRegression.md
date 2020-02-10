@@ -32,7 +32,7 @@ how to account for this.
 
 - Exercise: [Exercise_2](./08-MultipleRegression_FEV_half.html)
 - Data: "https://raw.githubusercontent.com/GTPB/PSLS20/master/data/fev.txt"
-- Solution
+- Solution:
 
 #### 3) The KPNA2 dataset
 

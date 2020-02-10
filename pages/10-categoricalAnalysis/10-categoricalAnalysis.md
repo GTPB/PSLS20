@@ -33,7 +33,7 @@ incidence of getting the polio disease.
 
 - Exercise: [Exercise_2](./10-categorical-salk-half.html)
 - Data: The data is generated in the script itself
-- Solution: [Solution_2](./10-categorical-salk.html)
+- Solution: 
 
 
 
