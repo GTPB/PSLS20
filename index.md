@@ -103,8 +103,8 @@ and https://raw.githubusercontent.com/GTPB/PSLS20/master/background_material/rma
     - [Tutorial](pages/06-linearRegression/06_linearRegression.md)
 7. [Analysis of Variance](pages/07-ANOVA/07-Anova.html)
     - [Tutorial](pages/07-ANOVA/07_ANOVA.md)
-8. [Multiple Regression](pages/08-MultipleRegression.html)
-    - [Tutorial](pages/08_multipleRegression.md)
+8. [Multiple Regression](pages/08-multipleRegression/08-MultipleRegression.html)
+    - [Tutorial](pages/08-multipleRegression/08_multipleRegression.md)
 9. Nonparametric Statistics:
     - [9.1 Nonparametric Statistics: Wilcoxon-Mann-Whitney test](pages/09-Non-parametric/09-NonparametericStatistics-WilcoxonMannWhitney.html)
     - [9.2 Nonparametric Statistics: Kruskal Wallis test](pages/09-Non-parametric/09-NonparametericStatistics-KruskalWallis.html)
